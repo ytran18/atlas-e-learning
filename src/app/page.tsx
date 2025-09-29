@@ -13,6 +13,7 @@ export default function Home() {
                     priority
                 />
                 <div>test deploy staging</div>
+                <div>test force push</div>
                 <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
                     <li className="mb-2 tracking-[-.01em]">
                         Get started by editing{" "}
