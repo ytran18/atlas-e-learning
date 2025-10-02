@@ -4,6 +4,7 @@ import "./globals.css";
 
 // speed insights
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Provider from "./provider";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -31,7 +32,7 @@ export default function RootLayout({
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <SpeedInsights />
-                {children}
+                <Provider>{children}</Provider>
             </body>
         </html>
     );
