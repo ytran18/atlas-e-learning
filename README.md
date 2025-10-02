@@ -24,8 +24,8 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 To learn more about Next.js, take a look at the following resources:
 
--   [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
--   [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
@@ -39,17 +39,17 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 This repo includes a workflow at `.github/workflows/vercel.yml` to:
 
--   Lint and build on every PR to `master` and push to `master`.
--   Deploy Preview on pull requests targeting `master`.
--   Deploy Production on pushes to `master`.
+- Lint and build on every PR to `master` and push to `master`.
+- Deploy Preview on pull requests targeting `master`.
+- Deploy Production on pushes to `master`.
 
 ### Required GitHub Secrets
 
 Create these repository secrets in GitHub Settings → Secrets and variables → Actions:
 
--   `VERCEL_TOKEN`: Personal token from Vercel (Account Settings → Tokens).
--   `VERCEL_ORG_ID`: Organization ID (Project Settings → General or from `.vercel/project.json`).
--   `VERCEL_PROJECT_ID`: Project ID (Project Settings → General or from `.vercel/project.json`).
+- `VERCEL_TOKEN`: Personal token from Vercel (Account Settings → Tokens).
+- `VERCEL_ORG_ID`: Organization ID (Project Settings → General or from `.vercel/project.json`).
+- `VERCEL_PROJECT_ID`: Project ID (Project Settings → General or from `.vercel/project.json`).
 
 The workflow uses Vercel CLI with `vercel pull`, `vercel build`, and `vercel deploy` to create Preview and Production deployments.
 
