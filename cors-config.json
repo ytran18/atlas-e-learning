@@ -1,6 +1,10 @@
 [
     {
-        "AllowedOrigins": ["http://localhost:3000"],
+        "AllowedOrigins": [
+            "http://localhost:3000",
+            "https://atld-prod.vercel.app/",
+            "https://atld-staging.vercel.app/"
+        ],
         "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],
         "AllowedHeaders": ["*"],
         "ExposeHeaders": ["ETag"],
