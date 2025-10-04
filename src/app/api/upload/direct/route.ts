@@ -9,7 +9,9 @@ import { R2_CONFIG, handleR2Error, r2Client } from "@/libs/cloudflare/r2.client"
 export async function POST(request: NextRequest) {
     try {
         const formData = await request.formData();
+
         const file = formData.get("file") as File;
+
         const contentType = (formData.get("contentType") as string) || "video";
 
         if (!file) {
@@ -44,12 +46,16 @@ export async function POST(request: NextRequest) {
 
         // Generate unique file key
         const timestamp = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
         const fileId = nanoid(10);
+
         const fileExtension = file.name.split(".").pop();
+
         const fileKey = `${contentType}/${timestamp}/${fileId}.${fileExtension}`;
 
         // Convert File to Buffer
         const arrayBuffer = await file.arrayBuffer();
+
         const buffer = Buffer.from(arrayBuffer);
 
         // For files larger than 5MB, use multipart upload

@@ -25,6 +25,8 @@ ATLD E-Learning là nền tảng học trực tuyến được xây dựng bằn
 - **React**: 19.1.0
 - **TypeScript**: 5.x
 - **Styling**: Tailwind CSS 4
+- **Authentication**: Clerk
+- **Cloud Storage**: Cloudflare R2 (AWS S3 compatible)
 - **Analytics**: Mixpanel, Vercel Speed Insights
 - **Code Quality**: ESLint, Prettier, Commitlint, Husky
 
@@ -60,7 +62,18 @@ nvm install
 npm install
 ```
 
-### 4. Chạy development server
+### 4. Cấu hình biến môi trường
+
+```bash
+# Copy file env example
+cp env.example .env.local
+
+# Sau đó thêm các API keys cần thiết vào .env.local
+```
+
+**Lưu ý**: Xem chi tiết về cấu hình Clerk Authentication trong file [`CLERK_SETUP.md`](./CLERK_SETUP.md)
+
+### 5. Chạy development server
 
 ```bash
 npm run dev
