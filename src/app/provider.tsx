@@ -4,6 +4,9 @@ import { useEffect } from "react";
 
 import { viVN } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
+import { MantineProvider } from "@mantine/core";
+import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
 
 import { initMixpanel } from "@/libs/mixpanel/mixpanel-client";
 
@@ -28,7 +31,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
             signInUrl="/sign-in"
             signUpUrl="/sign-up"
         >
-            {children}
+            <MantineProvider>{children}</MantineProvider>
         </ClerkProvider>
     );
 }
