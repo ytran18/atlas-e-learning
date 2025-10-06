@@ -51,6 +51,7 @@ export const VideoUploadButton = ({
                 style={{ display: "none" }}
                 disabled={disabled}
             />
+
             <button onClick={handleButtonClick} disabled={disabled} type="button">
                 {children || "Select Video"}
             </button>

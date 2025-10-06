@@ -6,8 +6,8 @@
             "https://atld-staging.vercel.app/"
         ],
         "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],
-        "AllowedHeaders": ["*"],
-        "ExposeHeaders": ["ETag"],
+        "AllowedHeaders": ["*", "Range", "Content-Range"],
+        "ExposeHeaders": ["ETag", "Content-Length", "Content-Range", "Accept-Ranges"],
         "MaxAgeSeconds": 3600
     }
 ]

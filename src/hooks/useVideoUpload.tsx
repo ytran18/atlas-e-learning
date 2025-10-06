@@ -1,5 +1,7 @@
 import { useCallback, useState } from "react";
 
+import { uploadFile } from "@/libs/axios/axiosClient";
+
 export interface UploadProgress {
     progress: number;
     status: "idle" | "uploading" | "success" | "error";
@@ -10,6 +12,7 @@ export interface UploadResult {
     success: boolean;
     fileKey?: string;
     publicUrl?: string;
+    uploadId?: string;
     error?: string;
 }
 
@@ -40,66 +43,47 @@ export const useVideoUpload = (): UseVideoUploadReturn => {
                     status: "uploading",
                 });
 
-                // Upload directly to server-side API with progress tracking
-                const result = await new Promise<{ fileKey: string; publicUrl?: string }>(
-                    (resolve, reject) => {
-                        const xhr = new XMLHttpRequest();
-                        const formData = new FormData();
-                        formData.append("file", file);
-                        formData.append("contentType", contentType);
+                // Prepare FormData
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("contentType", contentType);
 
-                        xhr.upload.addEventListener("progress", (event) => {
-                            if (event.lengthComputable) {
-                                const percentComplete = Math.round(
-                                    (event.loaded / event.total) * 100
-                                );
-                                setUploadProgress({
-                                    progress: percentComplete,
-                                    status: "uploading",
-                                });
-                            }
+                // Upload with axios and progress tracking
+                const response = await uploadFile(
+                    "/api/upload/video",
+                    formData,
+                    (progressEvent) => {
+                        const percentComplete = Math.round(progressEvent.progress);
+
+                        console.log("Video upload progress:", {
+                            loaded: progressEvent.loaded,
+                            total: progressEvent.total,
+                            percent: `${percentComplete}%`,
                         });
 
-                        xhr.addEventListener("load", () => {
-                            if (xhr.status === 200) {
-                                const response = JSON.parse(xhr.responseText);
-                                if (response.success) {
-                                    resolve({
-                                        fileKey: response.fileKey,
-                                        publicUrl: response.publicUrl,
-                                    });
-                                } else {
-                                    reject(new Error(response.error || "Upload failed"));
-                                }
-                            } else {
-                                reject(new Error(`Upload failed with status: ${xhr.status}`));
-                            }
+                        setUploadProgress({
+                            progress: percentComplete,
+                            status: "uploading",
                         });
-
-                        xhr.addEventListener("error", () => {
-                            reject(new Error("Network error during upload"));
-                        });
-
-                        xhr.addEventListener("abort", () => {
-                            reject(new Error("Upload aborted"));
-                        });
-
-                        xhr.open("POST", "/api/upload/direct");
-                        xhr.send(formData);
                     }
                 );
 
-                // Success
-                setUploadProgress({
-                    progress: 100,
-                    status: "success",
-                });
+                // Check response
+                if (response.data.success) {
+                    setUploadProgress({
+                        progress: 100,
+                        status: "success",
+                    });
 
-                return {
-                    success: true,
-                    fileKey: result.fileKey,
-                    publicUrl: result.publicUrl,
-                };
+                    return {
+                        success: true,
+                        fileKey: response.data.fileKey,
+                        publicUrl: response.data.publicUrl,
+                        uploadId: response.data.uploadId,
+                    };
+                } else {
+                    throw new Error(response.data.error || "Upload failed");
+                }
             } catch (error) {
                 const errorMessage =
                     error instanceof Error ? error.message : "Unknown error occurred";

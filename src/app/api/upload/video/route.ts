@@ -9,9 +9,7 @@ import { R2_CONFIG, handleR2Error, r2Client } from "@/libs/cloudflare/r2.client"
 export async function POST(request: NextRequest) {
     try {
         const formData = await request.formData();
-
         const file = formData.get("file") as File;
-
         const contentType = (formData.get("contentType") as string) || "video";
 
         if (!file) {
@@ -21,13 +19,12 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Validate file type
-        if (!R2_CONFIG.allowedMimeTypes.includes(file.type)) {
+        // Validate file type (only video files)
+        if (!file.type.startsWith("video/")) {
             return NextResponse.json(
                 {
                     success: false,
-                    error: "Invalid file type",
-                    allowedTypes: R2_CONFIG.allowedMimeTypes,
+                    error: "Invalid file type. Only video files are allowed.",
                 },
                 { status: 400 }
             );
@@ -44,18 +41,14 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Generate unique file key
-        const timestamp = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-
-        const fileId = nanoid(10);
-
+        // Create unique identifier for this upload
+        const uploadId = nanoid(10);
+        const timestamp = new Date().toISOString().split("T")[0];
         const fileExtension = file.name.split(".").pop();
-
-        const fileKey = `${contentType}/${timestamp}/${fileId}.${fileExtension}`;
+        const fileKey = `${contentType}/${timestamp}/${uploadId}.${fileExtension}`;
 
         // Convert File to Buffer
         const arrayBuffer = await file.arrayBuffer();
-
         const buffer = Buffer.from(arrayBuffer);
 
         // For files larger than 5MB, use multipart upload
@@ -67,14 +60,12 @@ export async function POST(request: NextRequest) {
                     Key: fileKey,
                     Body: buffer,
                     ContentType: file.type,
-                    Metadata: {
-                        originalFileName: file.name,
-                        contentType,
-                        uploadedAt: new Date().toISOString(),
-                    },
+                    // Critical headers for Range Request support
+                    ContentDisposition: "inline",
+                    CacheControl: "public, max-age=31536000",
                 },
-                queueSize: 4, // concurrent uploads
-                partSize: 5 * 1024 * 1024, // 5MB chunks
+                queueSize: 4,
+                partSize: 5 * 1024 * 1024,
             });
 
             await upload.done();
@@ -85,11 +76,9 @@ export async function POST(request: NextRequest) {
                 Key: fileKey,
                 Body: buffer,
                 ContentType: file.type,
-                Metadata: {
-                    originalFileName: file.name,
-                    contentType,
-                    uploadedAt: new Date().toISOString(),
-                },
+                // Critical headers for Range Request support
+                ContentDisposition: "inline",
+                CacheControl: "public, max-age=31536000",
             });
 
             await r2Client.send(command);
@@ -102,9 +91,13 @@ export async function POST(request: NextRequest) {
             success: true,
             fileKey,
             publicUrl,
+            uploadId,
+            fileName: file.name,
+            fileSize: file.size,
+            contentType: file.type,
         });
     } catch (error) {
-        console.error("Failed to upload file:", error);
+        console.error("Failed to upload video:", error);
 
         const errorMessage = handleR2Error(error);
 
@@ -118,9 +111,6 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// Set max body size for video uploads (default is 4MB)
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
+// Configure route for large file uploads
+export const runtime = "nodejs"; // Use Node.js runtime for better streaming support
+export const maxDuration = 300; // 5 minutes timeout

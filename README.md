@@ -27,6 +27,9 @@ ATLD E-Learning là nền tảng học trực tuyến được xây dựng bằn
 - **Styling**: Tailwind CSS 4
 - **Authentication**: Clerk
 - **Cloud Storage**: Cloudflare R2 (AWS S3 compatible)
+- **Video Streaming**: Progressive Streaming (HTTP Range Requests)
+- **Video Player**: HTML5 Native Video
+- **HTTP Client**: Axios (with interceptors & progress tracking)
 - **Analytics**: Mixpanel, Vercel Speed Insights
 - **Code Quality**: ESLint, Prettier, Commitlint, Husky
 
@@ -71,7 +74,13 @@ cp env.example .env.local
 # Sau đó thêm các API keys cần thiết vào .env.local
 ```
 
-**Lưu ý**: Xem chi tiết về cấu hình Clerk Authentication trong file [`CLERK_SETUP.md`](./CLERK_SETUP.md)
+**Lưu ý**:
+
+- Xem chi tiết về cấu hình Clerk Authentication trong file [`docs/CLERK_SETUP.md`](./docs/CLERK_SETUP.md)
+- Xem chi tiết về Video Upload & Progressive Streaming trong file [`docs/VIDEO_UPLOAD_GUIDE.md`](./docs/VIDEO_UPLOAD_GUIDE.md)
+- Xem chi tiết về cấu hình CORS cho R2 trong file [`docs/R2_CORS_SETUP.md`](./docs/R2_CORS_SETUP.md)
+- Xem chi tiết về Axios setup và usage trong file [`docs/AXIOS_SETUP.md`](./docs/AXIOS_SETUP.md)
+- Xem chi tiết về Video Architecture trong file [`docs/VIDEO_STRUCTURE.md`](./docs/VIDEO_STRUCTURE.md)
 
 ### 5. Chạy development server
 
