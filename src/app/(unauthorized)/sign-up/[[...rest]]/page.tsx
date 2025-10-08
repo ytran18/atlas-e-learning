@@ -1,5 +1,5 @@
-import SignUp from "@/features/auth/pages/SignUp";
+import SignUpPage from "@/features/auth/pages/signUp";
 
 export default function Page() {
-    return <SignUp />;
+    return <SignUpPage />;
 }
