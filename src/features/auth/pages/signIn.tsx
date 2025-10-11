@@ -1,5 +1,7 @@
 "use client";
 
+import { navigationPaths } from "@/utils/navigationPaths";
+
 import SignInFormDatePicker from "../_components/SignInFormDatePicker";
 import SignInFormField from "../_components/SignInFormField";
 import SignInFormLayout from "../_components/SignInFormLayout";
@@ -25,7 +27,7 @@ const SignInPage = () => {
             submitButtonText="Đăng nhập"
             footerText="Chưa có tài khoản?"
             footerLinkText="Đăng ký ngay"
-            footerLinkHref="/sign-up"
+            footerLinkHref={navigationPaths.SIGN_UP}
             isLoading={isLoading}
             error={error}
         >

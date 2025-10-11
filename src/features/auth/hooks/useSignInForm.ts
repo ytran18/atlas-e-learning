@@ -8,6 +8,8 @@ import { useSignIn } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { navigationPaths } from "@/utils/navigationPaths";
+
 import { SignInFormData, signInSchema } from "../validations/signInSchema";
 
 export const useSignInForm = () => {
@@ -57,7 +59,8 @@ export const useSignInForm = () => {
 
             if (result.status === "complete") {
                 await setActive({ session: result.createdSessionId });
-                router.push("/home");
+
+                router.push(navigationPaths.ATLD);
             }
         } catch (err: unknown) {
             console.error("Sign in error:", err);

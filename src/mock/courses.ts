@@ -339,24 +339,6 @@ const atldA1Lessons: Lession[] = [
         videoUrl: "https://example.com/videos/a1-theory-lesson3.mp4",
         sequenceNo: 3,
     },
-    {
-        id: "lesson4",
-        courseId: "course1",
-        title: "Quy tắc nhường đường và quyền ưu tiên",
-        description: "Các quy tắc về nhường đường tại ngã tư, ngã ba",
-        type: LessionType.THEORY,
-        videoUrl: "https://example.com/videos/a1-theory-lesson4.mp4",
-        sequenceNo: 4,
-    },
-    {
-        id: "lesson5",
-        courseId: "course1",
-        title: "Tốc độ và khoảng cách an toàn",
-        description: "Quy định về tốc độ và khoảng cách giữa các phương tiện",
-        type: LessionType.THEORY,
-        videoUrl: "https://example.com/videos/a1-theory-lesson5.mp4",
-        sequenceNo: 5,
-    },
     // Practice lessons
     {
         id: "lesson6",
