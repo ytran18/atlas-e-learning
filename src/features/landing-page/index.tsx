@@ -14,6 +14,7 @@ import {
 import { motion } from "framer-motion";
 
 import { fadeInUp, staggerContainer } from "@/animations/landing-page";
+import { navigationPaths } from "@/utils/navigationPaths";
 
 const LandingPage = () => {
     return (
@@ -61,10 +62,10 @@ const LandingPage = () => {
                         <motion.div variants={fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <Button size="lg">
-                                    <Link href="/register">Bắt đầu học ngay</Link>
+                                    <Link href={navigationPaths.ATLD}>Bắt đầu học ngay</Link>
                                 </Button>
                                 <Button size="lg" variant="outline">
-                                    <Link href="/safety-training">Khám phá khóa học</Link>
+                                    <Link href={navigationPaths.ATLD}>Khám phá khóa học</Link>
                                 </Button>
                             </div>
                         </motion.div>
@@ -179,7 +180,7 @@ const LandingPage = () => {
                                 động
                             </p>
                             <Button size="lg">
-                                <Link href="/register">Đăng ký miễn phí</Link>
+                                <Link href={navigationPaths.ATLD}>Đăng ký miễn phí</Link>
                             </Button>
                         </div>
                     </Card>
