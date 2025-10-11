@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import { IconClipboardCheck, IconPlaylist, IconVideo } from "@tabler/icons-react";
 
@@ -25,13 +25,14 @@ export const AtldPreviewContainer = ({
 }: AtldPreviewContainerProps) => {
     const router = useRouter();
 
+    const { atldId } = useParams();
+
     const handleBack = () => {
         router.push(navigationPaths.ATLD);
     };
 
     const handleStartLearning = () => {
-        // TODO: Implement start learning logic
-        console.log("Start learning clicked");
+        router.push(`/atld/${atldId}/verify`);
     };
 
     return (
