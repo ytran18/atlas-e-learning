@@ -61,12 +61,15 @@ const LandingPage = () => {
 
                         <motion.div variants={fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <Button size="lg">
-                                    <Link href={navigationPaths.ATLD}>Bắt đầu học ngay</Link>
-                                </Button>
-                                <Button size="lg" variant="outline">
-                                    <Link href={navigationPaths.ATLD}>Khám phá khóa học</Link>
-                                </Button>
+                                <Link href={navigationPaths.ATLD}>
+                                    <Button size="lg">Bắt đầu học ngay</Button>
+                                </Link>
+
+                                <Link href={navigationPaths.ATLD}>
+                                    <Button size="lg" variant="outline">
+                                        Khám phá khóa học
+                                    </Button>
+                                </Link>
                             </div>
                         </motion.div>
                     </motion.div>
