@@ -36,8 +36,8 @@ export const AtldPreviewContainer = ({
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-            {/* Hero Section with Gradient */}
+        <div className="min-h-screen bg-white">
+            {/* Hero Section */}
             <CourseHeroSection
                 title={course.title}
                 description={course.description}
@@ -52,47 +52,47 @@ export const AtldPreviewContainer = ({
             </CourseHeroSection>
 
             {/* Course Content Section */}
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl -mt-12 pb-4">
-                <div className="space-y-6">
-                    <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mb-6">
-                        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                            📚 Nội dung khóa học
-                        </h2>
-                    </div>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl py-8">
+                <div className="mb-8">
+                    <h2 className="text-2xl font-semibold text-gray-900 mb-2 tracking-tight">
+                        Nội dung khóa học
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                        Hoàn thành tất cả các phần để nhận chứng chỉ
+                    </p>
+                </div>
 
+                <div className="space-y-4">
                     {/* Theory Card */}
                     <CourseContentCard
-                        icon={<IconPlaylist className="h-6 w-6 sm:h-7 sm:w-7 text-white" />}
+                        icon={<IconPlaylist className="h-6 w-6" strokeWidth={1.5} />}
                         title="1. Học lý thuyết"
                         description="Xem các video lý thuyết để hiểu rõ về an toàn lao động"
-                        borderColor="blue"
-                        iconGradient="blue"
+                        step="01"
                     >
-                        <LessonList lessons={theoryLessons} hoverColor="blue" />
+                        <LessonList lessons={theoryLessons} />
                     </CourseContentCard>
 
                     {/* Practice Card */}
                     <CourseContentCard
-                        icon={<IconVideo className="h-6 w-6 sm:h-7 sm:w-7 text-white" />}
+                        icon={<IconVideo className="h-6 w-6" strokeWidth={1.5} />}
                         title="2. Học thực hành"
                         description="Xem các video thực hành để hiểu rõ về an toàn lao động"
-                        borderColor="green"
-                        iconGradient="green"
+                        step="02"
                     >
-                        <LessonList lessons={practiceLessons} hoverColor="green" />
+                        <LessonList lessons={practiceLessons} />
                     </CourseContentCard>
 
                     {/* Quiz Card */}
                     <CourseContentCard
-                        icon={<IconClipboardCheck className="h-6 w-6 sm:h-7 sm:w-7 text-white" />}
+                        icon={<IconClipboardCheck className="h-6 w-6" strokeWidth={1.5} />}
                         title="3. Kiểm tra"
                         description="Hoàn thành bài kiểm tra để đánh giá kiến thức đã học"
-                        borderColor="purple"
-                        iconGradient="purple"
+                        step="03"
                     >
-                        <div className="bg-purple-50 px-3 sm:px-4 py-2 sm:py-3 rounded-xl inline-block">
-                            <p className="text-sm sm:text-base text-gray-800 font-semibold">
-                                10 câu hỏi trắc nghiệm
+                        <div className="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200 inline-block">
+                            <p className="text-sm text-gray-700 font-medium">
+                                10 câu hỏi trắc nghiệm • 20 phút
                             </p>
                         </div>
                     </CourseContentCard>
