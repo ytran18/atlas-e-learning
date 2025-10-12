@@ -56,6 +56,16 @@ const GlobalHeader = () => {
                         >
                             Học nghề
                         </Link>
+
+                        <Link
+                            href={navigationPaths.ADMIN}
+                            className="flex items-center h-[42px] sm:h-full w-full sm:w-auto pl-[var(--mantine-spacing-md)] pr-[var(--mantine-spacing-md)] no-underline text-[var(--mantine-color-black)] font-medium hover:bg-[var(--mantine-color-gray-0)]"
+                            style={{
+                                fontSize: "var(--mantine-font-size-sm)",
+                            }}
+                        >
+                            Quản trị
+                        </Link>
                     </Group>
 
                     <AuthButton />
