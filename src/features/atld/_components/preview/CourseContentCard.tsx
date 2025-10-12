@@ -1,13 +1,10 @@
 import { ReactNode } from "react";
 
-import { Card } from "@mantine/core";
-
 interface CourseContentCardProps {
     icon: ReactNode;
     title: string;
     description: string;
-    borderColor?: "blue" | "green" | "purple";
-    iconGradient?: "blue" | "green" | "purple";
+    step: string;
     children: ReactNode;
 }
 
@@ -15,45 +12,31 @@ export const CourseContentCard = ({
     icon,
     title,
     description,
-    borderColor = "blue",
-    iconGradient = "blue",
+    step,
     children,
 }: CourseContentCardProps) => {
-    const borderColorClass = {
-        blue: "border-blue-100 hover:border-blue-200",
-        green: "border-green-100 hover:border-green-200",
-        purple: "border-purple-100 hover:border-purple-200",
-    }[borderColor];
-
-    const iconGradientClass = {
-        blue: "from-blue-500 to-blue-600",
-        green: "from-green-500 to-green-600",
-        purple: "from-purple-500 to-purple-600",
-    }[iconGradient];
-
     return (
-        <Card
-            withBorder
-            padding="md"
-            radius="xl"
-            className={`border-2 ${borderColorClass} transition-all hover:shadow-xl bg-white`}
-        >
-            <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-5">
-                <div
-                    className={`p-3 sm:p-4 bg-gradient-to-br ${iconGradientClass} rounded-xl shadow-lg flex-shrink-0`}
-                >
-                    {icon}
+        <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-start gap-4 mb-4">
+                {/* Step Number */}
+                <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gray-900 text-white rounded-lg flex items-center justify-center font-semibold">
+                        {step}
+                    </div>
                 </div>
-                <div className="flex-1 w-full min-w-0">
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 text-gray-900">
-                        {title}
-                    </h3>
-                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">
-                        {description}
-                    </p>
-                    {children}
+
+                <div className="flex-1">
+                    {/* Icon & Title */}
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className="text-gray-700">{icon}</div>
+                        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+                    </div>
+                    <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
                 </div>
             </div>
-        </Card>
+
+            {/* Content */}
+            <div className="pl-12">{children}</div>
+        </div>
     );
 };
