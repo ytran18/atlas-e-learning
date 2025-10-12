@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Be_Vietnam_Pro, Geist, Geist_Mono } from "next/font/google";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -7,6 +7,13 @@ import GlobalHeader from "@/components/GlobalHeader";
 
 import "./globals.css";
 import Provider from "./provider";
+
+const beVietnamPro = Be_Vietnam_Pro({
+    variable: "--font-be-vietnam-pro",
+    subsets: ["latin", "vietnamese"],
+    weight: ["300", "400", "500", "600", "700"],
+    display: "swap",
+});
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -29,8 +36,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="vi">
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <html lang="vi" className={beVietnamPro.variable}>
+            <body
+                className={`${beVietnamPro.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
+            >
                 <SpeedInsights />
                 <Provider>
                     <GlobalHeader />

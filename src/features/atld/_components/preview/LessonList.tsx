@@ -1,4 +1,4 @@
-import { IconCheck } from "@tabler/icons-react";
+import { IconClock, IconPlayerPlay } from "@tabler/icons-react";
 
 export interface Lesson {
     id: string;
@@ -8,30 +8,29 @@ export interface Lesson {
 
 interface LessonListProps {
     lessons: Lesson[];
-    hoverColor?: "blue" | "green" | "purple";
 }
 
-export const LessonList = ({ lessons, hoverColor = "blue" }: LessonListProps) => {
-    const hoverColorClass = {
-        blue: "hover:bg-blue-50",
-        green: "hover:bg-green-50",
-        purple: "hover:bg-purple-50",
-    }[hoverColor];
-
+export const LessonList = ({ lessons }: LessonListProps) => {
     return (
-        <ul className="space-y-2 sm:space-y-3">
-            {lessons.map((lesson) => (
+        <ul className="space-y-2">
+            {lessons.map((lesson, index) => (
                 <li
                     key={lesson.id}
-                    className={`flex flex-wrap items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg ${hoverColorClass} transition-colors group`}
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
                 >
-                    <IconCheck className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
-                    <span className="text-sm sm:text-base text-gray-700 font-medium flex-1 min-w-[150px]">
-                        {lesson.title}
+                    <IconPlayerPlay
+                        className="h-5 w-5 text-gray-400 group-hover:text-gray-600 flex-shrink-0"
+                        strokeWidth={1.5}
+                    />
+                    <span className="text-sm text-gray-700 flex-1 min-w-[150px]">
+                        {index + 1}. {lesson.title}
                     </span>
-                    <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">
-                        {lesson.duration || "10 phút"}
-                    </span>
+                    <div className="flex items-center gap-1.5 text-gray-500">
+                        <IconClock className="h-4 w-4" strokeWidth={1.5} />
+                        <span className="text-xs whitespace-nowrap">
+                            {lesson.duration || "10 phút"}
+                        </span>
+                    </div>
                 </li>
             ))}
         </ul>
