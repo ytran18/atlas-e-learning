@@ -4,28 +4,24 @@ import { useParams, useRouter } from "next/navigation";
 
 import { IconClipboardCheck, IconPlaylist, IconVideo } from "@tabler/icons-react";
 
-import { Course } from "@/types/course";
+import { CoursePreview } from "@/types/api";
 import { navigationPaths } from "@/utils/navigationPaths";
 
 import { CourseContentCard } from "../_components/preview/CourseContentCard";
 import { CourseHeroSection } from "../_components/preview/CourseHeroSection";
 import { CourseStats } from "../_components/preview/CourseStats";
-import { Lesson, LessonList } from "../_components/preview/LessonList";
+import { LessonList } from "../_components/preview/LessonList";
 
 interface AtldPreviewContainerProps {
-    course: Course;
-    theoryLessons: Lesson[];
-    practiceLessons: Lesson[];
+    course: CoursePreview;
 }
 
-export const AtldPreviewContainer = ({
-    course,
-    theoryLessons,
-    practiceLessons,
-}: AtldPreviewContainerProps) => {
+export const AtldPreviewContainer = ({ course }: AtldPreviewContainerProps) => {
     const router = useRouter();
 
     const { atldId } = useParams();
+
+    const totlaLessons = course.theory.videos.length + course.practice.videos.length;
 
     const handleBack = () => {
         router.push(navigationPaths.ATLD);
@@ -44,11 +40,7 @@ export const AtldPreviewContainer = ({
                 onBack={handleBack}
                 onStartLearning={handleStartLearning}
             >
-                <CourseStats
-                    totalLessons={course.lessons.length}
-                    totalQuestions={10}
-                    duration="~2 giờ"
-                />
+                <CourseStats totalLessons={totlaLessons} totalQuestions={10} duration="~2 giờ" />
             </CourseHeroSection>
 
             {/* Course Content Section */}
@@ -70,7 +62,7 @@ export const AtldPreviewContainer = ({
                         description="Xem các video lý thuyết để hiểu rõ về an toàn lao động"
                         step="01"
                     >
-                        <LessonList lessons={theoryLessons} />
+                        <LessonList lessons={course.theory.videos} />
                     </CourseContentCard>
 
                     {/* Practice Card */}
@@ -80,7 +72,7 @@ export const AtldPreviewContainer = ({
                         description="Xem các video thực hành để hiểu rõ về an toàn lao động"
                         step="02"
                     >
-                        <LessonList lessons={practiceLessons} />
+                        <LessonList lessons={course.practice.videos} />
                     </CourseContentCard>
 
                     {/* Quiz Card */}
@@ -92,7 +84,7 @@ export const AtldPreviewContainer = ({
                     >
                         <div className="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200 inline-block">
                             <p className="text-sm text-gray-700 font-medium">
-                                10 câu hỏi trắc nghiệm • 20 phút
+                                {course.totalQuestionOfExam} câu hỏi trắc nghiệm • 20 phút
                             </p>
                         </div>
                     </CourseContentCard>

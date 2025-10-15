@@ -68,7 +68,9 @@ async function apiFetch<T>(
  */
 export async function getCourseList(type: CourseType): Promise<GetCourseListResponse> {
     const endpoint = type === "atld" ? "/api/v1/atld/lists" : "/api/v1/hoc-nghe/lists";
+
     const response = await apiFetch<GetCourseListResponse>(endpoint);
+
     return response.data;
 }
 

@@ -1,5 +1,7 @@
 import { IconClock, IconPlayerPlay } from "@tabler/icons-react";
 
+import { Video } from "@/types/api";
+
 export interface Lesson {
     id: string;
     title: string;
@@ -7,7 +9,7 @@ export interface Lesson {
 }
 
 interface LessonListProps {
-    lessons: Lesson[];
+    lessons: Video[];
 }
 
 export const LessonList = ({ lessons }: LessonListProps) => {
@@ -15,7 +17,7 @@ export const LessonList = ({ lessons }: LessonListProps) => {
         <ul className="space-y-2">
             {lessons.map((lesson, index) => (
                 <li
-                    key={lesson.id}
+                    key={lesson.title}
                     className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
                 >
                     <IconPlayerPlay
@@ -28,7 +30,7 @@ export const LessonList = ({ lessons }: LessonListProps) => {
                     <div className="flex items-center gap-1.5 text-gray-500">
                         <IconClock className="h-4 w-4" strokeWidth={1.5} />
                         <span className="text-xs whitespace-nowrap">
-                            {lesson.duration || "10 phút"}
+                            {lesson.length || "10 phút"}
                         </span>
                     </div>
                 </li>
