@@ -1,4 +1,4 @@
-const ATLD_SLUG = "atld";
+export const ATLD_SLUG = "atld";
 
 const HOC_NGHE_SLUG = "hoc-nghe";
 
@@ -11,6 +11,7 @@ export const navigationPaths = {
     ADMIN: "/admin",
     ATLD_PREVIEW: `/atld/[${ATLD_SLUG}]`,
     HOC_NGHE_PREVIEW: `/hoc-nghe/[${HOC_NGHE_SLUG}]`,
+    ATLD_LEARN: `/atld/[${ATLD_SLUG}]/learn`,
 };
 
 export const publicPaths = [

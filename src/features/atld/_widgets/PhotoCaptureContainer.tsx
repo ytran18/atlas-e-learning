@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+
+import { ATLD_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 import { ActionButtons } from "../_components/verify/ActionButtons";
 import { CameraPreview } from "../_components/verify/CameraPreview";
@@ -21,7 +23,11 @@ interface PhotoCaptureContainerProps {
 
 export const PhotoCaptureContainer = ({ courseId }: PhotoCaptureContainerProps) => {
     const router = useRouter();
+
+    const { atldId } = useParams();
+
     const [isUploading, setIsUploading] = useState(false);
+
     const [uploadError, setUploadError] = useState<string | null>(null);
 
     const {
@@ -57,9 +63,11 @@ export const PhotoCaptureContainer = ({ courseId }: PhotoCaptureContainerProps) 
                 body: formData,
             });
 
-            if (!uploadResponse.ok) {
-                throw new Error("Failed to upload photo");
-            }
+            router.push(navigationPaths.ATLD_LEARN.replace(`[${ATLD_SLUG}]`, atldId as string));
+
+            // if (!uploadResponse.ok) {
+            //     throw new Error("Failed to upload photo");
+            // }
 
             const data = await uploadResponse.json();
 
