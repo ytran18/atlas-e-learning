@@ -11,7 +11,6 @@ import { CompletedVideo, CourseDetail, CourseProgress, StudentStats } from "@/ty
 // Internal Types
 // ============================================================================
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FirestoreData = Record<string, any>;
 
 // ============================================================================
@@ -158,11 +157,18 @@ export async function updateUserProgress(
     userId: string,
     groupId: string,
     updates: {
-        section: string;
-        videoIndex: number;
-        currentTime: number;
+        section?: string;
+        videoIndex?: number;
+        currentTime?: number;
         isCompleted?: boolean;
         completedVideo?: CompletedVideo;
+        examResult?: {
+            score: number;
+            totalQuestions: number;
+            passed: boolean;
+            completedAt: number;
+        };
+        lastUpdatedAt?: number;
     }
 ) {
     const now = Date.now();
@@ -174,11 +180,21 @@ export async function updateUserProgress(
         .doc(groupId);
 
     const updateData: FirestoreData = {
-        currentSection: updates.section,
-        currentVideoIndex: updates.videoIndex,
-        currentTime: updates.currentTime,
-        lastUpdatedAt: now,
+        lastUpdatedAt: updates.lastUpdatedAt || now,
     };
+
+    // Only update these fields if they are provided
+    if (updates.section !== undefined) {
+        updateData.currentSection = updates.section;
+    }
+
+    if (updates.videoIndex !== undefined) {
+        updateData.currentVideoIndex = updates.videoIndex;
+    }
+
+    if (updates.currentTime !== undefined) {
+        updateData.currentTime = updates.currentTime;
+    }
 
     if (updates.isCompleted !== undefined) {
         updateData.isCompleted = updates.isCompleted;
@@ -187,6 +203,11 @@ export async function updateUserProgress(
     // If a video is marked as completed, add it to completedVideos array
     if (updates.completedVideo) {
         updateData.completedVideos = admin.firestore.FieldValue.arrayUnion(updates.completedVideo);
+    }
+
+    // If exam result is provided, save it
+    if (updates.examResult) {
+        updateData.examResult = updates.examResult;
     }
 
     await progressRef.update(updateData);
@@ -210,22 +231,32 @@ export async function saveLearningCapture(
         .doc(groupId);
 
     if (type === "start") {
-        await progressRef.update({
-            startImageUrl: imageUrl,
-        });
+        // Use set with merge to create document if it doesn't exist
+        await progressRef.set(
+            {
+                startImageUrl: imageUrl,
+            },
+            { merge: true }
+        );
 
         return "startImageUrl";
     } else if (type === "finish") {
-        await progressRef.update({
-            finishImageUrl: imageUrl,
-        });
+        await progressRef.set(
+            {
+                finishImageUrl: imageUrl,
+            },
+            { merge: true }
+        );
 
         return "finishImageUrl";
     } else {
         // learning captures go to an array
-        await progressRef.update({
-            learningCaptureUrls: admin.firestore.FieldValue.arrayUnion(imageUrl),
-        });
+        await progressRef.set(
+            {
+                learningCaptureUrls: admin.firestore.FieldValue.arrayUnion(imageUrl),
+            },
+            { merge: true }
+        );
 
         return "learningCaptureUrls";
     }

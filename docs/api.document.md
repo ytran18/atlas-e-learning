@@ -393,6 +393,87 @@
 
 ---
 
+## 🟢 12. GET /api/v1/atld/exam/:groupId
+
+**Tương tự:** `/api/v1/hoc-nghe/exam/:groupId`
+
+**Mục đích:** Lấy danh sách câu hỏi của bài thi cuối khóa.
+
+**Response:**
+
+```json
+{
+    "groupId": "group_001",
+    "exam": {
+        "title": "Bài kiểm tra cuối khóa",
+        "description": "Đánh giá kiến thức an toàn lao động.",
+        "timeLimit": 900,
+        "questions": [
+            {
+                "id": "q1",
+                "content": "Thiết bị nào bắt buộc khi làm việc ở độ cao?",
+                "options": [
+                    { "id": "a", "content": "Mũ bảo hộ" },
+                    { "id": "b", "content": "Giày thể thao" },
+                    { "id": "c", "content": "Găng tay vải" }
+                ]
+            }
+        ]
+    }
+}
+```
+
+### 🧠 Logic Implement
+
+1. Lấy `groupId` từ route params.
+2. Truy vấn Firestore `groups/{groupId}` để lấy trường `exam`.
+3. Xóa các trường `answer` khỏi mỗi câu hỏi trước khi trả response.
+4. Trả về JSON chứa thông tin bài thi và danh sách câu hỏi.
+
+---
+
+## 🟢 13. POST /api/v1/atld/exam/submit
+
+**Tương tự:** `/api/v1/hoc-nghe/exam/submit`
+
+**Mục đích:** Nộp bài thi, chấm điểm và cập nhật tiến trình học của user.
+
+**Request:**
+
+```json
+{
+    "groupId": "group_001",
+    "answers": [
+        { "questionId": "q1", "answer": "a" },
+        { "questionId": "q2", "answer": "b" }
+    ]
+}
+```
+
+**Response:**
+
+```json
+{
+    "score": 9,
+    "totalQuestions": 10,
+    "passed": true,
+    "completedAt": 1739587854000
+}
+```
+
+### 🧠 Logic Implement
+
+1. Lấy `groupId` từ body request và userId từ authentication context.
+2. Query Firestore `groups/{groupId}` để lấy danh sách câu hỏi cùng đáp án.
+3. So sánh từng câu trả lời của user với đáp án đúng để tính `score`.
+4. Tính `passed = score >= 70%`.
+5. Cập nhật document tiến trình học (`progress/{userId}_{groupId}`):
+    - `isCompleted = true`
+    - `examResult = { score, passed, completedAt }`
+6. Trả về JSON response như ví dụ.
+
+---
+
 # 🔄 Flow hoạt động tổng thể của hệ thống
 
 ## 👨‍🎓 Flow User (Người học)

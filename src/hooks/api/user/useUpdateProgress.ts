@@ -4,12 +4,10 @@
  * Cập nhật tiến trình học của user
  * Track video đang xem, thời gian hiện tại, và đánh dấu video đã hoàn thành
  */
-import { UseMutationOptions, useMutation, useQueryClient } from "@tanstack/react-query";
+import { UseMutationOptions, useMutation } from "@tanstack/react-query";
 
 import { updateCourseProgress } from "@/services/api.client";
 import { CourseType, UpdateProgressRequest, UpdateProgressResponse } from "@/types/api";
-
-import { courseProgressKeys } from "./useCourseProgress";
 
 /**
  * Interface cho mutation variables
@@ -59,17 +57,10 @@ export function useUpdateProgress(
         "mutationFn"
     >
 ) {
-    const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: ({ groupId, ...data }: UpdateProgressVariables) =>
             updateCourseProgress(type, groupId, data),
-        onSuccess: (data, variables, context, mutation) => {
-            // Invalidate progress query để UI update với data mới
-            void queryClient.invalidateQueries({
-                queryKey: courseProgressKeys.progress(type, variables.groupId),
-            });
-
+        onSuccess: async (data, variables, context, mutation) => {
             // Gọi onSuccess callback nếu có
             if (options?.onSuccess) {
                 options.onSuccess(data, variables, context, mutation);

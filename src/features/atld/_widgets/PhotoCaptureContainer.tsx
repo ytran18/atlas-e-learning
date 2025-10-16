@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
-
 import { useParams, useRouter } from "next/navigation";
 
+import { useUploadCapture } from "@/hooks/api/user/useUploadCapture";
 import { ATLD_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 import { ActionButtons } from "../_components/verify/ActionButtons";
@@ -17,18 +16,10 @@ import { PrivacyNotice } from "../_components/verify/PrivacyNotice";
 import { SuccessMessage } from "../_components/verify/SuccessMessage";
 import { useCameraCapture } from "../hooks/useCameraCapture";
 
-interface PhotoCaptureContainerProps {
-    courseId: number;
-}
-
-export const PhotoCaptureContainer = ({ courseId }: PhotoCaptureContainerProps) => {
+export const PhotoCaptureContainer = () => {
     const router = useRouter();
 
     const { atldId } = useParams();
-
-    const [isUploading, setIsUploading] = useState(false);
-
-    const [uploadError, setUploadError] = useState<string | null>(null);
 
     const {
         videoRef,
@@ -40,54 +31,62 @@ export const PhotoCaptureContainer = ({ courseId }: PhotoCaptureContainerProps) 
         retakePhoto,
     } = useCameraCapture();
 
-    const handleUploadAndContinue = async () => {
-        if (!capturedPhoto) return;
+    // Hook để upload ảnh lên Cloudflare R2
+    const {
+        mutate: uploadCapture,
+        isPending: isUploading,
+        error: uploadError,
+    } = useUploadCapture("atld", {
+        onSuccess: (data) => {
+            console.log("[v0] Photo uploaded successfully:", data.imageUrl);
+            // Navigate to learning page after successful upload
+            router.push(navigationPaths.ATLD_LEARN.replace(`[${ATLD_SLUG}]`, atldId as string));
+        },
+        onError: (error) => {
+            console.error("[v0] Error uploading photo:", error);
+        },
+    });
 
-        setIsUploading(true);
-        setUploadError(null);
+    /**
+     * Convert data URL to File object
+     */
+    const dataURLtoFile = (dataUrl: string, filename: string): File => {
+        const arr = dataUrl.split(",");
+
+        const mime = arr[0].match(/:(.*?);/)?.[1] || "image/jpeg";
+
+        const bstr = atob(arr[1]);
+
+        let n = bstr.length;
+
+        const u8arr = new Uint8Array(n);
+
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+
+        return new File([u8arr], filename, { type: mime });
+    };
+
+    const handleUploadAndContinue = async () => {
+        if (!capturedPhoto || !atldId) return;
 
         try {
-            // Convert data URL to blob
-            const response = await fetch(capturedPhoto);
+            // Convert data URL to File
+            const file = dataURLtoFile(capturedPhoto, `verification-${Date.now()}.jpg`);
 
-            const blob = await response.blob();
-
-            // Create form data
-            const formData = new FormData();
-
-            formData.append("photo", blob, `verification-${Date.now()}.jpg`);
-
-            // Upload to server
-            const uploadResponse = await fetch("/api/upload-photo", {
-                method: "POST",
-                body: formData,
+            // Upload using the hook
+            uploadCapture({
+                file,
+                groupId: atldId as string,
+                captureType: "start", // Ảnh verification trước khi bắt đầu
             });
-
-            router.push(navigationPaths.ATLD_LEARN.replace(`[${ATLD_SLUG}]`, atldId as string));
-
-            // if (!uploadResponse.ok) {
-            //     throw new Error("Failed to upload photo");
-            // }
-
-            const data = await uploadResponse.json();
-
-            console.log("[v0] Photo uploaded:", data.url);
-
-            // Store photo URL in localStorage (or you can send it to your backend)
-            localStorage.setItem(`course-${courseId}-verification`, data.url);
-
-            // Redirect to learning page
-            router.push(`/safety-training/${courseId}/learn`);
         } catch (err) {
-            console.error("Error uploading photo:", err);
-
-            setUploadError("Không thể tải ảnh lên. Vui lòng thử lại.");
-
-            setIsUploading(false);
+            console.error("Error preparing photo upload:", err);
         }
     };
 
-    const displayError = cameraError || uploadError;
+    const displayError = cameraError || uploadError?.message;
 
     return (
         <div className="bg-white rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-2xl p-3 sm:p-6 relative overflow-hidden">
