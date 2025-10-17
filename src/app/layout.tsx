@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Geist, Geist_Mono } from "next/font/google";
 
+import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import GlobalHeader from "@/components/GlobalHeader";
@@ -41,6 +42,9 @@ export default function RootLayout({
                 className={`${beVietnamPro.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <SpeedInsights />
+
+                <Analytics />
+
                 <Provider>
                     <GlobalHeader />
                     {children}
