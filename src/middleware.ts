@@ -1,10 +1,22 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-import { publicPaths } from "./utils/navigationPaths";
+import { navigationPaths, publicPaths } from "./utils/navigationPaths";
 
 const isPublicRoute = createRouteMatcher(publicPaths);
 
 export default clerkMiddleware(async (auth, req) => {
+    const { userId } = await auth();
+
+    const { pathname } = req.nextUrl;
+
+    // If user is signed in and trying to access sign-in or sign-up pages, redirect to ATLD
+    if (userId && (pathname === navigationPaths.SIGN_IN || pathname === navigationPaths.SIGN_UP)) {
+        const atldUrl = new URL(navigationPaths.LANDING_PAGE, req.url);
+
+        return Response.redirect(atldUrl);
+    }
+
+    // Protect non-public routes
     if (!isPublicRoute(req)) {
         const signInUrl = new URL("/sign-in", req.url);
 

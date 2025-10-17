@@ -91,3 +91,43 @@ body {
     background: #9099ca;
     border-radius: 8px;
 }
+
+/* Mobile responsive improvements */
+@media (max-width: 640px) {
+    /* Ensure video players are responsive */
+    video {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 50vh;
+    }
+
+    /* Improve touch targets */
+    button,
+    [role="button"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Better spacing for mobile */
+    .mobile-padding {
+        padding: 1rem;
+    }
+
+    /* Hide scrollbars on mobile for cleaner look */
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* Tablet responsive improvements */
+@media (min-width: 641px) and (max-width: 1024px) {
+    /* Better spacing for tablets */
+    .tablet-padding {
+        padding: 1.5rem;
+    }
+}
