@@ -12,6 +12,7 @@ import AuthButton from "./AuthButton";
 
 const GlobalHeader = () => {
     const router = useRouter();
+
     return (
         <Box className="sticky top-0 z-50 supports-[backdrop-filter]:bg-white">
             <header className="h-[60px] pl-[var(--mantine-spacing-md)] pr-[var(--mantine-spacing-md)] border-b border-[var(--mantine-color-gray-3)]">
