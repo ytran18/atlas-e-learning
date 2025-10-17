@@ -252,6 +252,53 @@ export interface CourseDetail {
 export type GetCourseDetailResponse = CourseDetail;
 
 // ============================================================================
+// 12. GET /api/v1/atld/exam/:groupId - Get exam questions
+// ============================================================================
+
+export interface ExamQuestionForUser {
+    id: string;
+    content: string;
+    options: {
+        id: string;
+        content: string;
+    }[];
+    // Note: answer field is removed for user-facing API
+}
+
+export interface ExamForUser {
+    title: string;
+    description?: string;
+    timeLimit: number; // in seconds
+    questions: ExamQuestionForUser[];
+}
+
+export interface GetExamResponse {
+    groupId: string;
+    exam: ExamForUser;
+}
+
+// ============================================================================
+// 13. POST /api/v1/atld/exam/submit - Submit exam answers
+// ============================================================================
+
+export interface ExamAnswer {
+    questionId: string;
+    answer: string; // ID of selected option
+}
+
+export interface SubmitExamRequest {
+    groupId: string;
+    answers: ExamAnswer[];
+}
+
+export interface SubmitExamResponse {
+    score: number;
+    totalQuestions: number;
+    passed: boolean;
+    completedAt: number; // timestamp
+}
+
+// ============================================================================
 // Error Response
 // ============================================================================
 

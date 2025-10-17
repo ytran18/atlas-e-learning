@@ -47,6 +47,7 @@ export function useCoursePreview(
         queryKey: coursePreviewKeys.preview(type, groupId),
         queryFn: () => getCoursePreview(type, groupId),
         enabled: !!groupId, // Chỉ fetch khi có groupId
+        staleTime: 5 * 60 * 1000, // 5 minutes - data is considered fresh for 5 minutes
         ...options,
     });
 }

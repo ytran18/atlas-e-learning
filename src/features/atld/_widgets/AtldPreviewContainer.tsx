@@ -14,9 +14,15 @@ import { LessonList } from "../_components/preview/LessonList";
 
 interface AtldPreviewContainerProps {
     course: CoursePreview;
+    isJoined: boolean;
+    isLoadingJoiabled: boolean;
 }
 
-export const AtldPreviewContainer = ({ course }: AtldPreviewContainerProps) => {
+export const AtldPreviewContainer = ({
+    course,
+    isJoined,
+    isLoadingJoiabled,
+}: AtldPreviewContainerProps) => {
     const router = useRouter();
 
     const { atldId } = useParams();
@@ -27,16 +33,22 @@ export const AtldPreviewContainer = ({ course }: AtldPreviewContainerProps) => {
         router.push(navigationPaths.ATLD);
     };
 
-    const handleStartLearning = () => {
-        router.push(`/atld/${atldId}/verify`);
+    const handleStartLearning = (isJoined: boolean) => {
+        if (isJoined) {
+            router.push(`/atld/${atldId}/learn`);
+        } else {
+            router.push(`/atld/${atldId}/verify`);
+        }
     };
 
     return (
         <div className="min-h-screen bg-white">
             {/* Hero Section */}
             <CourseHeroSection
+                isJoined={isJoined}
                 title={course.title}
                 description={course.description}
+                isLoadingJoiabled={isLoadingJoiabled}
                 onBack={handleBack}
                 onStartLearning={handleStartLearning}
             >

@@ -15,10 +15,13 @@ import {
     GetCourseDetailResponse,
     GetCourseListResponse,
     GetCoursePreviewResponse,
+    GetExamResponse,
     GetProgressResponse,
     GetStatsResponse,
     StartCourseRequest,
     StartCourseResponse,
+    SubmitExamRequest,
+    SubmitExamResponse,
     UpdateCourseRequest,
     UpdateCourseResponse,
     UpdateProgressRequest,
@@ -171,6 +174,34 @@ export async function uploadLearningCapture(
     return (data as ApiSuccessResponse<UploadCaptureResponse>).data;
 }
 
+/**
+ * Get exam questions for a course
+ */
+export async function getExamQuestions(
+    type: CourseType,
+    groupId: string
+): Promise<GetExamResponse> {
+    const endpoint =
+        type === "atld" ? `/api/v1/atld/exam/${groupId}` : `/api/v1/hoc-nghe/exam/${groupId}`;
+    const response = await apiFetch<GetExamResponse>(endpoint);
+    return response.data;
+}
+
+/**
+ * Submit exam answers
+ */
+export async function submitExamAnswers(
+    type: CourseType,
+    data: SubmitExamRequest
+): Promise<SubmitExamResponse> {
+    const endpoint = type === "atld" ? "/api/v1/atld/exam/submit" : "/api/v1/hoc-nghe/exam/submit";
+    const response = await apiFetch<SubmitExamResponse>(endpoint, {
+        method: "POST",
+        body: JSON.stringify(data),
+    });
+    return response.data;
+}
+
 // ============================================================================
 // Admin API Methods
 // ============================================================================
@@ -256,9 +287,7 @@ export async function getCourseDetail(
     groupId: string
 ): Promise<GetCourseDetailResponse> {
     const endpoint =
-        type === "atld"
-            ? `/api/v1/admin/atld/detail/${groupId}`
-            : `/api/v1/admin/hoc-nghe/detail/${groupId}`;
+        type === "atld" ? `/api/v1/atld/detail/${groupId}` : `/api/v1/hoc-nghe/detail/${groupId}`;
 
     const response = await apiFetch<GetCourseDetailResponse>(endpoint);
     return response.data;

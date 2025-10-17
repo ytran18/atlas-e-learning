@@ -1,90 +1,152 @@
-import { Accordion, Group, List, Text, ThemeIcon } from "@mantine/core";
-import { IconCircleDashed } from "@tabler/icons-react";
-
 import { useLearnContext } from "@/contexts/LearnContext";
+import { navigationPaths } from "@/utils/navigationPaths";
 
-interface AccordionLabelProps {
+import LearnSidebarContent from "./LearnSidebarContent";
+
+interface VideoContent {
+    id: string;
     label: string;
     description: string;
+    isCompleted: boolean;
+    isAccessible: boolean;
+    isActive: boolean;
+    section: "theory" | "practice" | "exam";
+    index: number;
 }
 
-function AccordionLabel({ label, description }: AccordionLabelProps) {
-    return (
-        <Group wrap="nowrap">
-            <div>
-                <Text>{label}</Text>
-
-                <Text size="sm" c="dimmed" fw={400}>
-                    {description}
-                </Text>
-            </div>
-        </Group>
-    );
+interface SectionData {
+    id: string;
+    label: string;
+    description: string;
+    isAccessible: boolean;
+    content: VideoContent[];
 }
 
 const LearnSidebar = () => {
-    const { learnDetail } = useLearnContext();
+    const { learnDetail, progress } = useLearnContext();
 
     const { title } = learnDetail;
 
-    const sidebarLists = [
+    const { currentSection, currentVideoIndex, completedVideos, isCompleted } = progress;
+
+    // Helper function to check if a video is completed
+    const isVideoCompleted = (section: string, index: number) => {
+        return completedVideos.some(
+            (completed) => completed.section === section && completed.index === index
+        );
+    };
+
+    // Helper function to check if a video is currently active
+    const isVideoActive = (section: string, index: number) => {
+        // Check if this is the current section and video
+        const isCurrentVideo =
+            (currentSection || "theory") === section && (currentVideoIndex || 0) === index;
+
+        // Fallback: if currentVideoIndex is 0 or undefined, highlight first video of current section
+        const isFirstVideoOfCurrentSection =
+            currentSection === section &&
+            (currentVideoIndex === 0 || currentVideoIndex === undefined) &&
+            index === 0;
+
+        return isCurrentVideo || isFirstVideoOfCurrentSection;
+    };
+
+    // Helper function to check if a section is accessible
+    const isSectionAccessible = (sectionId: string) => {
+        if (isCompleted) return true; // If course is completed, all sections are accessible
+
+        if (sectionId === "theory") return true; // Theory is always accessible
+
+        if (sectionId === "practice") {
+            // Practice is accessible if all theory videos are completed
+            return learnDetail.theory.videos.every((_, index) => isVideoCompleted("theory", index));
+        }
+        if (sectionId === "exam") {
+            // Exam is accessible if all theory and practice videos are completed
+            const allTheoryCompleted = learnDetail.theory.videos.every((_, index) =>
+                isVideoCompleted("theory", index)
+            );
+
+            const allPracticeCompleted = learnDetail.practice.videos.every((_, index) =>
+                isVideoCompleted("practice", index)
+            );
+
+            return allTheoryCompleted && allPracticeCompleted;
+        }
+        return false;
+    };
+
+    // Navigation handlers
+    const handleViewAgain = (section: string, index: number) => {
+        window.location.href = `${navigationPaths.ATLD}/${learnDetail.id}/learn#${section}-${index}`;
+    };
+
+    const handleViewExam = () => {
+        window.location.href = `${navigationPaths.ATLD}/${learnDetail.id}/learn#exam`;
+    };
+
+    // Build sections data
+    const sections: SectionData[] = [
         {
             id: "theory",
             label: "Bài học lý thuyết",
             description: "Video",
-            content: learnDetail.theory.videos.map((video) => ({
-                id: video.id,
+            isAccessible: isSectionAccessible("theory"),
+            content: learnDetail.theory.videos.map((video, index) => ({
+                id: video.url,
                 label: video.title,
-                description: video.description,
+                description: video.description || "",
+                isCompleted: isVideoCompleted("theory", index),
+                isAccessible: true, // Theory videos are always accessible
+                isActive: isVideoActive("theory", index),
+                section: "theory" as const,
+                index,
             })),
         },
         {
             id: "practice",
             label: "Bài học thực hành",
             description: "Video",
-            content: learnDetail.practice.videos.map((video) => ({
-                id: video.id,
+            isAccessible: isSectionAccessible("practice"),
+            content: learnDetail.practice.videos.map((video, index) => ({
+                id: video.url,
                 label: video.title,
-                description: video.description,
+                description: video.description || "",
+                isCompleted: isVideoCompleted("practice", index),
+                isAccessible: isSectionAccessible("practice"),
+                isActive: isVideoActive("practice", index),
+                section: "practice" as const,
+                index,
             })),
+        },
+        {
+            id: "exam",
+            label: "Bài kiểm tra",
+            description: "Trắc nghiệm",
+            isAccessible: isSectionAccessible("exam"),
+            content: [
+                {
+                    id: learnDetail.exam.title,
+                    label: learnDetail.exam.title,
+                    description: learnDetail.exam.description || "",
+                    isCompleted: isCompleted,
+                    isAccessible: isSectionAccessible("exam"),
+                    isActive: isVideoActive("exam", 0),
+                    section: "exam" as const,
+                    index: 0,
+                },
+            ],
         },
     ];
 
-    const items = sidebarLists.map((item) => (
-        <Accordion.Item value={item.id} key={item.label}>
-            <Accordion.Control aria-label={item.label}>
-                <AccordionLabel {...item} />
-            </Accordion.Control>
-
-            <Accordion.Panel>
-                <div className="flex flex-col gap-y-2">
-                    <List spacing="xl" size="sm" center>
-                        {item.content.map((item) => (
-                            <List.Item
-                                key={item.id}
-                                icon={
-                                    <ThemeIcon color="blue" size={24} radius="xl">
-                                        <IconCircleDashed size={16} />
-                                    </ThemeIcon>
-                                }
-                            >
-                                {item.label}
-                            </List.Item>
-                        ))}
-                    </List>
-                </div>
-            </Accordion.Panel>
-        </Accordion.Item>
-    ));
-
     return (
-        <div className="border-r border-gray-300 h-full sm:w-1/4">
-            <div className="text-xl font-bold text-[rgb(0,86,210)] p-4">{title}</div>
-
-            <Accordion chevronPosition="right" variant="contained">
-                {items}
-            </Accordion>
-        </div>
+        <LearnSidebarContent
+            title={title}
+            sections={sections}
+            currentSection={currentSection}
+            onViewAgain={handleViewAgain}
+            onViewExam={handleViewExam}
+        />
     );
 };
 

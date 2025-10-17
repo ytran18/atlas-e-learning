@@ -7,8 +7,10 @@ interface CourseHeroSectionProps {
     title: string;
     description: string;
     badge?: string;
+    isJoined: boolean;
+    isLoadingJoiabled: boolean;
     onBack: () => void;
-    onStartLearning?: () => void;
+    onStartLearning?: (isJoined: boolean) => void;
     children?: ReactNode;
 }
 
@@ -16,6 +18,8 @@ export const CourseHeroSection = ({
     title,
     description,
     badge = "An toàn Lao động",
+    isJoined,
+    isLoadingJoiabled,
     onBack,
     onStartLearning,
     children,
@@ -58,11 +62,13 @@ export const CourseHeroSection = ({
                     {/* CTA Button */}
                     <Button
                         size="sm"
-                        onClick={onStartLearning}
+                        onClick={() => onStartLearning?.(isJoined)}
                         className="bg-gray-900 hover:bg-gray-800"
                         radius="md"
+                        loading={isLoadingJoiabled}
+                        loaderProps={{ type: "dots" }}
                     >
-                        Bắt đầu học ngay
+                        {isJoined ? "Tiếp tục học" : "Bắt đầu học ngay"}
                     </Button>
                 </div>
             </div>

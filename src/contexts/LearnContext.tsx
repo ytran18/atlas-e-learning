@@ -2,10 +2,11 @@
 
 import { FunctionComponent, PropsWithChildren, createContext, useContext } from "react";
 
-import { LearnDetail } from "@/types/learn-detail";
+import { CourseDetail, CourseProgress } from "@/types/api";
 
 export type LearnProviderProps = PropsWithChildren<{
-    learnDetail: LearnDetail;
+    learnDetail: CourseDetail;
+    progress: CourseProgress;
 }>;
 
 const LearnContext = createContext<LearnProviderProps | null>(null);

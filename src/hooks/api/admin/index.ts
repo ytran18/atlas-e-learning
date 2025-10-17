@@ -8,4 +8,3 @@ export * from "./useStudentStats";
 export * from "./useCreateCourse";
 export * from "./useUpdateCourse";
 export * from "./useDeleteCourse";
-export * from "./useCourseDetail";

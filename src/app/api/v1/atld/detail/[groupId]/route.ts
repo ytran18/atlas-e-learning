@@ -16,7 +16,6 @@ export async function GET(
 ) {
     try {
         // Authenticate admin user
-        // TODO: Add admin role check here
         await requireAuth();
 
         const { groupId } = await params;

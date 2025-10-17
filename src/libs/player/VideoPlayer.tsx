@@ -1,5 +1,7 @@
 "use client";
 
+import { ReactEventHandler } from "react";
+
 import {
     MediaControlBar,
     MediaController,
@@ -15,18 +17,39 @@ import {
 } from "media-chrome/react";
 import ReactPlayer from "react-player";
 
-const VideoPlayer = () => {
+interface VideoPlayerProps {
+    src: string;
+    canSeek?: boolean;
+    onEnded?: () => void; // when video ended
+    onPause?: () => void; // when video paused
+    onPlay?: () => void; // when video played
+    onProgress?: ReactEventHandler<HTMLVideoElement> | undefined; // when video progress
+}
+
+const VideoPlayer = ({
+    src,
+    canSeek = true,
+    onEnded,
+    onPause,
+    onPlay,
+    onProgress,
+}: VideoPlayerProps) => {
     return (
         <MediaController
             style={{
                 width: "100%",
+                height: "80%",
                 aspectRatio: "16/9",
             }}
         >
             <ReactPlayer
                 slot="media"
-                src="https://stream.mux.com/maVbJv2GSYNRgS02kPXOOGdJMWGU1mkA019ZUjYE7VU7k"
+                src={src}
                 controls={false}
+                onEnded={onEnded}
+                onPause={onPause}
+                onPlay={onPlay}
+                onProgress={onProgress}
                 style={
                     {
                         width: "100%",
@@ -36,24 +59,30 @@ const VideoPlayer = () => {
                 }
             />
 
-            <MediaControlBar>
-                <MediaPlayButton />
+            <MediaControlBar className="w-full bg-[rgb(20,20,30)] px-2">
+                <div className="w-full flex items-center gap-x-2">
+                    <MediaPlayButton />
 
-                <MediaSeekBackwardButton seekOffset={10} />
+                    {canSeek && (
+                        <>
+                            <MediaSeekBackwardButton seekOffset={10} />
 
-                <MediaSeekForwardButton seekOffset={10} />
+                            <MediaSeekForwardButton seekOffset={10} />
+                        </>
+                    )}
 
-                <MediaTimeRange />
+                    <MediaTimeRange className={`w-full ${canSeek ? "visible" : "invisible"}`} />
 
-                <MediaTimeDisplay showDuration />
+                    <MediaTimeDisplay showDuration />
 
-                <MediaMuteButton />
+                    <MediaMuteButton />
 
-                <MediaVolumeRange />
+                    <MediaVolumeRange />
 
-                <MediaPlaybackRateButton />
+                    {canSeek && <MediaPlaybackRateButton />}
 
-                <MediaFullscreenButton />
+                    <MediaFullscreenButton />
+                </div>
             </MediaControlBar>
         </MediaController>
     );
