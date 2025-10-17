@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import Link from "next/link";
 
 import { IconBook, IconClipboardCheck, IconPlayerPlay } from "@tabler/icons-react";
@@ -11,10 +13,16 @@ type AtldPreviewCardProps = {
 };
 
 const AtldPreviewCard = ({ course }: AtldPreviewCardProps) => {
+    const [isNavigating, setIsNavigating] = useState(false);
+
     return (
         <Link
             href={`/atld/${course.id}`}
-            className="group bg-white rounded-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col h-full cursor-pointer"
+            prefetch={true}
+            onClick={() => setIsNavigating(true)}
+            className={`group bg-white rounded-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col h-full cursor-pointer relative ${
+                isNavigating ? "opacity-75" : ""
+            }`}
         >
             {/* Thumbnail with softer gradient */}
             <div
@@ -69,6 +77,16 @@ const AtldPreviewCard = ({ course }: AtldPreviewCardProps) => {
                     </div>
                 </div>
             </div>
+
+            {/* Loading overlay */}
+            {isNavigating && (
+                <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10">
+                    <div className="flex items-center gap-2 text-blue-600">
+                        <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                        <span className="text-sm font-medium">Đang tải khóa học...</span>
+                    </div>
+                </div>
+            )}
         </Link>
     );
 };
