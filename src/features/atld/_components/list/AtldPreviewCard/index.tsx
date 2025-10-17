@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { IconBook, IconClipboardCheck, IconPlayerPlay } from "@tabler/icons-react";
 
@@ -11,15 +11,9 @@ type AtldPreviewCardProps = {
 };
 
 const AtldPreviewCard = ({ course }: AtldPreviewCardProps) => {
-    const router = useRouter();
-
-    const handleNavigateToPreview = () => {
-        router.push(`/atld/${course.id}`);
-    };
-
     return (
-        <div
-            onClick={handleNavigateToPreview}
+        <Link
+            href={`/atld/${course.id}`}
             className="group bg-white rounded-lg border border-gray-200 hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col h-full cursor-pointer"
         >
             {/* Thumbnail with softer gradient */}
@@ -75,7 +69,7 @@ const AtldPreviewCard = ({ course }: AtldPreviewCardProps) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 };
 
