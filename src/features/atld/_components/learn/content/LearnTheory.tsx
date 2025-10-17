@@ -104,30 +104,59 @@ const LearnTheory = () => {
             withBorder
             shadow="sm"
             radius="md"
-            padding="xl"
+            padding="lg"
             h="100%"
             className="bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20"
         >
-            <div className="flex flex-col gap-6 h-[calc(100%-24px)]">
-                <VideoPlayer
-                    src={currentVideo?.url || learnDetail.theory.videos[0].url}
-                    canSeek={currentVideo?.canSeek || learnDetail.theory.videos[0].canSeek}
-                    onEnded={handleVideoEndedInternal}
-                    onPlay={handleVideoPlay}
-                    onPause={handleVideoPaused}
-                    onProgress={handleProgress}
-                />
+            <div className="flex flex-col gap-4 lg:gap-6 h-full">
+                {/* Video Player Container */}
+                <div className="flex-1 min-h-0">
+                    <VideoPlayer
+                        src={currentVideo?.url || learnDetail.theory.videos[0].url}
+                        canSeek={currentVideo?.canSeek || learnDetail.theory.videos[0].canSeek}
+                        onEnded={handleVideoEndedInternal}
+                        onPlay={handleVideoPlay}
+                        onPause={handleVideoPaused}
+                        onProgress={handleProgress}
+                    />
+                </div>
 
-                <div className="w-full flex justify-end">
-                    <Button
-                        disabled={!isFinishVideo || isUpdatingProgress}
-                        loading={isUpdatingProgress}
-                        size="md"
-                        className="px-8 py-3"
-                        onClick={handleNextVideo}
-                    >
-                        Tiếp theo
-                    </Button>
+                {/* Video Info and Navigation */}
+                <div className="flex-shrink-0 space-y-4">
+                    {/* Video Title and Description */}
+                    <div className="space-y-2">
+                        <h3 className="text-lg lg:text-xl font-semibold text-gray-900">
+                            {currentVideo?.title || learnDetail.theory.videos[0].title}
+                        </h3>
+                        {currentVideo?.description && (
+                            <p className="text-sm lg:text-base text-gray-600">
+                                {currentVideo.description}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Progress Indicator */}
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                        <span>
+                            Video {videoIndex + 1} / {learnDetail.theory.videos.length}
+                        </span>
+                        <span>{isFinishVideo ? "✓ Hoàn thành" : "Đang học"}</span>
+                    </div>
+
+                    {/* Navigation Button */}
+                    <div className="w-full flex justify-end">
+                        <Button
+                            disabled={!isFinishVideo || isUpdatingProgress}
+                            loading={isUpdatingProgress}
+                            size="md"
+                            className="px-6 lg:px-8 py-3 w-full sm:w-auto"
+                            onClick={handleNextVideo}
+                        >
+                            {videoIndex + 1 < learnDetail.theory.videos.length
+                                ? "Video tiếp theo"
+                                : "Chuyển sang thực hành"}
+                        </Button>
+                    </div>
                 </div>
             </div>
         </Card>

@@ -37,13 +37,21 @@ const LearnSidebarContent = ({
     onViewExam,
 }: LearnSidebarContentProps) => {
     return (
-        <div className="border-r border-gray-300 h-full min-w-1/4">
-            <div className="text-xl font-bold text-[rgb(0,86,210)] p-4">{title}</div>
+        <div className="h-full">
+            {/* Desktop: Show title, Mobile: Title is in header */}
+            <div className="hidden lg:block text-xl font-bold text-[rgb(0,86,210)] p-4 border-b border-gray-200">
+                {title}
+            </div>
 
             <Accordion
                 chevronPosition="right"
                 variant="contained"
                 defaultValue={currentSection || "theory"}
+                classNames={{
+                    root: "h-full",
+                    content: "pb-0",
+                    item: "border-b border-gray-100 last:border-b-0",
+                }}
             >
                 {sections.map((section) => (
                     <SectionItem

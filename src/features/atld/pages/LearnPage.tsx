@@ -1,18 +1,18 @@
 "use client";
 
+import { useState } from "react";
+
 import { useParams } from "next/navigation";
 
 import { LearnProvider } from "@/contexts/LearnContext";
 import { useCourseDetail, useCourseProgress } from "@/hooks/api";
 
-import LearnExam from "../_components/learn/LearnExam";
-import LearnPractice from "../_components/learn/LearnPractice";
-import LearnSidebar from "../_components/learn/LearnSidebar";
-import LearnSteps from "../_components/learn/LearnSteps";
-import LearnTheory from "../_components/learn/LearnTheory";
+import { DesktopLayout, MobileLayout } from "../_components/learn";
 
 const LearnPage = () => {
     const { atldId } = useParams();
+
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // get course detail
     const { data: courseDetail, isLoading: isCourseDetailLoading } = useCourseDetail(
@@ -34,17 +34,14 @@ const LearnPage = () => {
         <div className="h-[calc(100vh-70px)] w-screen">
             <div className="h-full w-full">
                 <LearnProvider progress={progressData} learnDetail={courseDetail}>
-                    <div className="flex items-center gap-x-8 h-full w-full">
-                        <LearnSidebar />
+                    <MobileLayout
+                        title={courseDetail.title}
+                        isSidebarOpen={isSidebarOpen}
+                        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+                        onCloseSidebar={() => setIsSidebarOpen(false)}
+                    />
 
-                        <LearnSteps
-                            slots={{
-                                Theory: () => <LearnTheory />,
-                                Practice: () => <LearnPractice />,
-                                Exam: () => <LearnExam />,
-                            }}
-                        />
-                    </div>
+                    <DesktopLayout />
                 </LearnProvider>
             </div>
         </div>
