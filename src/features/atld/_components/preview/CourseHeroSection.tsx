@@ -8,6 +8,7 @@ interface CourseHeroSectionProps {
     description: string;
     badge?: string;
     isJoined: boolean;
+    isLoadingJoiabled: boolean;
     onBack: () => void;
     onStartLearning?: (isJoined: boolean) => void;
     children?: ReactNode;
@@ -18,6 +19,7 @@ export const CourseHeroSection = ({
     description,
     badge = "An toàn Lao động",
     isJoined,
+    isLoadingJoiabled,
     onBack,
     onStartLearning,
     children,
@@ -63,6 +65,8 @@ export const CourseHeroSection = ({
                         onClick={() => onStartLearning?.(isJoined)}
                         className="bg-gray-900 hover:bg-gray-800"
                         radius="md"
+                        loading={isLoadingJoiabled}
+                        loaderProps={{ type: "dots" }}
                     >
                         {isJoined ? "Tiếp tục học" : "Bắt đầu học ngay"}
                     </Button>

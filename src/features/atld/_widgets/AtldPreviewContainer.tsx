@@ -15,9 +15,14 @@ import { LessonList } from "../_components/preview/LessonList";
 interface AtldPreviewContainerProps {
     course: CoursePreview;
     isJoined: boolean;
+    isLoadingJoiabled: boolean;
 }
 
-export const AtldPreviewContainer = ({ course, isJoined }: AtldPreviewContainerProps) => {
+export const AtldPreviewContainer = ({
+    course,
+    isJoined,
+    isLoadingJoiabled,
+}: AtldPreviewContainerProps) => {
     const router = useRouter();
 
     const { atldId } = useParams();
@@ -43,6 +48,7 @@ export const AtldPreviewContainer = ({ course, isJoined }: AtldPreviewContainerP
                 isJoined={isJoined}
                 title={course.title}
                 description={course.description}
+                isLoadingJoiabled={isLoadingJoiabled}
                 onBack={handleBack}
                 onStartLearning={handleStartLearning}
             >

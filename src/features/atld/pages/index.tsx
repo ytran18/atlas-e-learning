@@ -3,11 +3,18 @@
 import { IconBook, IconCertificate, IconShieldCheck } from "@tabler/icons-react";
 
 import { useCourseList } from "@/hooks/api";
+import { GetCourseListResponse } from "@/types/api";
 
 import AtldPreviewCard from "../_components/list/AtldPreviewCard";
 
-const AtldPage = () => {
-    const { data, isLoading } = useCourseList("atld");
+interface AtldPageProps {
+    initialData?: GetCourseListResponse;
+}
+
+const AtldPage = ({ initialData }: AtldPageProps) => {
+    const { data, isLoading } = useCourseList("atld", {
+        initialData,
+    });
 
     if (!data || isLoading) {
         return null;

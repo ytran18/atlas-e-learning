@@ -127,7 +127,7 @@ const http = new Server();
 
 http.addRequestInterceptor("baseURL", (request, options) => {
     return {
-        request: `${process.env.NEXT_PUBLIC_API_BASE_URL}${request}`,
+        request: `${process.env.NEXT_PUBLIC_API_URL}${request}`,
         options,
     };
 });

@@ -3,13 +3,20 @@
 import { useParams } from "next/navigation";
 
 import { useCoursePreview, useCourseProgress } from "@/hooks/api";
+import { GetCoursePreviewResponse } from "@/types/api";
 
 import { AtldPreviewContainer } from "../_widgets/AtldPreviewContainer";
 
-const AtldPreview = () => {
+interface AtldPreviewProps {
+    initialData?: GetCoursePreviewResponse;
+}
+
+const AtldPreview = ({ initialData }: AtldPreviewProps) => {
     const { atldId } = useParams();
 
-    const { data, isLoading } = useCoursePreview("atld", atldId as string);
+    const { data, isLoading } = useCoursePreview("atld", atldId as string, {
+        initialData,
+    });
 
     const { data: progressData, isLoading: isProgressLoading } = useCourseProgress(
         "atld",
@@ -18,11 +25,17 @@ const AtldPreview = () => {
 
     const isJoined = !!progressData;
 
-    if (!data || isLoading || isProgressLoading) {
+    if (!data || isLoading) {
         return null;
     }
 
-    return <AtldPreviewContainer course={data} isJoined={isJoined} />;
+    return (
+        <AtldPreviewContainer
+            course={data}
+            isJoined={isJoined}
+            isLoadingJoiabled={isProgressLoading}
+        />
+    );
 };
 
 export default AtldPreview;

@@ -14,11 +14,13 @@ import LearnTheory from "../_components/learn/LearnTheory";
 const LearnPage = () => {
     const { atldId } = useParams();
 
+    // get course detail
     const { data: courseDetail, isLoading: isCourseDetailLoading } = useCourseDetail(
         "atld",
         atldId as string
     );
 
+    // get course progress
     const { data: progressData, isLoading: isProgressLoading } = useCourseProgress(
         "atld",
         atldId as string
