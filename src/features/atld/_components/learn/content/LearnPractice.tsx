@@ -118,8 +118,8 @@ const LearnPractice = () => {
                 />
 
                 <div>
-                    <Text>{currentVideo.title}</Text>
-                    <Text>{currentVideo.description}</Text>
+                    <Text>{currentVideo?.title ?? ""}</Text>
+                    <Text>{currentVideo?.description ?? ""}</Text>
                 </div>
 
                 <div className="w-full flex justify-end">
