@@ -58,12 +58,12 @@ const AuthButton = () => {
         <Group gap="xs">
             <Button
                 variant="default"
-                size="sm"
+                size="xs"
                 onClick={() => router.push(navigationPaths.SIGN_IN)}
             >
                 Log in
             </Button>
-            <Button size="sm" onClick={() => router.push(navigationPaths.SIGN_UP)}>
+            <Button size="xs" onClick={() => router.push(navigationPaths.SIGN_UP)}>
                 Sign up
             </Button>
         </Group>

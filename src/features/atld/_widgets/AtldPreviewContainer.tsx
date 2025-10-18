@@ -1,11 +1,9 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
-
 import { IconClipboardCheck, IconPlaylist, IconVideo } from "@tabler/icons-react";
 
 import { CoursePreview } from "@/types/api";
-import { navigationPaths } from "@/utils/navigationPaths";
+import { secondsToHours } from "@/utils/time";
 
 import { CourseContentCard } from "../_components/preview/CourseContentCard";
 import { CourseHeroSection } from "../_components/preview/CourseHeroSection";
@@ -23,23 +21,13 @@ export const AtldPreviewContainer = ({
     isJoined,
     isLoadingJoiabled,
 }: AtldPreviewContainerProps) => {
-    const router = useRouter();
-
-    const { atldId } = useParams();
-
     const totlaLessons = course.theory.videos.length + course.practice.videos.length;
 
-    const handleBack = () => {
-        router.push(navigationPaths.ATLD);
-    };
-
-    const handleStartLearning = (isJoined: boolean) => {
-        if (isJoined) {
-            router.push(`/atld/${atldId}/learn`);
-        } else {
-            router.push(`/atld/${atldId}/verify`);
-        }
-    };
+    const totalDuration =
+        (course.theory.videos.reduce((acc, lesson) => acc + lesson.length, 0) +
+            course.practice.videos.reduce((acc, lesson) => acc + lesson.length, 0) +
+            course.totalQuestionOfExam * 2) ^
+        60;
 
     return (
         <div className="min-h-screen bg-white">
@@ -49,10 +37,12 @@ export const AtldPreviewContainer = ({
                 title={course.title}
                 description={course.description}
                 isLoadingJoiabled={isLoadingJoiabled}
-                onBack={handleBack}
-                onStartLearning={handleStartLearning}
             >
-                <CourseStats totalLessons={totlaLessons} totalQuestions={10} duration="~2 giờ" />
+                <CourseStats
+                    totalLessons={totlaLessons}
+                    totalQuestions={10}
+                    duration={secondsToHours(totalDuration)}
+                />
             </CourseHeroSection>
 
             {/* Course Content Section */}
@@ -96,7 +86,8 @@ export const AtldPreviewContainer = ({
                     >
                         <div className="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200 inline-block">
                             <p className="text-sm text-gray-700 font-medium">
-                                {course.totalQuestionOfExam} câu hỏi trắc nghiệm • 20 phút
+                                {course.totalQuestionOfExam} câu hỏi trắc nghiệm •{" "}
+                                {course.totalQuestionOfExam * 2} phút
                             </p>
                         </div>
                     </CourseContentCard>

@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 
+import { Button } from "@mantine/core";
+
 interface CourseContentCardProps {
     icon: ReactNode;
     title: string;
@@ -20,9 +22,7 @@ export const CourseContentCard = ({
             <div className="flex items-start gap-4 mb-4">
                 {/* Step Number */}
                 <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-gray-900 text-white rounded-lg flex items-center justify-center font-semibold">
-                        {step}
-                    </div>
+                    <Button variant="light">{step}</Button>
                 </div>
 
                 <div className="flex-1">

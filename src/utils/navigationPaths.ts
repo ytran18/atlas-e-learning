@@ -12,6 +12,7 @@ export const navigationPaths = {
     ATLD_PREVIEW: `/atld/[${ATLD_SLUG}]`,
     HOC_NGHE_PREVIEW: `/hoc-nghe/[${HOC_NGHE_SLUG}]`,
     ATLD_LEARN: `/atld/[${ATLD_SLUG}]/learn`,
+    ATLD_VERIFY: `/atld/[${ATLD_SLUG}]/verify`,
 };
 
 export const publicPaths = [

@@ -69,10 +69,7 @@ const LearnPractice = () => {
         console.log("video paused");
     };
 
-    const handleProgress: ReactEventHandler<HTMLVideoElement> = (event) => {
-        const currentTime = (event.target as HTMLVideoElement).currentTime;
-        console.log("currentTime", currentTime);
-    };
+    const handleProgress: ReactEventHandler<HTMLVideoElement> = () => {};
 
     const handleNextVideo = () => {
         const nextVideoIndex = videoIndex + 1;
