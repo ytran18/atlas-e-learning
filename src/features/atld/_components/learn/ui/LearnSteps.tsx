@@ -54,9 +54,9 @@ const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots }) => {
     }
 
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-full overflow-hidden">
             {/* Mobile Layout - Horizontal Tabs */}
-            <div className="lg:hidden h-full flex flex-col">
+            <div className="lg:hidden h-full flex flex-col overflow-hidden">
                 <MobileTabNavigation activeTab={active} onTabChange={handleTabChange}>
                     {{
                         theory: slots.Theory(),
@@ -67,7 +67,7 @@ const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots }) => {
             </div>
 
             {/* Desktop Layout - Vertical Stepper */}
-            <div className="hidden lg:block w-full h-full p-4">
+            <div className="hidden lg:block w-full h-full overflow-hidden">
                 <Stepper
                     h="100%"
                     size="xs"
@@ -75,7 +75,9 @@ const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots }) => {
                     active={active}
                     onStepClick={setActive}
                     classNames={{
-                        content: "h-full",
+                        content: "h-full overflow-hidden !pt-0",
+                        steps: "h-0 !hidden",
+                        step: "h-full",
                     }}
                 >
                     <Stepper.Step label="Lý thuyết">{slots.Theory()}</Stepper.Step>

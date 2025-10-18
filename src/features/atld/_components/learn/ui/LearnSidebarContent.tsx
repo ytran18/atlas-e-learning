@@ -1,4 +1,5 @@
-import { Accordion } from "@mantine/core";
+import { Accordion, Button } from "@mantine/core";
+import { IconChevronLeft } from "@tabler/icons-react";
 
 import SectionItem from "./SectionItem";
 
@@ -37,10 +38,17 @@ const LearnSidebarContent = ({
     onViewExam,
 }: LearnSidebarContentProps) => {
     return (
-        <div className="h-full">
+        <div className="h-full flex flex-col gap-y-4">
             {/* Desktop: Show title, Mobile: Title is in header */}
-            <div className="hidden lg:block text-xl font-bold text-[rgb(0,86,210)] p-4 border-b border-gray-200">
-                {title}
+            <div className="flex items-center gap-x-2">
+                <Button leftSection={<IconChevronLeft className="w-6 h-6 min-h-6 min-w-6" />}>
+                    Quay về
+                </Button>
+            </div>
+            <div className="w-full border border-gray-200 rounded-md flex items-center gap-x-2">
+                <div className="hidden lg:block text-xl font-bold text-[rgb(0,86,210)] p-4">
+                    {title}
+                </div>
             </div>
 
             <Accordion
@@ -48,7 +56,6 @@ const LearnSidebarContent = ({
                 variant="contained"
                 defaultValue={currentSection || "theory"}
                 classNames={{
-                    root: "h-full",
                     content: "pb-0",
                     item: "border-b border-gray-100 last:border-b-0",
                 }}

@@ -1,6 +1,6 @@
 import { ReactEventHandler, useEffect, useState } from "react";
 
-import { Button, Card, Text } from "@mantine/core";
+import { Button, Card } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useLearnContext } from "@/contexts/LearnContext";
@@ -103,31 +103,47 @@ const LearnPractice = () => {
             withBorder
             shadow="sm"
             radius="md"
-            padding="xl"
             h="100%"
-            className="bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20"
+            className="bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20 !p-0 sm:!p-4"
         >
-            <div className="flex flex-col gap-6 h-[calc(100%-24px)]">
-                <VideoPlayer
-                    src={currentVideo?.url || learnDetail.practice.videos[0].url}
-                    canSeek={currentVideo?.canSeek || learnDetail.practice.videos[0].canSeek}
-                    onEnded={handleVideoEndedInternal}
-                    onPlay={handleVideoPlay}
-                    onPause={handleVideoPaused}
-                    onProgress={handleProgress}
-                />
-
-                <div>
-                    <Text>{currentVideo?.title ?? ""}</Text>
-                    <Text>{currentVideo?.description ?? ""}</Text>
+            <div className="flex flex-col gap-4 h-full">
+                <div className="flex-1 min-h-0">
+                    <VideoPlayer
+                        src={currentVideo?.url || learnDetail.practice.videos[0].url}
+                        // canSeek={currentVideo?.canSeek || learnDetail.practice.videos[0].canSeek}
+                        canSeek={true}
+                        onEnded={handleVideoEndedInternal}
+                        onPlay={handleVideoPlay}
+                        onPause={handleVideoPaused}
+                        onProgress={handleProgress}
+                    />
                 </div>
 
-                <div className="w-full flex justify-end">
+                <div className="space-y-2 flex-shrink-0 px-2 sm:px-0">
+                    <h3 className="text-lg lg:text-xl font-semibold text-gray-900">
+                        {currentVideo?.title || learnDetail.theory.videos[0].title}
+                    </h3>
+                    {currentVideo?.description && (
+                        <p className="text-sm lg:text-base text-gray-600">
+                            {currentVideo.description}
+                        </p>
+                    )}
+                </div>
+
+                {/* Progress Indicator */}
+                <div className="flex items-center justify-between text-sm text-gray-500 flex-shrink-0 px-2 sm:px-0">
+                    <span>
+                        Video {videoIndex + 1} / {learnDetail.practice.videos.length}
+                    </span>
+                    <span>{isFinishVideo ? "✓ Hoàn thành" : "Đang học"}</span>
+                </div>
+
+                <div className="w-full flex justify-end flex-shrink-0 p-2 sm:p-0">
                     <Button
                         disabled={!isFinishVideo || isUpdatingProgress}
                         loading={isUpdatingProgress}
                         size="md"
-                        className="px-8 py-3"
+                        className="px-6 lg:px-8 py-3 w-full sm:w-auto"
                         onClick={handleNextVideo}
                     >
                         Tiếp theo

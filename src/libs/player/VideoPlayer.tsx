@@ -38,7 +38,7 @@ const VideoPlayer = ({
         <MediaController
             style={{
                 width: "100%",
-                height: "80%",
+                height: "100%",
                 aspectRatio: "16/9",
             }}
         >

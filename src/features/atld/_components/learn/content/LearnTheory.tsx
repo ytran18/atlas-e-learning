@@ -106,7 +106,7 @@ const LearnTheory = () => {
             radius="md"
             padding="lg"
             h="100%"
-            className="bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20"
+            className="bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/20 !p-0 sm:!p-4"
         >
             <div className="flex flex-col gap-4 lg:gap-6 h-full">
                 {/* Video Player Container */}
@@ -122,7 +122,7 @@ const LearnTheory = () => {
                 </div>
 
                 {/* Video Info and Navigation */}
-                <div className="flex-shrink-0 space-y-4">
+                <div className="flex-shrink-0 space-y-4 px-2 sm:px-0">
                     {/* Video Title and Description */}
                     <div className="space-y-2">
                         <h3 className="text-lg lg:text-xl font-semibold text-gray-900">
@@ -136,7 +136,7 @@ const LearnTheory = () => {
                     </div>
 
                     {/* Progress Indicator */}
-                    <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center justify-between text-sm text-gray-500 flex-shrink-0 px-2 sm:px-0">
                         <span>
                             Video {videoIndex + 1} / {learnDetail.theory.videos.length}
                         </span>
@@ -144,7 +144,7 @@ const LearnTheory = () => {
                     </div>
 
                     {/* Navigation Button */}
-                    <div className="w-full flex justify-end">
+                    <div className="w-full flex justify-end flex-shrink-0 p-2 sm:p-0">
                         <Button
                             disabled={!isFinishVideo || isUpdatingProgress}
                             loading={isUpdatingProgress}
