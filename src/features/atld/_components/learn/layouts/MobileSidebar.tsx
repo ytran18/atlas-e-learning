@@ -13,7 +13,7 @@ const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
         <div className="fixed inset-0 z-50 lg:hidden">
             <div className="fixed inset-0 bg-black/20" onClick={onClose} />
 
-            <div className="fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-white shadow-xl overflow-y-auto">
+            <div className="fixed top-0 left-0 h-full w-90 max-w-[90vw] bg-white shadow-xl overflow-y-auto">
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
                     <h2 className="text-lg font-semibold text-gray-900">Nội dung khóa học</h2>
 

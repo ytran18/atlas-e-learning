@@ -31,19 +31,17 @@ const LearnPage = () => {
     }
 
     return (
-        <div className="h-[calc(100vh-70px)] w-screen">
-            <div className="h-full w-full">
-                <LearnProvider progress={progressData} learnDetail={courseDetail}>
-                    <MobileLayout
-                        title={courseDetail.title}
-                        isSidebarOpen={isSidebarOpen}
-                        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-                        onCloseSidebar={() => setIsSidebarOpen(false)}
-                    />
+        <div className="h-[calc(100vh-70px)] w-full overflow-hidden">
+            <LearnProvider progress={progressData} learnDetail={courseDetail}>
+                <MobileLayout
+                    title={courseDetail.title}
+                    isSidebarOpen={isSidebarOpen}
+                    onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+                    onCloseSidebar={() => setIsSidebarOpen(false)}
+                />
 
-                    <DesktopLayout />
-                </LearnProvider>
-            </div>
+                <DesktopLayout />
+            </LearnProvider>
         </div>
     );
 };
