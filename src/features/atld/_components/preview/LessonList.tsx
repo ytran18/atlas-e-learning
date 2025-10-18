@@ -1,6 +1,7 @@
 import { IconClock, IconPlayerPlay } from "@tabler/icons-react";
 
 import { Video } from "@/types/api";
+import { secondsToMinutes } from "@/utils/time";
 
 export interface Lesson {
     id: string;
@@ -30,7 +31,7 @@ export const LessonList = ({ lessons }: LessonListProps) => {
                     <div className="flex items-center gap-1.5 text-gray-500">
                         <IconClock className="h-4 w-4" strokeWidth={1.5} />
                         <span className="text-xs whitespace-nowrap">
-                            {lesson.length || "10 phút"}
+                            {secondsToMinutes(lesson.length) || "10 : 00"}
                         </span>
                     </div>
                 </li>

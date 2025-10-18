@@ -2,6 +2,7 @@
 
 import { DatePickerInput } from "@mantine/dates";
 import { IconCalendar } from "@tabler/icons-react";
+import "dayjs/locale/vi";
 import { Control, Controller, FieldValues } from "react-hook-form";
 
 interface SignInFormDatePickerProps<T extends FieldValues = FieldValues> {

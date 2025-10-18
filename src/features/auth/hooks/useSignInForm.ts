@@ -37,7 +37,6 @@ export const useSignInForm = () => {
 
         // If validation passed, birthDate is guaranteed to be a Date
         if (!data.birthDate) {
-            console.log({ data });
             setError("Vui lòng chọn ngày sinh");
             return;
         }
