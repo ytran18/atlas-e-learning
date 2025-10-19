@@ -44,7 +44,12 @@ const AuthButton = () => {
                     </Text>
                 </Box>
 
-                <Button variant="default" size="sm" onClick={() => signOut(() => router.push("/"))}>
+                <Button
+                    visibleFrom="sm"
+                    variant="default"
+                    size="sm"
+                    onClick={() => signOut(() => router.push("/"))}
+                >
                     <div className="flex items-center gap-x-2">
                         <IconLogout className="text-gray-700" size={16} />
                         <Text visibleFrom="sm">Đăng xuất</Text>

@@ -289,6 +289,8 @@ export async function getCourseDetail(
     const endpoint =
         type === "atld" ? `/api/v1/atld/detail/${groupId}` : `/api/v1/hoc-nghe/detail/${groupId}`;
 
+    console.log("endpoint", endpoint);
+
     const response = await apiFetch<GetCourseDetailResponse>(endpoint);
     return response.data;
 }

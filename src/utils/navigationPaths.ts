@@ -1,6 +1,5 @@
 export const ATLD_SLUG = "atld";
-
-const HOC_NGHE_SLUG = "hoc-nghe";
+export const HOC_NGHE_SLUG = "hocNgheId";
 
 export const navigationPaths = {
     LANDING_PAGE: "/landing-page",
@@ -13,6 +12,8 @@ export const navigationPaths = {
     HOC_NGHE_PREVIEW: `/hoc-nghe/[${HOC_NGHE_SLUG}]`,
     ATLD_LEARN: `/atld/[${ATLD_SLUG}]/learn`,
     ATLD_VERIFY: `/atld/[${ATLD_SLUG}]/verify`,
+    HOC_NGHE_LEARN: `/hoc-nghe/[${HOC_NGHE_SLUG}]/learn`,
+    HOC_NGHE_VERIFY: `/hoc-nghe/[${HOC_NGHE_SLUG}]/verify`,
 };
 
 export const publicPaths = [
