@@ -1,6 +1,4 @@
-import { LearnExam, LearnPractice, LearnSteps, LearnTheory } from "../";
-import MobileHeader from "./MobileHeader";
-import MobileSidebar from "./MobileSidebar";
+import { MobileLayout as SharedMobileLayout } from "@/features/shared";
 
 interface MobileLayoutProps {
     title: string;
@@ -9,30 +7,8 @@ interface MobileLayoutProps {
     onCloseSidebar: () => void;
 }
 
-const MobileLayout = ({
-    title,
-    isSidebarOpen,
-    onToggleSidebar,
-    onCloseSidebar,
-}: MobileLayoutProps) => {
-    return (
-        <div className="flex flex-col h-full w-full lg:hidden overflow-hidden">
-            <MobileHeader title={title} onToggleSidebar={onToggleSidebar} />
-
-            <MobileSidebar isOpen={isSidebarOpen} onClose={onCloseSidebar} />
-
-            {/* Mobile Content Area */}
-            <div className="flex-1 min-h-0 overflow-hidden p-4">
-                <LearnSteps
-                    slots={{
-                        Theory: () => <LearnTheory />,
-                        Practice: () => <LearnPractice />,
-                        Exam: () => <LearnExam />,
-                    }}
-                />
-            </div>
-        </div>
-    );
+const MobileLayout = (props: MobileLayoutProps) => {
+    return <SharedMobileLayout {...props} courseType="atld" />;
 };
 
 export default MobileLayout;

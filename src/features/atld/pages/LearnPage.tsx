@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { LearnProvider } from "@/contexts/LearnContext";
 import { useCourseDetail, useCourseProgress } from "@/hooks/api";
 
-import { DesktopLayout, MobileLayout } from "../_components/learn";
+import { CourseLoading, DesktopLayout, MobileLayout } from "../_components/learn";
 
 const LearnPage = () => {
     const { atldId } = useParams();
@@ -27,7 +27,7 @@ const LearnPage = () => {
     );
 
     if (isCourseDetailLoading || !courseDetail || isProgressLoading || !progressData) {
-        return null;
+        return <CourseLoading />;
     }
 
     return (

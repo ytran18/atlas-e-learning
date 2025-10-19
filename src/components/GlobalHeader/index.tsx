@@ -2,10 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
-import { Box, Burger, Drawer, Group, Stack, Text } from "@mantine/core";
+import { useClerk } from "@clerk/nextjs";
+import { Box, Burger, Button, Drawer, Group, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { IconLogout } from "@tabler/icons-react";
 
 import { navigationPaths } from "@/utils/navigationPaths";
 
@@ -14,12 +16,16 @@ import AuthButton from "./AuthButton";
 const GlobalHeader = () => {
     const router = useRouter();
 
+    const { signOut } = useClerk();
+
+    const currentPath = usePathname();
+
     const [opened, { toggle, close }] = useDisclosure(false);
 
     const navigationItems = [
         { href: navigationPaths.LANDING_PAGE, label: "Trang chủ" },
         { href: navigationPaths.ATLD, label: "Đào tạo ATLD" },
-        { href: "/", label: "Học nghề" },
+        { href: navigationPaths.HOC_NGHE, label: "Học nghề" },
     ];
 
     return (
@@ -45,6 +51,7 @@ const GlobalHeader = () => {
                                 className="flex items-center h-[42px] sm:h-full w-full sm:w-auto pl-[var(--mantine-spacing-md)] pr-[var(--mantine-spacing-md)] no-underline text-[var(--mantine-color-black)] font-medium hover:bg-[var(--mantine-color-gray-0)]"
                                 style={{
                                     fontSize: "var(--mantine-font-size-sm)",
+                                    color: currentPath === item.href ? "#1D72FE" : "",
                                 }}
                             >
                                 {item.label}
@@ -89,6 +96,13 @@ const GlobalHeader = () => {
                             {item.label}
                         </Link>
                     ))}
+
+                    <Button color="red" size="sm" onClick={() => signOut(() => router.push("/"))}>
+                        <div className="flex items-center gap-x-2">
+                            <IconLogout className="text-white" size={16} />
+                            <Text>Đăng xuất</Text>
+                        </div>
+                    </Button>
                 </Stack>
             </Drawer>
         </Box>
