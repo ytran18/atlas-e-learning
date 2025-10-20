@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
+
+import { generateMetadata, pageSeoConfigs } from "@/configs/seo.config";
 import HocNghePage from "@/features/hoc-nghe/pages";
 import { getCourseListServer } from "@/services/api.server";
 import { GetCourseListResponse } from "@/types/api";
+
+export const metadata: Metadata = generateMetadata(pageSeoConfigs.hocNghe);
 
 export default async function Page() {
     let initialData: GetCourseListResponse | undefined;
