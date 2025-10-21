@@ -1,10 +1,25 @@
+"use client";
+
 import { IconBook, IconCertificate, IconShieldCheck } from "@tabler/icons-react";
 
-import { mockCourses } from "@/mock/courses";
+import { useCourseList } from "@/hooks/api";
+import { GetCourseListResponse } from "@/types/api";
 
 import AtldPreviewCard from "../_components/list/AtldPreviewCard";
 
-const AtldPage = () => {
+interface AtldPageProps {
+    initialData?: GetCourseListResponse;
+}
+
+const AtldPage = ({ initialData }: AtldPageProps) => {
+    const { data, isLoading } = useCourseList("atld", {
+        initialData,
+    });
+
+    if (!data || isLoading) {
+        return null;
+    }
+
     return (
         <div className="min-h-screen bg-white">
             {/* Hero Section - Coursera style */}
@@ -56,7 +71,7 @@ const AtldPage = () => {
                 </div>
 
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl">
-                    {mockCourses.map((course) => (
+                    {data.map((course) => (
                         <AtldPreviewCard key={course.id} course={course} />
                     ))}
                 </div>

@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { viVN } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
+import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+import { createQueryClient } from "@/configs/reactQuery.config";
 import { initMixpanel } from "@/libs/mixpanel/mixpanel-client";
 
 // Custom localization để thay đổi text
@@ -20,6 +25,9 @@ const customViVN = {
 };
 
 export default function Provider({ children }: { children: React.ReactNode }) {
+    // Tạo QueryClient instance, chỉ tạo 1 lần duy nhất
+    const [queryClient] = useState(() => createQueryClient());
+
     useEffect(() => {
         initMixpanel();
     }, []);
@@ -31,7 +39,15 @@ export default function Provider({ children }: { children: React.ReactNode }) {
             signInUrl="/sign-in"
             signUpUrl="/sign-up"
         >
-            <MantineProvider>{children}</MantineProvider>
+            <QueryClientProvider client={queryClient}>
+                <MantineProvider>
+                    <Notifications />
+
+                    {children}
+                </MantineProvider>
+                {/* React Query Devtools - chỉ hiện trong development */}
+                <ReactQueryDevtools initialIsOpen={false} />
+            </QueryClientProvider>
         </ClerkProvider>
     );
 }

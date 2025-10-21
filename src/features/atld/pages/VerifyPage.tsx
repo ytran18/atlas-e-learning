@@ -1,12 +1,8 @@
 "use client";
 
-import { useParams } from "next/navigation";
-
 import { PhotoCaptureContainer } from "../_widgets/PhotoCaptureContainer";
 
 const VerifyPage = () => {
-    const { atldId } = useParams();
-
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-4 sm:py-8">
             <div className="container mx-auto px-4 max-w-2xl">
@@ -25,7 +21,7 @@ const VerifyPage = () => {
                 </div>
 
                 {/* Main Content */}
-                <PhotoCaptureContainer courseId={Number(atldId)} />
+                <PhotoCaptureContainer />
             </div>
         </div>
     );

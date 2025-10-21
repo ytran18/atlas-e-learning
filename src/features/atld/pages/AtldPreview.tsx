@@ -1,32 +1,39 @@
-import { mockCourses } from "@/mock/courses";
-import { LessionType } from "@/types/course";
+"use client";
+
+import { useParams } from "next/navigation";
+
+import { useCoursePreview, useCourseProgress } from "@/hooks/api";
+import { GetCoursePreviewResponse } from "@/types/api";
 
 import { AtldPreviewContainer } from "../_widgets/AtldPreviewContainer";
 
-const course = mockCourses[0];
+interface AtldPreviewProps {
+    initialData?: GetCoursePreviewResponse;
+}
 
-const AtldPreview = () => {
-    const theoryLessons = course.lessons
-        .filter((lesson) => lesson.type === LessionType.THEORY)
-        .map((lesson) => ({
-            id: lesson.id,
-            title: lesson.title,
-            duration: "10 phút",
-        }));
+const AtldPreview = ({ initialData }: AtldPreviewProps) => {
+    const { atldId } = useParams();
 
-    const practiceLessons = course.lessons
-        .filter((lesson) => lesson.type === LessionType.PRACTICE)
-        .map((lesson) => ({
-            id: lesson.id,
-            title: lesson.title,
-            duration: "10 phút",
-        }));
+    const { data, isLoading } = useCoursePreview("atld", atldId as string, {
+        initialData,
+    });
+
+    const { data: progressData, isLoading: isProgressLoading } = useCourseProgress(
+        "atld",
+        atldId as string
+    );
+
+    const isJoined = !!progressData;
+
+    if (!data || isLoading) {
+        return null;
+    }
 
     return (
         <AtldPreviewContainer
-            course={course}
-            theoryLessons={theoryLessons}
-            practiceLessons={practiceLessons}
+            course={data}
+            isJoined={isJoined}
+            isLoadingJoiabled={isProgressLoading}
         />
     );
 };

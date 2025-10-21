@@ -1,53 +1,47 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
-
 import { IconClipboardCheck, IconPlaylist, IconVideo } from "@tabler/icons-react";
 
-import { Course } from "@/types/course";
-import { navigationPaths } from "@/utils/navigationPaths";
+import { CoursePreview } from "@/types/api";
+import { secondsToHours } from "@/utils/time";
 
 import { CourseContentCard } from "../_components/preview/CourseContentCard";
 import { CourseHeroSection } from "../_components/preview/CourseHeroSection";
 import { CourseStats } from "../_components/preview/CourseStats";
-import { Lesson, LessonList } from "../_components/preview/LessonList";
+import { LessonList } from "../_components/preview/LessonList";
 
 interface AtldPreviewContainerProps {
-    course: Course;
-    theoryLessons: Lesson[];
-    practiceLessons: Lesson[];
+    course: CoursePreview;
+    isJoined: boolean;
+    isLoadingJoiabled: boolean;
 }
 
 export const AtldPreviewContainer = ({
     course,
-    theoryLessons,
-    practiceLessons,
+    isJoined,
+    isLoadingJoiabled,
 }: AtldPreviewContainerProps) => {
-    const router = useRouter();
+    const totlaLessons = course.theory.videos.length + course.practice.videos.length;
 
-    const { atldId } = useParams();
-
-    const handleBack = () => {
-        router.push(navigationPaths.ATLD);
-    };
-
-    const handleStartLearning = () => {
-        router.push(`/atld/${atldId}/verify`);
-    };
+    const totalDuration =
+        (course.theory.videos.reduce((acc, lesson) => acc + lesson.length, 0) +
+            course.practice.videos.reduce((acc, lesson) => acc + lesson.length, 0) +
+            course.totalQuestionOfExam * 2) ^
+        60;
 
     return (
         <div className="min-h-screen bg-white">
             {/* Hero Section */}
             <CourseHeroSection
+                isJoined={isJoined}
                 title={course.title}
                 description={course.description}
-                onBack={handleBack}
-                onStartLearning={handleStartLearning}
+                isLoadingJoiabled={isLoadingJoiabled}
             >
                 <CourseStats
-                    totalLessons={course.lessons.length}
+                    totalLessons={totlaLessons}
                     totalQuestions={10}
-                    duration="~2 giờ"
+                    duration={secondsToHours(totalDuration)}
                 />
             </CourseHeroSection>
 
@@ -70,7 +64,7 @@ export const AtldPreviewContainer = ({
                         description="Xem các video lý thuyết để hiểu rõ về an toàn lao động"
                         step="01"
                     >
-                        <LessonList lessons={theoryLessons} />
+                        <LessonList lessons={course.theory.videos} />
                     </CourseContentCard>
 
                     {/* Practice Card */}
@@ -80,7 +74,7 @@ export const AtldPreviewContainer = ({
                         description="Xem các video thực hành để hiểu rõ về an toàn lao động"
                         step="02"
                     >
-                        <LessonList lessons={practiceLessons} />
+                        <LessonList lessons={course.practice.videos} />
                     </CourseContentCard>
 
                     {/* Quiz Card */}
@@ -92,7 +86,8 @@ export const AtldPreviewContainer = ({
                     >
                         <div className="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200 inline-block">
                             <p className="text-sm text-gray-700 font-medium">
-                                10 câu hỏi trắc nghiệm • 20 phút
+                                {course.totalQuestionOfExam} câu hỏi trắc nghiệm •{" "}
+                                {course.totalQuestionOfExam * 2} phút
                             </p>
                         </div>
                     </CourseContentCard>

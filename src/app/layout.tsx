@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Geist, Geist_Mono } from "next/font/google";
 
+import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import GlobalHeader from "@/components/GlobalHeader";
+import { StructuredData } from "@/components/SEO";
+import {
+    baseSeoConfig,
+    generateMetadata,
+    generateOrganizationStructuredData,
+} from "@/configs/seo.config";
 
 import "./globals.css";
 import Provider from "./provider";
@@ -25,10 +32,12 @@ const geistMono = Geist_Mono({
     subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-    title: "Hệ thống đào tạo An Toàn Lao Động",
-    description: "Hệ thống đào tạo An Toàn Lao Động",
-};
+export const metadata: Metadata = generateMetadata({
+    title: baseSeoConfig.defaultTitle,
+    description: baseSeoConfig.defaultDescription,
+    keywords: baseSeoConfig.defaultKeywords,
+    url: "/",
+});
 
 export default function RootLayout({
     children,
@@ -37,10 +46,16 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="vi" className={beVietnamPro.variable}>
+            <head>
+                <StructuredData data={generateOrganizationStructuredData()} />
+            </head>
             <body
                 className={`${beVietnamPro.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <SpeedInsights />
+
+                <Analytics />
+
                 <Provider>
                     <GlobalHeader />
                     {children}
