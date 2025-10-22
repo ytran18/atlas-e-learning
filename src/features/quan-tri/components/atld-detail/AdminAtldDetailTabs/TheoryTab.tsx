@@ -81,7 +81,7 @@ const TheoryTab = () => {
             <VideoUploadModal
                 opened={isAddVideoModalOpen}
                 onClose={() => setIsAddVideoModalOpen(false)}
-                onSubmit={handleAddVideo}
+                onSubmit={(data) => handleAddVideo({ ...data, section: "theory" })}
                 title="Thêm video mới"
             />
         </div>

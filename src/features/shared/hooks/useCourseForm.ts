@@ -151,6 +151,7 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
         title: string;
         description: string;
         file: File | null;
+        section: "theory" | "practice";
     }) => {
         if (!data.file) return;
 
@@ -175,7 +176,7 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
             const uploadResult = await uploadResponse.json();
 
             const newVideo: Video = {
-                sortNo: watchedValues.theory.videos.length + 1,
+                sortNo: watchedValues[data.section].videos.length + 1,
                 title: data.title,
                 description: data.description,
                 url: uploadResult.publicUrl || uploadResult.fileKey,
@@ -184,8 +185,8 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
                 shouldCompleteToPassed: false,
             };
 
-            const currentVideos = watchedValues.theory.videos;
-            setValue("theory.videos", [...currentVideos, newVideo], { shouldDirty: true });
+            const currentVideos = watchedValues[data.section].videos;
+            setValue(`${data.section}.videos`, [...currentVideos, newVideo], { shouldDirty: true });
         } catch (err) {
             setError(err instanceof Error ? err.message : "Có lỗi xảy ra khi thêm video");
         } finally {

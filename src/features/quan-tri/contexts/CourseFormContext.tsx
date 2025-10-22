@@ -19,6 +19,7 @@ interface CourseFormContextType {
         title: string;
         description: string;
         file: File | null;
+        section: "theory" | "practice";
     }) => Promise<void>;
     setEditTitle: (value: string) => void;
     setEditDescription: (value: string) => void;
