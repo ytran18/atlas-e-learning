@@ -14,6 +14,9 @@ export const navigationPaths = {
     ATLD_VERIFY: `/atld/[${ATLD_SLUG}]/verify`,
     HOC_NGHE_LEARN: `/hoc-nghe/[${HOC_NGHE_SLUG}]/learn`,
     HOC_NGHE_VERIFY: `/hoc-nghe/[${HOC_NGHE_SLUG}]/verify`,
+    QUAN_TRI_ATLD: `/quan-tri/atld`,
+    QUAN_TRI_HOC_NGHE: `/quan-tri/hoc-nghe`,
+    QUAN_TRI_USER: `/quan-tri/user`,
 };
 
 export const publicPaths = [

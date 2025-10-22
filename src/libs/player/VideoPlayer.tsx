@@ -16,6 +16,7 @@ import {
 interface VideoPlayerProps {
     src: string;
     canSeek?: boolean;
+    isPreview?: boolean;
     onEnded?: () => void; // when video ended
     onPause?: () => void; // when video paused
     onPlay?: () => void; // when video played
@@ -27,6 +28,7 @@ const LOADING_DEBOUNCE_TIME = 200;
 const VideoPlayer = ({
     src,
     canSeek = true,
+    isPreview = false,
     onEnded,
     onPause,
     onPlay,
@@ -94,29 +96,33 @@ const VideoPlayer = ({
                     height: "100%",
                 }}
             />
-            <MediaControlBar className="w-full bg-[rgba(20,20,30,0.5)] px-2">
-                <div className="w-full flex flex-col">
-                    <div className="w-full flex items-center justify-between gap-x-2">
-                        <div className="flex items-center gap-x-4">
-                            {isLoadingVideo ? (
-                                <MediaLoadingIndicator />
-                            ) : (
-                                <MediaPlayButton className="size-5" />
-                            )}
+            {!isPreview && (
+                <MediaControlBar className="w-full bg-[rgba(20,20,30,0.5)] px-2">
+                    <div className="w-full flex flex-col">
+                        <div className="w-full flex items-center justify-between gap-x-2">
+                            <div className="flex items-center gap-x-4">
+                                {isLoadingVideo ? (
+                                    <MediaLoadingIndicator />
+                                ) : (
+                                    <MediaPlayButton className="size-5" />
+                                )}
 
-                            <MediaTimeDisplay showDuration />
+                                <MediaTimeDisplay showDuration />
+                            </div>
+
+                            <div className="flex items-center gap-x-4">
+                                <MediaVolumeRange />
+
+                                <MediaFullscreenButton />
+                            </div>
                         </div>
 
-                        <div className="flex items-center gap-x-4">
-                            <MediaVolumeRange />
-
-                            <MediaFullscreenButton />
-                        </div>
+                        <MediaTimeRange
+                            className={`w-full ${!canSeek ? "pointer-events-none" : ""}`}
+                        />
                     </div>
-
-                    <MediaTimeRange className={`w-full ${!canSeek ? "pointer-events-none" : ""}`} />
-                </div>
-            </MediaControlBar>
+                </MediaControlBar>
+            )}
         </MediaController>
     );
 };
