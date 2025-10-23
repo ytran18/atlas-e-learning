@@ -3,8 +3,9 @@ import { Controller } from "react-hook-form";
 
 import { useAtldAdminDetailContext } from "@/features/quan-tri/contexts/AtldAdminDetailContext";
 import { useCourseFormContext } from "@/features/quan-tri/contexts/CourseFormContext";
-import EditModeButtons from "@/features/shared/_components/forms/EditModeButtons";
-import EditableField from "@/features/shared/_components/forms/EditableField";
+
+import EditModeButtons from "../../EditModeButtons";
+import EditableField from "../../EditableField";
 
 const AdminAtldDetailHeader = () => {
     const { isEditMode, setIsEditMode } = useAtldAdminDetailContext();

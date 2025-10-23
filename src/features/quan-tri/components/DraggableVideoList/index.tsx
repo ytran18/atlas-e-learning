@@ -7,11 +7,11 @@ import { Video } from "@/types/api";
 
 interface DraggableVideoListProps {
     videos: Video[];
-    onDragEnd: (result: any) => void;
     isEditMode: boolean;
+    onDragEnd: (result: any) => void;
 }
 
-const DraggableVideoList = ({ videos, onDragEnd, isEditMode }: DraggableVideoListProps) => {
+const DraggableVideoList = ({ videos, isEditMode, onDragEnd }: DraggableVideoListProps) => {
     if (isEditMode) {
         return (
             <DragDropContext onDragEnd={onDragEnd}>

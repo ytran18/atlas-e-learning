@@ -6,12 +6,14 @@ import { Controller } from "react-hook-form";
 
 import { useAtldAdminDetailContext } from "@/features/quan-tri/contexts/AtldAdminDetailContext";
 import { useCourseFormContext } from "@/features/quan-tri/contexts/CourseFormContext";
-import DraggableVideoList from "@/features/shared/_components/forms/DraggableVideoList";
-import EditableField from "@/features/shared/_components/forms/EditableField";
-import VideoUploadModal from "@/features/shared/_components/forms/VideoUploadModal";
+
+import DraggableVideoList from "../../DraggableVideoList";
+import EditableField from "../../EditableField";
+import VideoUploadModal from "../../VideoUploadModal";
 
 const TheoryTab = () => {
     const { courseDetail, isEditMode } = useAtldAdminDetailContext();
+
     const { theory } = courseDetail;
 
     // Use the shared course form context
