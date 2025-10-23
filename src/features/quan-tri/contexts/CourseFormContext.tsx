@@ -22,6 +22,20 @@ interface CourseFormContextType {
         section: "theory" | "practice";
     }) => Promise<void>;
     handleUpdateVideo: (videoId: string, data: { title: string; description: string }) => void;
+    handleAddExamQuestion: (data: {
+        content: string;
+        options: { id: string; content: string }[];
+        correctAnswer: string;
+    }) => void;
+    handleDeleteExamQuestion: (questionId: string) => void;
+    handleUpdateExamQuestion: (
+        questionId: string,
+        data: {
+            content: string;
+            options: { id: string; content: string }[];
+            correctAnswer: string;
+        }
+    ) => void;
     setEditTitle: (value: string) => void;
     setEditDescription: (value: string) => void;
     setEditTheory: (value: any) => void;

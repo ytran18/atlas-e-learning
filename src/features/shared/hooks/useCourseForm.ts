@@ -6,6 +6,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { updateCourse } from "@/services/api.client";
 import {
     CourseDetail,
+    ExamQuestion,
     ExamSection,
     PracticeSection,
     TheorySection,
@@ -52,6 +53,11 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
     useFieldArray({
         control,
         name: "practice.videos",
+    });
+
+    useFieldArray({
+        control,
+        name: "exam.questions",
     });
 
     // Watch form values
@@ -226,6 +232,58 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
         }
     };
 
+    // Handle add exam question
+    const handleAddExamQuestion = (data: {
+        content: string;
+        options: { id: string; content: string }[];
+        correctAnswer: string;
+    }) => {
+        const newQuestion: ExamQuestion = {
+            id: nanoid(),
+            content: data.content,
+            options: data.options,
+            answer: data.correctAnswer,
+        };
+
+        const currentQuestions = watchedValues.exam.questions;
+
+        setValue("exam.questions", [...currentQuestions, newQuestion], { shouldDirty: true });
+    };
+
+    // Handle delete exam question
+    const handleDeleteExamQuestion = (questionId: string) => {
+        const currentQuestions = watchedValues.exam.questions;
+
+        const updatedQuestions = currentQuestions.filter((question) => question.id !== questionId);
+
+        setValue("exam.questions", updatedQuestions, { shouldDirty: true });
+    };
+
+    // Handle update exam question
+    const handleUpdateExamQuestion = (
+        questionId: string,
+        data: {
+            content: string;
+            options: { id: string; content: string }[];
+            correctAnswer: string;
+        }
+    ) => {
+        const currentQuestions = [...watchedValues.exam.questions];
+
+        const questionIndex = currentQuestions.findIndex((question) => question.id === questionId);
+
+        if (questionIndex !== -1) {
+            currentQuestions[questionIndex] = {
+                ...currentQuestions[questionIndex],
+                content: data.content,
+                options: data.options,
+                answer: data.correctAnswer,
+            };
+
+            setValue("exam.questions", currentQuestions, { shouldDirty: true });
+        }
+    };
+
     return {
         // Form instance
         form,
@@ -249,6 +307,9 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
         handlePracticeDragEnd,
         handleAddVideo,
         handleUpdateVideo,
+        handleAddExamQuestion,
+        handleDeleteExamQuestion,
+        handleUpdateExamQuestion,
 
         // Form methods
         setEditTitle: (value: string) => setValue("title", value),

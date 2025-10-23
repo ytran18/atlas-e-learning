@@ -36,9 +36,9 @@ const TabsContent = ({ slots }: TabsContentProps) => {
         <Tabs
             defaultValue={AdminAtldDetailTabs.THEORY}
             classNames={{
-                root: "h-full flex flex-col",
+                root: "h-full !flex !flex-col w-full",
                 list: "flex-shrink-0 border-b border-gray-200 bg-white mb-3",
-                panel: "flex-1 overflow-hidden",
+                panel: "max-h-[calc(100vh-640px)]",
                 tab: "flex-1 text-center py-3 px-2 text-sm font-medium",
             }}
         >
