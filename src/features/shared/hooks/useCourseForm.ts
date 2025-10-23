@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { nanoid } from "nanoid";
 import { useFieldArray, useForm } from "react-hook-form";
 
 import { updateCourse } from "@/services/api.client";
@@ -176,6 +177,7 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
             const uploadResult = await uploadResponse.json();
 
             const newVideo: Video = {
+                id: nanoid(),
                 sortNo: watchedValues[data.section].videos.length + 1,
                 title: data.title,
                 description: data.description,
@@ -191,6 +193,36 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
             setError(err instanceof Error ? err.message : "Có lỗi xảy ra khi thêm video");
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    // Handle update video
+    const handleUpdateVideo = (videoId: string, data: { title: string; description: string }) => {
+        // Update video in theory section
+        const theoryVideos = [...watchedValues.theory.videos];
+        const theoryVideoIndex = theoryVideos.findIndex((video) => video.id === videoId);
+
+        if (theoryVideoIndex !== -1) {
+            theoryVideos[theoryVideoIndex] = {
+                ...theoryVideos[theoryVideoIndex],
+                title: data.title,
+                description: data.description,
+            };
+            setValue("theory.videos", theoryVideos, { shouldDirty: true });
+            return;
+        }
+
+        // Update video in practice section
+        const practiceVideos = [...watchedValues.practice.videos];
+        const practiceVideoIndex = practiceVideos.findIndex((video) => video.id === videoId);
+
+        if (practiceVideoIndex !== -1) {
+            practiceVideos[practiceVideoIndex] = {
+                ...practiceVideos[practiceVideoIndex],
+                title: data.title,
+                description: data.description,
+            };
+            setValue("practice.videos", practiceVideos, { shouldDirty: true });
         }
     };
 
@@ -216,6 +248,7 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
         handleTheoryDragEnd,
         handlePracticeDragEnd,
         handleAddVideo,
+        handleUpdateVideo,
 
         // Form methods
         setEditTitle: (value: string) => setValue("title", value),

@@ -18,6 +18,7 @@ export type CaptureType = "start" | "learning" | "finish";
 // ============================================================================
 
 export interface Video {
+    id: string;
     sortNo: number;
     title: string;
     description?: string;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button } from "@mantine/core";
+import { Button, Text } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { Controller } from "react-hook-form";
 
@@ -17,8 +17,14 @@ const PracticeTab = () => {
     const { practice } = courseDetail;
 
     // Use the shared course form context
-    const { form, isLoading, editPractice, handlePracticeDragEnd, handleAddVideo } =
-        useCourseFormContext();
+    const {
+        form,
+        isLoading,
+        editPractice,
+        handlePracticeDragEnd,
+        handleAddVideo,
+        handleUpdateVideo,
+    } = useCourseFormContext();
 
     // Add video modal state
     const [isAddVideoModalOpen, setIsAddVideoModalOpen] = useState(false);
@@ -60,10 +66,13 @@ const PracticeTab = () => {
             </div>
 
             <div className="flex flex-col gap-y-3">
+                <Text fw={500}>Video Thực Hành</Text>
+
                 <DraggableVideoList
                     videos={isEditMode ? editPractice.videos : practice.videos}
                     onDragEnd={handlePracticeDragEnd}
                     isEditMode={isEditMode}
+                    onUpdateVideo={handleUpdateVideo}
                 />
 
                 {isEditMode && (

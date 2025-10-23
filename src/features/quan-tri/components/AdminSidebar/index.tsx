@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, PropsWithChildren } from "react";
 
 import { useParams } from "next/navigation";
 
@@ -6,25 +6,28 @@ import { Card, Group, Stack, Text, Title } from "@mantine/core";
 
 import { CourseListItem, GetCourseListResponse } from "@/types/api";
 
-type AdminSidebarProps = {
+type AdminSidebarProps = PropsWithChildren<{
     title: string;
     courseList: GetCourseListResponse;
     onSelectCourse: (course: CourseListItem) => void;
-};
+}>;
 
 const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
     title,
     courseList,
     onSelectCourse,
+    children,
 }) => {
     const { atldId } = useParams();
 
     return (
         <div className="flex-shrink-0">
             <Card withBorder shadow="md" radius="md" p="md" className="bg-white h-full">
-                <Group mb="lg">
+                <div className="w-full flex justify-between items-center mb-4">
                     <Title order={3}>{title}</Title>
-                </Group>
+
+                    {children}
+                </div>
 
                 <Stack gap="sm">
                     {courseList.map((course) => {

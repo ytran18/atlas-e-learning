@@ -21,6 +21,7 @@ interface CourseFormContextType {
         file: File | null;
         section: "theory" | "practice";
     }) => Promise<void>;
+    handleUpdateVideo: (videoId: string, data: { title: string; description: string }) => void;
     setEditTitle: (value: string) => void;
     setEditDescription: (value: string) => void;
     setEditTheory: (value: any) => void;
