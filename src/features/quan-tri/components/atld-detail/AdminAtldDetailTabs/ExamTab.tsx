@@ -57,7 +57,28 @@ const ExamTab = () => {
         }
     };
 
-    if (!exam || exam.questions.length === 0) return <Empty title="Chưa thêm câu hỏi" />;
+    if (!exam || exam.questions.length === 0)
+        return (
+            <div>
+                {isEditMode && (
+                    <div className="w-full flex justify-end">
+                        <Button leftSection={<IconPlus size={16} />} onClick={handleAddQuestion}>
+                            Thêm câu hỏi
+                        </Button>
+                    </div>
+                )}
+
+                <Empty title="Chưa thêm câu hỏi" />
+
+                <ModalQuestion
+                    opened={isQuestionModalOpen}
+                    onClose={handleCloseModal}
+                    onSave={handleSaveQuestion}
+                    editQuestion={editingQuestion}
+                    mode={modalMode}
+                />
+            </div>
+        );
 
     return (
         <div className="flex flex-col gap-y-4 h-full">
