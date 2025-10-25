@@ -92,7 +92,7 @@ const PracticeTab = () => {
             <VideoUploadModal
                 opened={isAddVideoModalOpen}
                 onClose={() => setIsAddVideoModalOpen(false)}
-                onSubmit={(data) => handleAddVideo({ ...data, section: "practice" })}
+                onSubmit={(video) => handleAddVideo({ video, section: "practice" })}
                 title="Thêm video mới"
             />
         </div>

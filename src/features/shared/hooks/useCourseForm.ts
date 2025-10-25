@@ -154,43 +154,14 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
     };
 
     // Handle add new video
-    const handleAddVideo = async (data: {
-        title: string;
-        description: string;
-        file: File | null;
-        section: "theory" | "practice";
-    }) => {
-        if (!data.file) return;
-
+    const handleAddVideo = async (data: { video: Video; section: "theory" | "practice" }) => {
         try {
             setIsLoading(true);
             setError(null);
 
-            // Upload video file
-            const formData = new FormData();
-            formData.append("file", data.file);
-            formData.append("contentType", "video");
-
-            const uploadResponse = await fetch("/api/upload/direct", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (!uploadResponse.ok) {
-                throw new Error("Upload video thất bại");
-            }
-
-            const uploadResult = await uploadResponse.json();
-
             const newVideo: Video = {
-                id: nanoid(),
+                ...data.video,
                 sortNo: watchedValues[data.section].videos.length + 1,
-                title: data.title,
-                description: data.description,
-                url: uploadResult.publicUrl || uploadResult.fileKey,
-                length: 0, // TODO: Get actual video duration
-                canSeek: true,
-                shouldCompleteToPassed: false,
             };
 
             const currentVideos = watchedValues[data.section].videos;
@@ -229,6 +200,35 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
                 description: data.description,
             };
             setValue("practice.videos", practiceVideos, { shouldDirty: true });
+        }
+    };
+
+    // Handle delete video
+    const handleDeleteVideo = (videoId: string) => {
+        // Delete video in theory section
+        const theoryVideos = [...watchedValues.theory.videos];
+
+        const theoryVideoIndex = theoryVideos.findIndex((video) => video.id === videoId);
+
+        if (theoryVideoIndex !== -1) {
+            theoryVideos.splice(theoryVideoIndex, 1);
+
+            setValue("theory.videos", theoryVideos, { shouldDirty: true });
+
+            return;
+        }
+
+        // Delete video in practice section
+        const practiceVideos = [...watchedValues.practice.videos];
+
+        const practiceVideoIndex = practiceVideos.findIndex((video) => video.id === videoId);
+
+        if (practiceVideoIndex !== -1) {
+            practiceVideos.splice(practiceVideoIndex, 1);
+
+            setValue("practice.videos", practiceVideos, { shouldDirty: true });
+
+            return;
         }
     };
 
@@ -307,6 +307,7 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
         handlePracticeDragEnd,
         handleAddVideo,
         handleUpdateVideo,
+        handleDeleteVideo,
         handleAddExamQuestion,
         handleDeleteExamQuestion,
         handleUpdateExamQuestion,

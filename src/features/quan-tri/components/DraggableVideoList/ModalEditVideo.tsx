@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { Button, Input, Modal, Textarea } from "@mantine/core";
+import { Button, Checkbox, Input, Modal, Textarea } from "@mantine/core";
 import { useForm } from "react-hook-form";
 
 import { Video } from "@/types/api";
@@ -64,6 +64,12 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
                         error={form.formState.errors.description?.message}
                     />
                 </Input.Wrapper>
+
+                {/* <div className="w-full flex items-center justify-between"> */}
+                <Checkbox label="Cho phép tua" />
+
+                <Checkbox label="Xem hết để hoàn thành" defaultChecked />
+                {/* </div> */}
 
                 <div className="flex justify-end gap-x-2 mt-4">
                     <Button variant="outline" onClick={onClose}>

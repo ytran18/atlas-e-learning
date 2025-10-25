@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useContext } from "react";
 
 import { useCourseForm } from "@/features/shared/hooks/useCourseForm";
-import { CourseDetail } from "@/types/api";
+import { CourseDetail, Video } from "@/types/api";
 
 interface CourseFormContextType {
     form: ReturnType<typeof useCourseForm>["form"];
@@ -15,18 +15,14 @@ interface CourseFormContextType {
     handleCancelEdit: () => void;
     handleTheoryDragEnd: (result: any) => void;
     handlePracticeDragEnd: (result: any) => void;
-    handleAddVideo: (data: {
-        title: string;
-        description: string;
-        file: File | null;
-        section: "theory" | "practice";
-    }) => Promise<void>;
+    handleAddVideo: (data: { video: Video; section: "theory" | "practice" }) => Promise<void>;
     handleUpdateVideo: (videoId: string, data: { title: string; description: string }) => void;
     handleAddExamQuestion: (data: {
         content: string;
         options: { id: string; content: string }[];
         correctAnswer: string;
     }) => void;
+    handleDeleteVideo: (videoId: string) => void;
     handleDeleteExamQuestion: (questionId: string) => void;
     handleUpdateExamQuestion: (
         questionId: string,

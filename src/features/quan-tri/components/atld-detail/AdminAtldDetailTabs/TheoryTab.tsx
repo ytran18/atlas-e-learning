@@ -17,8 +17,15 @@ const TheoryTab = () => {
     const { theory } = courseDetail;
 
     // Use the shared course form context
-    const { form, isLoading, editVideos, handleTheoryDragEnd, handleAddVideo, handleUpdateVideo } =
-        useCourseFormContext();
+    const {
+        form,
+        isLoading,
+        editVideos,
+        handleTheoryDragEnd,
+        handleAddVideo,
+        handleUpdateVideo,
+        handleDeleteVideo,
+    } = useCourseFormContext();
 
     // Add video modal state
     const [isAddVideoModalOpen, setIsAddVideoModalOpen] = useState(false);
@@ -67,6 +74,7 @@ const TheoryTab = () => {
                     onDragEnd={handleTheoryDragEnd}
                     isEditMode={isEditMode}
                     onUpdateVideo={handleUpdateVideo}
+                    onDeleteVideo={handleDeleteVideo}
                 />
 
                 {isEditMode && (
@@ -86,7 +94,7 @@ const TheoryTab = () => {
             <VideoUploadModal
                 opened={isAddVideoModalOpen}
                 onClose={() => setIsAddVideoModalOpen(false)}
-                onSubmit={(data) => handleAddVideo({ ...data, section: "theory" })}
+                onSubmit={(video) => handleAddVideo({ video, section: "theory" })}
                 title="Thêm video mới"
             />
         </div>

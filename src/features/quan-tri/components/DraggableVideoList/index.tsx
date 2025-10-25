@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card, Text, ThemeIcon, Tooltip } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import { IconEdit, IconGripVertical, IconTrash } from "@tabler/icons-react";
 
 import Empty from "@/components/Empty";
@@ -15,6 +16,7 @@ interface DraggableVideoListProps {
     isEditMode: boolean;
     onDragEnd: (result: any) => void;
     onUpdateVideo?: (videoId: string, data: { title: string; description: string }) => void;
+    onDeleteVideo?: (videoId: string) => void;
 }
 
 const DraggableVideoList = ({
@@ -22,6 +24,7 @@ const DraggableVideoList = ({
     isEditMode,
     onDragEnd,
     onUpdateVideo,
+    onDeleteVideo,
 }: DraggableVideoListProps) => {
     const [isEditVideoModalOpen, setIsEditVideoModalOpen] = useState<boolean>(false);
 
@@ -32,6 +35,20 @@ const DraggableVideoList = ({
     const handleEditVideo = (video: Video) => {
         setSelectedVideo(video);
         setIsEditVideoModalOpen(true);
+    };
+
+    const handleDeleteVideo = (video: Video) => {
+        if (onDeleteVideo && video.id) {
+            modals.openConfirmModal({
+                title: "Xác nhận xóa video",
+                centered: true,
+                children: <Text size="sm">Bạn có chắc chắn muốn xóa video này?</Text>,
+                labels: { confirm: "Xóa", cancel: "Huỷ" },
+                confirmProps: { color: "red" },
+                onCancel: () => {},
+                onConfirm: () => onDeleteVideo(video.id),
+            });
+        }
     };
 
     const handleUpdateVideo = (data: { title: string; description: string; id: string }) => {
@@ -111,6 +128,9 @@ const DraggableVideoList = ({
                                                                 color="red"
                                                                 className="cursor-pointer"
                                                                 size="md"
+                                                                onClick={() =>
+                                                                    handleDeleteVideo(video)
+                                                                }
                                                             >
                                                                 <IconTrash />
                                                             </ThemeIcon>
@@ -153,7 +173,13 @@ const DraggableVideoList = ({
     return (
         <div className="flex flex-col gap-y-3">
             {videos.map((video, index) => (
-                <Card withBorder key={`video-${video.sortNo}-${index}`}>
+                <Card
+                    withBorder
+                    key={`video-${video.sortNo}-${index}`}
+                    onClick={() => {
+                        window.open(video.url, "_blank");
+                    }}
+                >
                     <div className="flex items-center gap-x-3 cursor-pointer">
                         <div className="w-[100px] h-[50px]">
                             <VideoPlayer src={video.url} isPreview />
