@@ -5,13 +5,11 @@ const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
 const isMixpanelReady = () => {
     return (
         typeof mixpanel !== "undefined" &&
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (mixpanel as any).config &&
         typeof mixpanel.track === "function"
     );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const dispatchTrackingEvent = (eventName: string, payload: any) => {
     // Send to Mixpanel
     try {

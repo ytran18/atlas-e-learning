@@ -53,7 +53,7 @@ export async function testR2Connection(): Promise<boolean> {
 }
 
 // Convert R2 SDK errors into user-friendly messages
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export function handleR2Error(error: any): string {
     if (error.name === "NoSuchBucket") return "Bucket does not exist.";
     if (error.name === "InvalidAccessKeyId") return "Invalid access key.";

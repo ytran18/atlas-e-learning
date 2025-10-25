@@ -2,7 +2,7 @@ export interface Group {
     id: number;
     name: string;
     color: string;
-    // eslint-disable-next-line
+
     icon: any;
     totalStudents?: number;
 }
