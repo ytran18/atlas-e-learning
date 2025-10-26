@@ -79,6 +79,7 @@ const VideoPlayer = ({
                 ref={videoElementRef}
                 slot="media"
                 src={src}
+                playsInline
                 onEnded={onEnded}
                 onPause={onPause}
                 onPlay={onPlay}
