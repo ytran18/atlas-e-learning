@@ -16,7 +16,16 @@ interface CourseFormContextType {
     handleTheoryDragEnd: (result: any) => void;
     handlePracticeDragEnd: (result: any) => void;
     handleAddVideo: (data: { video: Video; section: "theory" | "practice" }) => Promise<void>;
-    handleUpdateVideo: (videoId: string, data: { title: string; description: string }) => void;
+    handleUpdateVideo: (
+        videoId: string,
+        data: {
+            title: string;
+            description: string;
+            canSeek: boolean;
+            shouldCompleteToPassed: boolean;
+            url: string;
+        }
+    ) => void;
     handleAddExamQuestion: (data: {
         content: string;
         options: { id: string; content: string }[];

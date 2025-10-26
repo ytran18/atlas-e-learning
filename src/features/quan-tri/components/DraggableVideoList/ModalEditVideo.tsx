@@ -1,45 +1,115 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Button, Checkbox, Input, Modal, Textarea } from "@mantine/core";
+import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
 import { useForm } from "react-hook-form";
 
 import { Video } from "@/types/api";
+
+import VideoBlock from "./VideoBlock";
 
 type ModalEditVideoProps = {
     opened: boolean;
     video: Video;
     onClose: () => void;
-    onSubmit: (data: { title: string; description: string; id: string }) => void;
+    onSubmit: (data: {
+        title: string;
+        description: string;
+        id: string;
+        canSeek: boolean;
+        shouldCompleteToPassed: boolean;
+        url: string;
+    }) => void;
+};
+
+type ModalEditVideoFormData = {
+    title: string;
+    description: string;
+    canSeek: boolean;
+    shouldCompleteToPassed: boolean;
 };
 
 const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProps) => {
-    const form = useForm<{ title: string; description: string }>({
+    const [newVideoUrl, setNewVideoUrl] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const form = useForm<ModalEditVideoFormData>({
         defaultValues: {
             title: video?.title || "",
             description: video?.description || "",
+            canSeek: video?.canSeek || false,
+            shouldCompleteToPassed: video?.shouldCompleteToPassed || true,
         },
     });
 
     // Reset form when video changes
     useEffect(() => {
         if (video) {
-            console.log({ video });
-
             form.reset({
                 title: video.title || "",
                 description: video.description || "",
+                canSeek: video.canSeek || false,
+                shouldCompleteToPassed: video.shouldCompleteToPassed || true,
             });
+            setNewVideoUrl(null);
         }
     }, [video, form]);
 
-    const handleSubmit = (data: { title: string; description: string }) => {
-        const value = {
-            ...data,
-            id: video.id,
-        };
+    const handleSubmit = async (data: ModalEditVideoFormData) => {
+        setIsSubmitting(true);
+        try {
+            const value = {
+                ...data,
+                id: video.id,
+                url: newVideoUrl || video.url,
+            };
 
-        onSubmit(value);
-        onClose();
+            await onSubmit(value);
+
+            notifications.show({
+                title: "Thành công",
+                message: "Video đã được cập nhật thành công",
+                color: "green",
+                position: "top-right",
+            });
+
+            onClose();
+        } catch (error) {
+            console.error("Error updating video:", error);
+            notifications.show({
+                title: "Lỗi",
+                message: "Có lỗi xảy ra khi cập nhật video. Vui lòng thử lại.",
+                color: "red",
+                position: "top-right",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleVideoReplace = (newUrl: string) => {
+        setNewVideoUrl(newUrl);
+    };
+
+    const handleClose = () => {
+        if (form.formState.isDirty || newVideoUrl) {
+            modals.openConfirmModal({
+                title: "Bạn có chắc chắn muốn thoát? Các thay đổi chưa lưu sẽ bị mất.",
+                centered: true,
+                children: <p>Bạn có chắc chắn muốn thoát? Các thay đổi chưa lưu sẽ bị mất.</p>,
+                labels: { confirm: "Thoát", cancel: "Huỷ" },
+                confirmProps: { color: "red" },
+                onCancel: () => {},
+                onConfirm: () => {
+                    form.reset();
+                    setNewVideoUrl(null);
+                    onClose();
+                },
+            });
+        } else {
+            onClose();
+        }
     };
 
     if (!video) {
@@ -47,7 +117,7 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
     }
 
     return (
-        <Modal size="lg" title="Chỉnh sửa video" opened={opened} onClose={onClose} centered>
+        <Modal size="lg" title="Chỉnh sửa video" opened={opened} onClose={handleClose} centered>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-y-4">
                 <Input.Wrapper label="Tiêu đề video" withAsterisk>
                     <Input
@@ -65,17 +135,28 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
                     />
                 </Input.Wrapper>
 
-                {/* <div className="w-full flex items-center justify-between"> */}
-                <Checkbox label="Cho phép tua" />
+                <VideoBlock
+                    video={video}
+                    onVideoReplace={handleVideoReplace}
+                    newVideoUrl={newVideoUrl}
+                />
 
-                <Checkbox label="Xem hết để hoàn thành" defaultChecked />
-                {/* </div> */}
+                <Checkbox label="Cho phép tua" {...form.register("canSeek")} />
+
+                <Checkbox
+                    label="Xem hết để hoàn thành"
+                    {...form.register("shouldCompleteToPassed")}
+                />
 
                 <div className="flex justify-end gap-x-2 mt-4">
-                    <Button variant="outline" onClick={onClose}>
+                    <Button variant="outline" onClick={handleClose} type="button">
                         Hủy
                     </Button>
-                    <Button type="submit" loading={form.formState.isSubmitting}>
+                    <Button
+                        type="submit"
+                        loading={isSubmitting}
+                        disabled={!form.formState.isDirty && !newVideoUrl}
+                    >
                         Cập nhật
                     </Button>
                 </div>

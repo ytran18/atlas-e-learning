@@ -15,7 +15,16 @@ interface DraggableVideoListProps {
     videos: Video[];
     isEditMode: boolean;
     onDragEnd: (result: any) => void;
-    onUpdateVideo?: (videoId: string, data: { title: string; description: string }) => void;
+    onUpdateVideo?: (
+        videoId: string,
+        data: {
+            title: string;
+            description: string;
+            canSeek: boolean;
+            shouldCompleteToPassed: boolean;
+            url: string;
+        }
+    ) => void;
     onDeleteVideo?: (videoId: string) => void;
 }
 
@@ -51,7 +60,14 @@ const DraggableVideoList = ({
         }
     };
 
-    const handleUpdateVideo = (data: { title: string; description: string; id: string }) => {
+    const handleUpdateVideo = (data: {
+        title: string;
+        description: string;
+        id: string;
+        canSeek: boolean;
+        shouldCompleteToPassed: boolean;
+        url: string;
+    }) => {
         if (selectedVideo && onUpdateVideo) {
             onUpdateVideo(data.id, data);
         }
@@ -173,29 +189,34 @@ const DraggableVideoList = ({
     return (
         <div className="flex flex-col gap-y-3">
             {videos.map((video, index) => (
-                <Card
-                    withBorder
+                <Tooltip
+                    label="Nhấn vào đây để xem video"
+                    withArrow
                     key={`video-${video.sortNo}-${index}`}
-                    onClick={() => {
-                        window.open(video.url, "_blank");
-                    }}
                 >
-                    <div className="flex items-center gap-x-3 cursor-pointer">
-                        <div className="w-[100px] h-[50px]">
-                            <VideoPlayer src={video.url} isPreview />
-                        </div>
+                    <Card
+                        withBorder
+                        onClick={() => {
+                            window.open(video.url, "_blank");
+                        }}
+                    >
+                        <div className="flex items-center gap-x-3 cursor-pointer">
+                            <div className="w-[100px] h-[50px]">
+                                <VideoPlayer src={video.url} isPreview />
+                            </div>
 
-                        <div className="">
-                            <Text size="sm" fw={500}>
-                                {video.title}
-                            </Text>
+                            <div className="">
+                                <Text size="sm" fw={500}>
+                                    {video.title}
+                                </Text>
 
-                            <Text size="sm" c="dimmed">
-                                {video.description}
-                            </Text>
+                                <Text size="sm" c="dimmed">
+                                    {video.description}
+                                </Text>
+                            </div>
                         </div>
-                    </div>
-                </Card>
+                    </Card>
+                </Tooltip>
             ))}
         </div>
     );

@@ -1,4 +1,4 @@
-import { Badge, Card, Group, Text, Title } from "@mantine/core";
+import { Card, Group, Text, Title } from "@mantine/core";
 
 const Header = () => {
     return (
@@ -9,14 +9,6 @@ const Header = () => {
                         <Title order={1} className="text-lg md:text-2xl font-bold truncate">
                             Quản trị hệ thống
                         </Title>
-                        <Badge
-                            variant="default"
-                            color="white"
-                            size="sm"
-                            className="sm:inline-block"
-                        >
-                            Admin Panel
-                        </Badge>
                     </Group>
                     <Text className="text-sm md:text-lg opacity-90">
                         Quản lý khóa học, video và người dùng

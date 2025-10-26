@@ -174,7 +174,16 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
     };
 
     // Handle update video
-    const handleUpdateVideo = (videoId: string, data: { title: string; description: string }) => {
+    const handleUpdateVideo = (
+        videoId: string,
+        data: {
+            title: string;
+            description: string;
+            canSeek: boolean;
+            shouldCompleteToPassed: boolean;
+            url: string;
+        }
+    ) => {
         // Update video in theory section
         const theoryVideos = [...watchedValues.theory.videos];
         const theoryVideoIndex = theoryVideos.findIndex((video) => video.id === videoId);
@@ -184,6 +193,9 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
                 ...theoryVideos[theoryVideoIndex],
                 title: data.title,
                 description: data.description,
+                canSeek: data.canSeek,
+                shouldCompleteToPassed: data.shouldCompleteToPassed,
+                url: data.url,
             };
             setValue("theory.videos", theoryVideos, { shouldDirty: true });
             return;

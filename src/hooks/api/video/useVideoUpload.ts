@@ -32,7 +32,9 @@ export function useVideoUpload(options: UseVideoUploadOptions = {}) {
             }
 
             // Get auth token
-            const token = await getToken();
+            const token = await getToken({
+                template: "default-auth",
+            });
             if (!token) {
                 throw new Error("No authentication token available");
             }

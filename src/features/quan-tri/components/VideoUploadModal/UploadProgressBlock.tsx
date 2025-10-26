@@ -8,10 +8,16 @@ type UploadProgressBlockProps = {
 
 const UploadProgressBlock: FunctionComponent<UploadProgressBlockProps> = ({ uploadProgress }) => {
     return (
-        <div className="space-y-4">
-            <Text size="sm" fw={500}>
-                Đang tải lên...
-            </Text>
+        <div className="flex flex-col gap-y-1">
+            <div className="w-full flex justify-between items-center">
+                <Text size="sm" fw={500}>
+                    Đang tải lên...
+                </Text>
+
+                <Text size="sm" fw={500}>
+                    {uploadProgress}%
+                </Text>
+            </div>
 
             <Progress value={uploadProgress} size="sm" />
         </div>
