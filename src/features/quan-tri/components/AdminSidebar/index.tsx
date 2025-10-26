@@ -18,10 +18,10 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
     onSelectCourse,
     children,
 }) => {
-    const { atldId } = useParams();
+    const { atldId, hocNgheId } = useParams();
 
     return (
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 w-1/4">
             <Card withBorder shadow="md" radius="md" p="md" className="bg-white h-full">
                 <div className="w-full flex justify-between items-center mb-4">
                     <Title order={3}>{title}</Title>
@@ -31,7 +31,7 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
 
                 <Stack gap="sm">
                     {courseList.map((course) => {
-                        const isSelected = course.id === atldId;
+                        const isSelected = course.id === atldId || course.id === hocNgheId;
 
                         return (
                             <Card

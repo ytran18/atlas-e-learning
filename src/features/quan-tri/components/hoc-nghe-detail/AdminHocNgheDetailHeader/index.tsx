@@ -5,24 +5,24 @@ import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { Controller } from "react-hook-form";
 
-import { useAtldAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
+import { useHocNgheAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
 import { useCourseFormContext } from "@/features/quan-tri/contexts/CourseFormContext";
 import { useDeleteCourse } from "@/hooks/api";
 
 import EditModeButtons from "../../EditModeButtons";
 import EditableField from "../../EditableField";
 
-const AdminAtldDetailHeader = () => {
-    const { atldId } = useParams();
+const AdminHocNgheDetailHeader = () => {
+    const { hocNgheId } = useParams();
 
     const router = useRouter();
 
-    const { isEditMode, setIsEditMode } = useAtldAdminDetailContext();
+    const { isEditMode, setIsEditMode } = useHocNgheAdminDetailContext();
 
     // Use the shared course form context
     const { form, isLoading, handleEditToggle, handleCancelEdit } = useCourseFormContext();
 
-    const { mutateAsync: deleteCourse } = useDeleteCourse("atld");
+    const { mutateAsync: deleteCourse } = useDeleteCourse("hoc-nghe");
 
     // Handle save with edit mode toggle
     const handleSave = async () => {
@@ -44,7 +44,7 @@ const AdminAtldDetailHeader = () => {
             labels: { confirm: "Xóa", cancel: "Huỷ" },
             onConfirm: async () => {
                 try {
-                    await deleteCourse({ groupId: atldId as string });
+                    await deleteCourse({ groupId: hocNgheId as string });
 
                     notifications.show({
                         title: "Thành công",
@@ -53,7 +53,7 @@ const AdminAtldDetailHeader = () => {
                         position: "top-right",
                     });
 
-                    router.push("/quan-tri/atld");
+                    router.push("/quan-tri/hoc-nghe");
                 } catch (error) {
                     console.error(error);
                 }
@@ -116,4 +116,4 @@ const AdminAtldDetailHeader = () => {
     );
 };
 
-export default AdminAtldDetailHeader;
+export default AdminHocNgheDetailHeader;

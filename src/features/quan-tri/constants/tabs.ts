@@ -3,3 +3,9 @@ export enum AdminAtldDetailTabs {
     PRACTICE = "practice",
     EXAM = "exam",
 }
+
+export enum AdminHocNgheDetailTabs {
+    THEORY = "theory",
+    PRACTICE = "practice",
+    EXAM = "exam",
+}

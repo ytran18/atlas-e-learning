@@ -4,7 +4,7 @@ import { Button, ScrollArea } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 
 import Empty from "@/components/Empty";
-import { useAtldAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
+import { useHocNgheAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
 import { useCourseFormContext } from "@/features/quan-tri/contexts/CourseFormContext";
 import { ExamQuestion } from "@/types/api";
 
@@ -13,7 +13,7 @@ import QuestionCard from "../../QuestionCard";
 
 const ExamTab = () => {
     // contexts
-    const { isEditMode } = useAtldAdminDetailContext();
+    const { isEditMode } = useHocNgheAdminDetailContext();
 
     const { editExam, handleAddExamQuestion, handleUpdateExamQuestion } = useCourseFormContext();
 

@@ -4,7 +4,7 @@ import { Button, Text } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { Controller } from "react-hook-form";
 
-import { useAtldAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
+import { useHocNgheAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
 import { useCourseFormContext } from "@/features/quan-tri/contexts/CourseFormContext";
 
 import DraggableVideoList from "../../DraggableVideoList";
@@ -12,7 +12,7 @@ import EditableField from "../../EditableField";
 import VideoUploadModal from "../../VideoUploadModal";
 
 const PracticeTab = () => {
-    const { courseDetail, isEditMode } = useAtldAdminDetailContext();
+    const { courseDetail, isEditMode } = useHocNgheAdminDetailContext();
 
     const { practice } = courseDetail;
 

@@ -6,29 +6,29 @@ import { Card } from "@mantine/core";
 
 import { useCourseDetail } from "@/hooks/api";
 
-import AdminAtldDetailHeader from "../components/atld-detail/AdminAtldDetailHeader";
-import AdminAtldDetailTabs from "../components/atld-detail/AdminAtldDetailTabs";
+import AdminHocNgheDetailHeader from "../components/hoc-nghe-detail/AdminHocNgheDetailHeader";
+import AdminHocNgheDetailTabs from "../components/hoc-nghe-detail/AdminHocNgheDetailTabs";
 import { AdminDetailProvider } from "../contexts/AdminDetailContext";
 import { CourseFormProvider } from "../contexts/CourseFormContext";
 
-const AtldDetailPage = () => {
-    const { atldId } = useParams();
+const AtldHocNgheDetailPage = () => {
+    const { hocNgheId } = useParams();
 
-    const { data: courseDetail } = useCourseDetail("atld", atldId as string);
+    const { data: courseDetail } = useCourseDetail("hoc-nghe", hocNgheId as string);
 
     if (!courseDetail) return <div>Loading...</div>;
 
     return (
         <Card withBorder shadow="md" radius="md" p="md" className="flex-1 gap-y-4">
             <AdminDetailProvider courseDetail={courseDetail}>
-                <CourseFormProvider courseDetail={courseDetail} courseType="atld">
-                    <AdminAtldDetailHeader />
+                <CourseFormProvider courseDetail={courseDetail} courseType="hoc-nghe">
+                    <AdminHocNgheDetailHeader />
 
-                    <AdminAtldDetailTabs />
+                    <AdminHocNgheDetailTabs />
                 </CourseFormProvider>
             </AdminDetailProvider>
         </Card>
     );
 };
 
-export default AtldDetailPage;
+export default AtldHocNgheDetailPage;

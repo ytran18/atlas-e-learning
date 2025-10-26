@@ -1,15 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { Card, Tabs, ThemeIcon } from "@mantine/core";
 import { IconHammer, IconShield, IconUsers } from "@tabler/icons-react";
 
 import { navigationPaths } from "@/utils/navigationPaths";
 
-type AdminTabsProps = {
-    currentTab: string;
-};
+import { getCurrentAdminPathname } from "../../utils/get-current-admin-pathname";
 
 export const adminNavItems = [
     {
@@ -35,7 +34,11 @@ export const adminNavItems = [
     },
 ];
 
-const AdminTabs = ({ currentTab }: AdminTabsProps) => {
+const AdminTabs = () => {
+    const pathname = usePathname();
+
+    const currentTab = getCurrentAdminPathname(pathname);
+
     return (
         <Card withBorder radius="md" p="md">
             <Tabs

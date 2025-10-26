@@ -4,7 +4,7 @@ import { IconEdit, IconTrash } from "@tabler/icons-react";
 
 import { ExamQuestion } from "@/types/api";
 
-import { useAtldAdminDetailContext } from "../../contexts/AtldAdminDetailContext";
+import { useAtldAdminDetailContext } from "../../contexts/AdminDetailContext";
 import { useCourseFormContext } from "../../contexts/CourseFormContext";
 
 type QuestionCardProps = {

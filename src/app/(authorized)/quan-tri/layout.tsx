@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             >
                 <Header />
 
-                <AdminTabs currentTab="atld" />
+                <AdminTabs />
 
                 {children}
             </Container>
