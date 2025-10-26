@@ -26,6 +26,7 @@ export interface Video {
     length: number; // duration in seconds
     canSeek?: boolean;
     shouldCompleteToPassed?: boolean;
+    thumbnailUrl?: string;
 }
 
 // ============================================================================

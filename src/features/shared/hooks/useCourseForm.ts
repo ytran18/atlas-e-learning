@@ -182,6 +182,7 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
             canSeek: boolean;
             shouldCompleteToPassed: boolean;
             url: string;
+            thumbnailUrl: string;
         }
     ) => {
         // Update video in theory section
@@ -196,6 +197,7 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
                 canSeek: data.canSeek,
                 shouldCompleteToPassed: data.shouldCompleteToPassed,
                 url: data.url,
+                thumbnailUrl: data.thumbnailUrl,
             };
             setValue("theory.videos", theoryVideos, { shouldDirty: true });
             return;
@@ -210,6 +212,7 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
                 ...practiceVideos[practiceVideoIndex],
                 title: data.title,
                 description: data.description,
+                thumbnailUrl: data.thumbnailUrl,
             };
             setValue("practice.videos", practiceVideos, { shouldDirty: true });
         }

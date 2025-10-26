@@ -24,6 +24,7 @@ interface CourseFormContextType {
             canSeek: boolean;
             shouldCompleteToPassed: boolean;
             url: string;
+            thumbnailUrl: string;
         }
     ) => void;
     handleAddExamQuestion: (data: {

@@ -1,5 +1,5 @@
 import { Button, Group } from "@mantine/core";
-import { IconDeviceFloppy, IconEdit, IconX } from "@tabler/icons-react";
+import { IconDeviceFloppy, IconEdit, IconTrashFilled, IconX } from "@tabler/icons-react";
 
 interface EditModeButtonsProps {
     isEditMode: boolean;
@@ -41,7 +41,7 @@ const EditModeButtons = ({
                     </Button>
 
                     <Button
-                        leftSection={<IconDeviceFloppy />}
+                        leftSection={<IconTrashFilled />}
                         variant="filled"
                         color="red"
                         onClick={onDelete}

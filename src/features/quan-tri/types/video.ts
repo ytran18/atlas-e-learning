@@ -19,7 +19,7 @@ export interface FinalResult {
     taskId: string;
     processingTime: number;
     m3u8Playlist: string;
-    r2UploadResult: {
+    uploadResult: {
         url: string;
         key: string;
         size: number;
@@ -30,6 +30,7 @@ export interface FinalResult {
         key: string;
         size: number;
     }>;
+    thumbnailUrl: string;
 }
 
 export interface UploadResult {
@@ -44,6 +45,7 @@ export interface UploadResult {
             contentType: string;
         };
         taskId?: string;
+        thumbnailUrl?: string;
     };
     error?: string;
 }

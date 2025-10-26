@@ -44,11 +44,9 @@ const VideoDropzone = forwardRef<VideoDropzoneRef, VideoDropzoneProps>(
         } = useVideoUpload({
             maxSizeMB: maxSize,
             onSuccess: (result) => {
-                console.log("Upload success:", result);
                 // Set taskId for WebSocket progress tracking
                 if (result.data?.taskId) {
                     setTaskId(result.data.taskId);
-                    console.log("Task ID set for progress tracking:", result.data.taskId);
                 }
             },
             onError: (error) => {
@@ -69,9 +67,10 @@ const VideoDropzone = forwardRef<VideoDropzoneRef, VideoDropzoneProps>(
             onUploadComplete?.({
                 success: true,
                 data: {
-                    fileKey: result?.r2UploadResult?.key,
-                    publicUrl: result?.r2UploadResult?.url,
+                    fileKey: result?.uploadResult?.key,
+                    publicUrl: result?.uploadResult?.url,
                     taskId: result?.taskId,
+                    thumbnailUrl: result?.thumbnailUrl,
                 },
             });
         });

@@ -1,12 +1,11 @@
 import { useState } from "react";
 
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { Card, Text, ThemeIcon, Tooltip } from "@mantine/core";
+import { Card, Image, Text, ThemeIcon, Tooltip } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconEdit, IconGripVertical, IconTrash } from "@tabler/icons-react";
 
 import Empty from "@/components/Empty";
-import VideoPlayer from "@/libs/player/VideoPlayer";
 import { Video } from "@/types/api";
 
 import ModalEditVideo from "./ModalEditVideo";
@@ -23,6 +22,7 @@ interface DraggableVideoListProps {
             canSeek: boolean;
             shouldCompleteToPassed: boolean;
             url: string;
+            thumbnailUrl: string;
         }
     ) => void;
     onDeleteVideo?: (videoId: string) => void;
@@ -67,8 +67,10 @@ const DraggableVideoList = ({
         canSeek: boolean;
         shouldCompleteToPassed: boolean;
         url: string;
+        thumbnailUrl: string;
     }) => {
         if (selectedVideo && onUpdateVideo) {
+            console.log("handleUpdateVideo", data);
             onUpdateVideo(data.id, data);
         }
     };
@@ -125,7 +127,10 @@ const DraggableVideoList = ({
                                                     </div>
 
                                                     <div className="w-[100px] h-[50px]">
-                                                        <VideoPlayer src={video.url} isPreview />
+                                                        <Image
+                                                            src={video.thumbnailUrl}
+                                                            alt={video.title}
+                                                        />
                                                     </div>
 
                                                     <div className="flex-1">
@@ -202,7 +207,7 @@ const DraggableVideoList = ({
                     >
                         <div className="flex items-center gap-x-3 cursor-pointer">
                             <div className="w-[100px] h-[50px]">
-                                <VideoPlayer src={video.url} isPreview />
+                                <Image src={video.thumbnailUrl} alt={video.title} />
                             </div>
 
                             <div className="">

@@ -125,6 +125,7 @@ const VideoUploadModal = ({
                 length: 0, // Will be updated when video metadata is available
                 canSeek: formData.canSeek,
                 shouldCompleteToPassed: formData.shouldCompleteToPassed,
+                thumbnailUrl: result.data.thumbnailUrl,
             };
 
             onSubmit(video);

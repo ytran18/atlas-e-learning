@@ -28,10 +28,10 @@ const UploadedResultBlock: FunctionComponent<UploadedResultBlockProps> = ({ resu
                     <strong>M3U8 Playlist:</strong> {result.m3u8Playlist}
                 </Text>
                 <Text size="sm">
-                    <strong>R2 URL:</strong> {result.r2UploadResult.url}
+                    <strong>R2 URL:</strong> {result.uploadResult.url}
                 </Text>
                 <Text size="sm">
-                    <strong>R2 Key:</strong> {result.r2UploadResult.key}
+                    <strong>R2 Key:</strong> {result.uploadResult.key}
                 </Text>
                 <Text size="sm">
                     <strong>Segments:</strong> {result.segments.length} files

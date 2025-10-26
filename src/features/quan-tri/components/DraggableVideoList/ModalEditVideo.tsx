@@ -20,11 +20,13 @@ type ModalEditVideoProps = {
         canSeek: boolean;
         shouldCompleteToPassed: boolean;
         url: string;
+        thumbnailUrl: string;
     }) => void;
 };
 
 type ModalEditVideoFormData = {
     title: string;
+    thumbnailUrl: string;
     description: string;
     canSeek: boolean;
     shouldCompleteToPassed: boolean;
@@ -32,7 +34,14 @@ type ModalEditVideoFormData = {
 
 const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProps) => {
     const [newVideoUrl, setNewVideoUrl] = useState<string | null>(null);
+
+    const [newThumbnailUrl, setNewThumbnailUrl] = useState<string | null>(null);
+
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [isUploading, setIsUploading] = useState(false);
+
+    const [hasSelectedFile, setHasSelectedFile] = useState(false);
 
     const form = useForm<ModalEditVideoFormData>({
         defaultValues: {
@@ -40,6 +49,7 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
             description: video?.description || "",
             canSeek: video?.canSeek || false,
             shouldCompleteToPassed: video?.shouldCompleteToPassed || true,
+            thumbnailUrl: video?.thumbnailUrl || "",
         },
     });
 
@@ -51,18 +61,28 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
                 description: video.description || "",
                 canSeek: video.canSeek || false,
                 shouldCompleteToPassed: video.shouldCompleteToPassed || true,
+                thumbnailUrl: video.thumbnailUrl || "",
             });
+
             setNewVideoUrl(null);
+
+            setNewThumbnailUrl(null);
+
+            setIsUploading(false);
+
+            setHasSelectedFile(false);
         }
     }, [video, form]);
 
     const handleSubmit = async (data: ModalEditVideoFormData) => {
         setIsSubmitting(true);
+
         try {
             const value = {
                 ...data,
                 id: video.id,
                 url: newVideoUrl || video.url,
+                thumbnailUrl: data.thumbnailUrl,
             };
 
             await onSubmit(value);
@@ -88,22 +108,28 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
         }
     };
 
-    const handleVideoReplace = (newUrl: string) => {
+    const handleVideoReplace = (newUrl: string, thumbnailUrl: string) => {
         setNewVideoUrl(newUrl);
+        setNewThumbnailUrl(thumbnailUrl);
+        // Cập nhật thumbnailUrl vào form
+        form.setValue("thumbnailUrl", thumbnailUrl);
     };
 
     const handleClose = () => {
-        if (form.formState.isDirty || newVideoUrl) {
+        if (form.formState.isDirty || newVideoUrl || isUploading || hasSelectedFile) {
             modals.openConfirmModal({
-                title: "Bạn có chắc chắn muốn thoát? Các thay đổi chưa lưu sẽ bị mất.",
+                title: <p className="font-bold">Bạn có chắc chắn muốn thoát?</p>,
                 centered: true,
-                children: <p>Bạn có chắc chắn muốn thoát? Các thay đổi chưa lưu sẽ bị mất.</p>,
+                children: <p>Các thay đổi chưa lưu sẽ bị mất.</p>,
                 labels: { confirm: "Thoát", cancel: "Huỷ" },
                 confirmProps: { color: "red" },
                 onCancel: () => {},
                 onConfirm: () => {
                     form.reset();
                     setNewVideoUrl(null);
+                    setNewThumbnailUrl(null);
+                    setIsUploading(false);
+                    setHasSelectedFile(false);
                     onClose();
                 },
             });
@@ -117,7 +143,14 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
     }
 
     return (
-        <Modal size="lg" title="Chỉnh sửa video" opened={opened} onClose={handleClose} centered>
+        <Modal
+            size="lg"
+            title="Chỉnh sửa video"
+            opened={opened}
+            onClose={handleClose}
+            closeOnClickOutside={false}
+            centered
+        >
             <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-y-4">
                 <Input.Wrapper label="Tiêu đề video" withAsterisk>
                     <Input
@@ -138,7 +171,12 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
                 <VideoBlock
                     video={video}
                     onVideoReplace={handleVideoReplace}
+                    newThumbnailUrl={newThumbnailUrl}
                     newVideoUrl={newVideoUrl}
+                    onUploadStateChange={(uploading, fileSelected) => {
+                        setIsUploading(uploading);
+                        setHasSelectedFile(fileSelected);
+                    }}
                 />
 
                 <Checkbox label="Cho phép tua" {...form.register("canSeek")} />
@@ -155,7 +193,7 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
                     <Button
                         type="submit"
                         loading={isSubmitting}
-                        disabled={!form.formState.isDirty && !newVideoUrl}
+                        disabled={(!form.formState.isDirty && !newVideoUrl) || isUploading}
                     >
                         Cập nhật
                     </Button>
