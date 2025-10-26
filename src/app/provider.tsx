@@ -7,6 +7,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
+import "@mantine/dropzone/styles.css";
+import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -41,9 +43,11 @@ export default function Provider({ children }: { children: React.ReactNode }) {
         >
             <QueryClientProvider client={queryClient}>
                 <MantineProvider>
-                    <Notifications />
+                    <ModalsProvider>
+                        <Notifications />
 
-                    {children}
+                        {children}
+                    </ModalsProvider>
                 </MantineProvider>
                 {/* React Query Devtools - chỉ hiện trong development */}
                 <ReactQueryDevtools initialIsOpen={false} />
