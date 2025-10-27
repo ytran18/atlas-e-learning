@@ -17,6 +17,8 @@ const HocNghePage = ({ initialData }: HocNghePageProps) => {
         initialData,
     });
 
+    console.log({ hocNgheData: data });
+
     if (!data || isLoading) {
         return null;
     }

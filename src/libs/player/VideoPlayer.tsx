@@ -2,6 +2,7 @@
 
 import { ReactEventHandler, useEffect, useRef, useState } from "react";
 
+import Hls from "hls.js";
 import {
     MediaControlBar,
     MediaController,
@@ -21,6 +22,7 @@ interface VideoPlayerProps {
     onPause?: () => void; // when video paused
     onPlay?: () => void; // when video played
     onProgress?: ReactEventHandler<HTMLVideoElement> | undefined; // when video progress
+    isHls?: boolean; // whether the video source is HLS stream
 }
 
 const LOADING_DEBOUNCE_TIME = 200;
@@ -33,8 +35,10 @@ const VideoPlayer = ({
     onPause,
     onPlay,
     onProgress,
+    isHls = true,
 }: VideoPlayerProps) => {
     const videoElementRef = useRef<HTMLVideoElement | null>(null);
+    const hlsRef = useRef<Hls | null>(null);
 
     const isLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -60,13 +64,75 @@ const VideoPlayer = ({
         }
     };
 
+    // Initialize HLS if needed
+    useEffect(() => {
+        const videoElement = videoElementRef.current;
+
+        if (!videoElement || !isHls) return;
+
+        // Check if HLS is supported natively
+        if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+            // Native HLS support (Safari)
+            videoElement.src = src;
+        } else if (Hls.isSupported()) {
+            // Use hls.js for other browsers
+            if (hlsRef.current) {
+                hlsRef.current.destroy();
+            }
+
+            const hls = new Hls({
+                enableWorker: true,
+                lowLatencyMode: true,
+                backBufferLength: 90,
+            });
+
+            hlsRef.current = hls;
+            hls.loadSource(src);
+            hls.attachMedia(videoElement);
+
+            // Handle HLS events
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                console.log("HLS manifest parsed");
+            });
+
+            hls.on(Hls.Events.ERROR, (event, data) => {
+                console.error("HLS error:", data);
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            console.log("Fatal network error encountered, try to recover");
+                            hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            console.log("Fatal media error encountered, try to recover");
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            console.log("Fatal error, cannot recover");
+                            hls.destroy();
+                            break;
+                    }
+                }
+            });
+        } else {
+            console.error("HLS is not supported in this browser");
+        }
+
+        // Cleanup function
+        return () => {
+            if (hlsRef.current) {
+                hlsRef.current.destroy();
+                hlsRef.current = null;
+            }
+        };
+    }, [src, isHls]);
+
     // Cleanup timeout on unmount
     useEffect(() => {
         return () => {
             clearTimeout(isLoadingTimeoutRef.current as NodeJS.Timeout);
         };
     }, []);
-    // trigger build
 
     return (
         <MediaController
@@ -79,7 +145,7 @@ const VideoPlayer = ({
             <video
                 ref={videoElementRef}
                 slot="media"
-                src={src}
+                src={!isHls ? src : undefined}
                 crossOrigin="anonymous"
                 playsInline
                 onEnded={onEnded}

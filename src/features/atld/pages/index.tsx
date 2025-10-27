@@ -16,6 +16,8 @@ const AtldPage = ({ initialData }: AtldPageProps) => {
         initialData,
     });
 
+    console.log({ atldData: data });
+
     if (!data || isLoading) {
         return null;
     }
