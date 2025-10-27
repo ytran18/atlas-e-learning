@@ -1,89 +1,106 @@
-// /pages/api/video/[...path].ts (hoặc app/api/video/[[...path]]/route.ts)
 import { NextRequest, NextResponse } from "next/server";
 
 import { GetObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
 
 import { r2Client } from "@/libs/cloudflare/r2.client";
 
-// --- HÀM GET (QUAN TRỌNG NHẤT) ---
-export async function GET(
-    request: NextRequest,
-    { params }: { params: Promise<{ path: string[] }> }
-) {
-    try {
-        const resolvedParams = await params;
-        const path = resolvedParams.path;
-        const filePath = path.join("/");
-        const range = request.headers.get("range");
+// --- HÀM GET (ĐÃ TỐI ƯU HÓA) ---
+export async function GET(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
+    const { path } = await context.params;
+    const filePath = path.join("/");
+    const range = request.headers.get("range");
 
-        // Lấy file từ R2
+    // --- LOG #1: YÊU CẦU MỚI ---
+    console.log(`\n✅ [PROXY - ${filePath}] === YÊU CẦU MỚI ===`);
+    console.log(`[PROXY - ${filePath}] Yêu cầu từ Safari: ${request.method}`);
+    console.log(`[PROXY - ${filePath}] Header 'Range' từ Safari: ${range || "Không có"}`);
+
+    try {
+        // --- LOG #2: GỌI R2 ---
+        console.log(`[PROXY - ${filePath}] Đang gọi R2 với Key: ${filePath}`);
         const command = new GetObjectCommand({
             Bucket: process.env.NEXT_PUBLIC_R2_BUCKET_NAME!,
             Key: filePath,
-            ...(range && { Range: range }),
+            ...(range && { Range: range }), // Gửi 'Range' đến R2 nếu có
         });
+
         const response = await r2Client.send(command);
-        const body = response.Body;
+        const body = response.Body; // Lấy stream
+
+        // --- LOG #3: PHẢN HỒI TỪ R2 ---
+        console.log(
+            `[PROXY - ${filePath}] ✅ R2 Phản hồi THÀNH CÔNG (Status ${response.$metadata.httpStatusCode})`
+        );
+        console.log(`[PROXY - ${filePath}] R2 Content-Range: ${response.ContentRange || "N/A"}`);
+        console.log(`[PROXY - ${filePath}] R2 Content-Length: ${response.ContentLength}`);
+        console.log(`[PROXY - ${filePath}] R2 ETag: ${response.ETag}`);
 
         if (!body) {
+            console.error(`[PROXY - ${filePath}] ❌ LỖI: R2 trả về body rỗng!`);
             return new NextResponse("File not found", { status: 404 });
         }
 
-        // Lấy TOÀN BỘ metadata quan trọng từ R2
+        // Lấy metadata từ R2
         const contentRange = response.ContentRange;
         const contentLength = response.ContentLength;
-        const contentType = response.ContentType || "application/octet-stream";
         const etag = response.ETag;
         const lastModified = response.LastModified;
 
-        // --- Xử lý riêng cho .m3u8 (File này NHỎ, không cần stream) ---
+        // --- Logic xác định header ---
+        let contentType: string;
+        let cacheControl: string;
+
         if (filePath.endsWith(".m3u8")) {
-            if (!body) {
-                return new NextResponse("File not found", { status: 404 });
-            }
-
-            const bodyBytes = await body.transformToByteArray();
-
-            // (Nếu cần thay thế URL thì làm ở đây, nhưng chúng ta đã
-            // xác nhận là URL tương đối nên không cần)
-
-            return new NextResponse(new Uint8Array(bodyBytes), {
-                status: 200,
-                headers: {
-                    "Content-Type": "application/vnd.apple.mpegurl",
-                    "Content-Length": bodyBytes.length.toString(),
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                },
-            });
+            contentType = "application/vnd.apple.mpegurl";
+            cacheControl = "no-cache, no-store, must-revalidate";
+        } else if (filePath.endsWith(".ts")) {
+            contentType = "video/mp2t";
+            cacheControl = "public, max-age=3600";
+        } else {
+            contentType = response.ContentType || "application/octet-stream";
+            cacheControl = "public, max-age=3600";
         }
 
-        // --- Xử lý file .ts (Stream) ---
-
-        // Build headers
+        // --- Build headers để trả về cho Safari ---
         const headers: Record<string, string> = {
             "Content-Type": contentType,
+            "Cache-Control": cacheControl,
             "Accept-Ranges": "bytes",
             "Content-Length": contentLength?.toString() || "0",
-            "Cache-Control": "public, max-age=3600",
-
-            // *** BỔ SUNG QUAN TRỌNG ***
-            // Safari có thể cần ETag và Last-Modified để xử lý Range
             ...(etag && { ETag: etag }),
             ...(lastModified && { "Last-Modified": lastModified.toUTCString() }),
         };
 
-        // Thêm Content-Range nếu là 206
         if (range && contentRange) {
             headers["Content-Range"] = contentRange;
         }
 
-        // Stream body trực tiếp
+        const status = range ? 206 : 200;
+
+        // --- LOG #4: TRẢ VỀ CHO SAFARI ---
+        console.log(`[PROXY - ${filePath}] ✅ Chuẩn bị trả về cho Safari`);
+        console.log(
+            `[PROXY - ${filePath}] Status trả về: ${status} ${status === 206 ? "(Partial Content)" : "(OK)"}`
+        );
+        console.log(`[PROXY - ${filePath}] Headers trả về: ${JSON.stringify(headers, null, 2)}`);
+
+        // Trả về response dạng stream
         return new NextResponse(body as any, {
-            status: range ? 206 : 200, // Trả về 206 nếu Safari yêu cầu Range
+            status,
             headers,
         });
     } catch (error) {
-        console.error("Error proxying video file:", error);
+        // --- LOG #5: XỬ LÝ LỖI ---
+        console.error(`\n❌❌❌ [PROXY - ${filePath}] === LỖI NGHIÊM TRỌNG ===`);
+        if (error instanceof Error) {
+            console.error(`[PROXY - ${filePath}] Tên lỗi: ${error.name}`);
+            console.error(`[PROXY - ${filePath}] Thông điệp lỗi: ${error.message}`);
+            // Ghi đầy đủ stack trace để debug
+            console.error(`[PROXY - ${filePath}] Stack Trace: ${error.stack}`);
+        } else {
+            console.error(`[PROXY - ${filePath}] Lỗi không xác định:`, error);
+        }
+
         if (error instanceof Error && error.name === "NoSuchKey") {
             return new NextResponse("File not found", { status: 404 });
         }
@@ -91,14 +108,10 @@ export async function GET(
     }
 }
 
-// --- HÀM HEAD (HIỆU NĂNG CAO) ---
-export async function HEAD(
-    request: NextRequest,
-    { params }: { params: Promise<{ path: string[] }> }
-) {
+// --- HÀM HEAD (Rất quan trọng cho HLS) ---
+export async function HEAD(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
     try {
-        const resolvedParams = await params;
-        const path = resolvedParams.path;
+        const { path } = await context.params;
         const filePath = path.join("/");
 
         // Chỉ lấy metadata, không lấy body
@@ -109,17 +122,18 @@ export async function HEAD(
         const response = await r2Client.send(command);
 
         let contentType: string;
+        let cacheControl: string;
+
         if (filePath.endsWith(".m3u8")) {
             contentType = "application/vnd.apple.mpegurl";
+            cacheControl = "no-cache, no-store, must-revalidate";
         } else if (filePath.endsWith(".ts")) {
             contentType = "video/mp2t";
+            cacheControl = "public, max-age=3600";
         } else {
             contentType = response.ContentType || "application/octet-stream";
+            cacheControl = "public, max-age=3600";
         }
-
-        const cacheControl = filePath.endsWith(".m3u8")
-            ? "no-cache, no-store, must-revalidate"
-            : "public, max-age=3600";
 
         return new NextResponse(null, {
             status: 200,
@@ -138,12 +152,12 @@ export async function HEAD(
     }
 }
 
-// --- HÀM OPTIONS (CHO CORS NẾU CẦN) ---
+// --- HÀM OPTIONS (Giữ nguyên) ---
 export async function OPTIONS() {
     return new NextResponse(null, {
         status: 200,
         headers: {
-            "Access-Control-Allow-Origin": "*", // Thay bằng domain của bạn
+            "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
             "Access-Control-Allow-Headers": "Range, Content-Range, If-Range",
             "Access-Control-Max-Age": "86400",
