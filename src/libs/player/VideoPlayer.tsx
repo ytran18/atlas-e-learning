@@ -78,7 +78,7 @@ const VideoPlayer = ({
             <video
                 ref={videoElementRef}
                 slot="media"
-                src={src}
+                src={`${src}?v=${new Date().getTime()}`}
                 playsInline
                 onEnded={onEnded}
                 onPause={onPause}
