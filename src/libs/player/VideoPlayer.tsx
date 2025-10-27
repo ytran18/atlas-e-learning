@@ -80,6 +80,7 @@ const VideoPlayer = ({
                 ref={videoElementRef}
                 slot="media"
                 src={src}
+                crossOrigin="anonymous"
                 playsInline
                 onEnded={onEnded}
                 onPause={onPause}

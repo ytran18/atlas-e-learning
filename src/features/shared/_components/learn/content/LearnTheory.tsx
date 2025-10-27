@@ -117,7 +117,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                 {/* Video Player Container */}
                 <div className="flex-1 min-h-0">
                     <VideoPlayer
-                        src={currentVideo?.url || learnDetail.theory.videos[0].url}
+                        src={currentVideo?.url || learnDetail.theory.videos?.[0]?.url}
                         canSeek={currentVideo?.canSeek || learnDetail.theory.videos[0].canSeek}
                         onEnded={handleVideoEndedInternal}
                         onPlay={handleVideoPlay}
