@@ -64,7 +64,7 @@ export async function GET(
                     "Content-Type": contentType,
                     "Content-Length": modifiedBytes.length.toString(),
                     "Accept-Ranges": "bytes",
-                    "Cache-Control": "public, max-age=3600",
+                    "Cache-Control": "no-cache, no-store, must-revalidate", // Ngăn Cloudflare cache
                     // Include range info if it's a partial content request
                     ...(range &&
                         contentRange && {
