@@ -199,21 +199,21 @@ const VideoPlayer = ({
                                 {isLoadingVideo ? (
                                     <MediaLoadingIndicator />
                                 ) : (
-                                    <MediaPlayButton className="size-5" />
+                                    <MediaPlayButton className="size-5 bg-transparent" />
                                 )}
 
-                                <MediaTimeDisplay showDuration />
+                                <MediaTimeDisplay showDuration className="bg-transparent" />
                             </div>
 
                             <div className="flex items-center gap-x-4">
-                                <MediaVolumeRange />
+                                <MediaVolumeRange className="bg-transparent" />
 
-                                <MediaFullscreenButton />
+                                <MediaFullscreenButton className="bg-transparent" />
                             </div>
                         </div>
 
                         <MediaTimeRange
-                            className={`w-full ${!canSeek ? "pointer-events-none" : ""}`}
+                            className={`w-full bg-transparent ${!canSeek ? "pointer-events-none" : ""}`}
                         />
                     </div>
                 </MediaControlBar>

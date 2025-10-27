@@ -115,7 +115,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
         >
             <div className="flex flex-col gap-4 lg:gap-6 h-full">
                 {/* Video Player Container */}
-                <div className="flex-1 min-h-0">
+                <div className="min-h-0">
                     <VideoPlayer
                         src={currentVideo?.url || learnDetail.theory.videos?.[0]?.url}
                         canSeek={currentVideo?.canSeek || learnDetail.theory.videos[0].canSeek}
