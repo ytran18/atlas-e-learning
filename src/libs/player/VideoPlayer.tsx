@@ -96,6 +96,7 @@ const VideoPlayer = ({
         // Check if HLS is supported natively
         if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
             // Native HLS support (Safari) - use proxy URL
+            console.log("proxySrc can play type", proxySrc);
             videoElement.src = proxySrc;
         } else if (Hls.isSupported()) {
             // Use hls.js for other browsers - also use proxy URL for consistency
