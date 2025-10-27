@@ -47,6 +47,9 @@ const VideoPlayer = ({
 
     // Convert R2 URLs to proxy URLs for same-origin requests
     const getProxyUrl = (originalUrl: string): string => {
+        console.log("originalUrl", originalUrl);
+        console.log("process.env.NEXT_PUBLIC_R2_PUBLIC_URL", process.env.NEXT_PUBLIC_R2_PUBLIC_URL);
+
         // Check if it's an R2 URL that needs proxying
         if (!originalUrl.includes(process.env.NEXT_PUBLIC_R2_PUBLIC_URL!)) {
             return originalUrl; // Not an R2 URL, return as is
@@ -105,6 +108,8 @@ const VideoPlayer = ({
                 lowLatencyMode: true,
                 backBufferLength: 90,
             });
+
+            console.log("proxySrc", proxySrc);
 
             hlsRef.current = hls;
             hls.loadSource(proxySrc); // Use proxy URL

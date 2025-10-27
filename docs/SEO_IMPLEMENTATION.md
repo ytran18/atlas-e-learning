@@ -50,7 +50,7 @@ All pages now include proper metadata:
 ```typescript
 export const baseSeoConfig = {
     siteName: "ATLD E-Learning",
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://atld-elearning.com",
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://antoanlaodongso.com",
     defaultTitle: "Hệ thống đào tạo An Toàn Lao Động",
     defaultDescription: "Hệ thống đào tạo trực tuyến chuyên nghiệp về An Toàn Lao Động...",
     defaultKeywords: ["an toàn lao động", "đào tạo an toàn", ...],
@@ -95,7 +95,7 @@ The `generateMetadata` function creates comprehensive metadata including:
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     "name": "ATLD E-Learning",
-    "url": "https://atld-elearning.com",
+    "url": "https://antoanlaodongso.com",
     // ... more organization details
 }
 ```
@@ -131,7 +131,7 @@ The `generateMetadata` function creates comprehensive metadata including:
 Add these environment variables to your `.env.local`:
 
 ```env
-NEXT_PUBLIC_SITE_URL=https://your-domain.com
+NEXT_PUBLIC_SITE_URL=https://antoanlaodongso.com
 GOOGLE_SITE_VERIFICATION=your-google-verification-code
 YANDEX_VERIFICATION=your-yandex-verification-code
 YAHOO_VERIFICATION=your-yahoo-verification-code
@@ -174,7 +174,7 @@ YAHOO_VERIFICATION=your-yahoo-verification-code
 ### Google Search Console
 
 1. Verify your domain
-2. Submit sitemap: `https://your-domain.com/sitemap.xml`
+2. Submit sitemap: `https://antoanlaodongso.com/sitemap.xml`
 3. Monitor indexing status
 4. Check for crawl errors
 

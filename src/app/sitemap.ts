@@ -1,7 +1,11 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://atld-elearning.com";
+    const baseUrl =
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        (process.env.NODE_ENV === "production"
+            ? "https://antoanlaodongso.com"
+            : "https://staging.antoanlaodongso.com");
 
     return [
         {
