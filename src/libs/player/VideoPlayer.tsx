@@ -38,11 +38,28 @@ const VideoPlayer = ({
     isHls = true,
 }: VideoPlayerProps) => {
     const videoElementRef = useRef<HTMLVideoElement | null>(null);
+
     const hlsRef = useRef<Hls | null>(null);
 
     const isLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(false);
+
+    // Convert R2 URLs to proxy URLs for same-origin requests
+    const getProxyUrl = (originalUrl: string): string => {
+        // Check if it's an R2 URL that needs proxying
+        if (!originalUrl.includes(process.env.NEXT_PUBLIC_R2_PUBLIC_URL!)) {
+            return originalUrl; // Not an R2 URL, return as is
+        }
+
+        // Extract path from R2 URL
+        // https://pub-xxx.r2.dev/videos/abc123.m3u8 -> videos/abc123.m3u8
+        const url = new URL(originalUrl);
+        const path = url.pathname.substring(1); // Remove leading slash
+
+        // Return proxy URL
+        return `/api/video/${path}`;
+    };
 
     const handleReady = () => {
         clearTimeout(isLoadingTimeoutRef.current as NodeJS.Timeout);
@@ -70,12 +87,15 @@ const VideoPlayer = ({
 
         if (!videoElement || !isHls) return;
 
+        // Convert R2 URL to proxy URL for same-origin requests
+        const proxySrc = getProxyUrl(src);
+
         // Check if HLS is supported natively
         if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
-            // Native HLS support (Safari)
-            videoElement.src = src;
+            // Native HLS support (Safari) - use proxy URL
+            videoElement.src = proxySrc;
         } else if (Hls.isSupported()) {
-            // Use hls.js for other browsers
+            // Use hls.js for other browsers - also use proxy URL for consistency
             if (hlsRef.current) {
                 hlsRef.current.destroy();
             }
@@ -87,7 +107,7 @@ const VideoPlayer = ({
             });
 
             hlsRef.current = hls;
-            hls.loadSource(src);
+            hls.loadSource(proxySrc); // Use proxy URL
             hls.attachMedia(videoElement);
 
             // Handle HLS events
