@@ -25,7 +25,7 @@ const HocNgheCourseListContainer = ({ initialData }: HocNgheCourseListContainerP
     }
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="h-[calc(100vh-70px)] bg-white">
             <HocNgheHeroSection data={data} />
 
             {/* Courses Grid */}

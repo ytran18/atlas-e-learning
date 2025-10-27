@@ -5,8 +5,6 @@ export const queryClientConfig = {
         queries: {
             // Thời gian cache data (5 phút)
             staleTime: 1000 * 60 * 5,
-            // Thời gian giữ inactive queries trong cache (10 phút)
-            gcTime: 1000 * 60 * 10,
             // Retry khi request fail (3 lần)
             retry: 3,
             // Delay giữa các lần retry (exponential backoff)

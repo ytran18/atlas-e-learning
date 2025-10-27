@@ -20,7 +20,7 @@ interface CourseHeroSectionProps {
 export const CourseHeroSection = ({
     title,
     description,
-    badge = "Học Nghe",
+    badge = "Học Nghề",
     isJoined,
     isLoadingJoiabled,
     children,

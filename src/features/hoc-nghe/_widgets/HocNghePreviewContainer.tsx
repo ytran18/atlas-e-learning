@@ -3,7 +3,6 @@
 import { IconClipboardCheck, IconPlaylist, IconVideo } from "@tabler/icons-react";
 
 import { CoursePreview } from "@/types/api";
-import { secondsToHours } from "@/utils/time";
 
 import { CourseContentCard } from "../_components/preview/CourseContentCard";
 import { CourseHeroSection } from "../_components/preview/CourseHeroSection";
@@ -23,14 +22,8 @@ export const HocNghePreviewContainer = ({
 }: HocNghePreviewContainerProps) => {
     const totlaLessons = course.theory.videos.length + course.practice.videos.length;
 
-    const totalDuration =
-        (course.theory.videos.reduce((acc, lesson) => acc + lesson.length, 0) +
-            course.practice.videos.reduce((acc, lesson) => acc + lesson.length, 0) +
-            course.totalQuestionOfExam * 2) ^
-        60;
-
     return (
-        <div className="min-h-screen bg-white">
+        <div className="h-[calc(100vh-70px)] bg-white">
             {/* Hero Section */}
             <CourseHeroSection
                 isJoined={isJoined}
@@ -41,7 +34,6 @@ export const HocNghePreviewContainer = ({
                 <CourseStats
                     totalLessons={totlaLessons}
                     totalQuestions={course.totalQuestionOfExam}
-                    duration={secondsToHours(totalDuration)}
                 />
             </CourseHeroSection>
 

@@ -48,6 +48,16 @@ export function useCourseProgress(
         queryKey: courseProgressKeys.progress(type, groupId),
         queryFn: () => getCourseProgress(type, groupId),
         enabled: !!groupId, // Chỉ fetch khi có groupId
+        retry: (failureCount, error) => {
+            console.log("retry", failureCount, error);
+
+            // Không retry nếu là 404 error
+            if (error?.message?.includes("404") || error?.message?.includes("Progress not found")) {
+                return false;
+            }
+            // Retry tối đa 3 lần cho các lỗi khác
+            return failureCount < 3;
+        },
         ...options,
     });
 }
