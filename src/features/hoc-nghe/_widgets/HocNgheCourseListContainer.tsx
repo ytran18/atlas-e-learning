@@ -20,6 +20,8 @@ const HocNgheCourseListContainer = ({ initialData }: HocNgheCourseListContainerP
         type: "hoc-nghe",
     });
 
+    console.log({ hocNgheData: data });
+
     if (!data || isLoading || isProgressLoading) {
         return <HocNgheLoadingState />;
     }

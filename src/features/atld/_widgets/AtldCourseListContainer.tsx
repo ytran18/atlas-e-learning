@@ -20,6 +20,8 @@ const AtldCourseListContainer = ({ initialData }: AtldCourseListContainerProps) 
         type: "atld",
     });
 
+    console.log({ atldData: data });
+
     if (!data || isLoading || isProgressLoading) {
         return <AtldLoadingState />;
     }
