@@ -5,7 +5,13 @@
  * Provides type-safe methods for database operations.
  */
 import { admin, adminDb } from "@/libs/firebase/firebaseAdmin.config";
-import { CompletedVideo, CourseDetail, CourseProgress, StudentStats } from "@/types/api";
+import {
+    CompletedVideo,
+    CourseDetail,
+    CourseProgress,
+    ExamAnswer,
+    StudentStats,
+} from "@/types/api";
 
 // ============================================================================
 // Internal Types
@@ -167,6 +173,7 @@ export async function updateUserProgress(
             totalQuestions: number;
             passed: boolean;
             completedAt: number;
+            answers?: ExamAnswer[];
         };
         lastUpdatedAt?: number;
     }

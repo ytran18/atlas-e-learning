@@ -1,6 +1,6 @@
 import { ReactEventHandler, useEffect, useState } from "react";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button, Card } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,9 +16,12 @@ interface LearnPracticeProps {
 }
 
 const LearnPractice = ({ courseType }: LearnPracticeProps) => {
-    const { learnDetail, progress, currentVideoIndex } = useLearnContext();
+    const { learnDetail, progress, currentVideoIndex, navigateToVideo, navigateToExam } =
+        useLearnContext();
 
     const queryClient = useQueryClient();
+
+    const router = useRouter();
 
     const theme = COURSE_THEMES[courseType];
 
@@ -100,6 +103,7 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
 
     const handleNextVideo = () => {
         const nextVideoIndex = videoIndex + 1;
+
         const totalVideos = learnDetail.practice.videos.length;
 
         if (nextVideoIndex < totalVideos) {
@@ -110,6 +114,10 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
                 videoIndex: nextVideoIndex,
                 currentTime: 0,
             });
+            // Update local state immediately for better UX
+            navigateToVideo("practice", nextVideoIndex);
+            // Update URL
+            router.replace(`?section=practice&video=${nextVideoIndex}`);
             setIsFinishVideo(false);
         } else {
             // All practice videos completed, move to exam section
@@ -119,6 +127,10 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
                 videoIndex: 0,
                 currentTime: 0,
             });
+            // Update local state immediately for better UX
+            navigateToExam();
+            // Update URL
+            router.replace(`?section=exam&video=0`);
         }
     };
 

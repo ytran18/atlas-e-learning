@@ -84,20 +84,11 @@ const LearnExam = ({ courseType }: LearnExamProps) => {
                             },
                         }
                     );
-                    console.log("Course progress updated - marked as completed");
                 } catch (progressError) {
                     console.error("Failed to update progress:", progressError);
                     // Don't show error to user as exam was already submitted successfully
                 }
             }
-
-            // Log detailed results for debugging
-            console.log("=== EXAM RESULTS ===");
-            console.log("Exam Title:", learnDetail.exam.title);
-            console.log("Score:", result.score);
-            console.log("Total Questions:", result.totalQuestions);
-            console.log("Passed:", result.passed);
-            console.log("Completed At:", new Date(result.completedAt).toLocaleString());
         } catch (error) {
             console.error("Failed to submit exam:", error);
             alert("Lỗi nộp bài\nCó lỗi xảy ra khi nộp bài thi. Vui lòng thử lại.");

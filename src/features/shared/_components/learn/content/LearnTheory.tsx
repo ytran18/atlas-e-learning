@@ -1,6 +1,6 @@
 import { ReactEventHandler, useEffect, useState } from "react";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button, Card } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,9 +16,11 @@ interface LearnTheoryProps {
 }
 
 const LearnTheory = ({ courseType }: LearnTheoryProps) => {
-    const { learnDetail, progress, currentVideoIndex } = useLearnContext();
+    const { learnDetail, progress, currentVideoIndex, navigateToVideo } = useLearnContext();
 
     const queryClient = useQueryClient();
+
+    const router = useRouter();
 
     const theme = COURSE_THEMES[courseType];
 
@@ -57,6 +59,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
         courseType,
         {
             onSuccess: async () => {
+                console.log("update progress success");
                 await queryClient.invalidateQueries({
                     queryKey: courseProgressKeys.progress(courseType, learnDetail.id),
                 });
@@ -110,6 +113,10 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                 videoIndex: nextVideoIndex,
                 currentTime: 0,
             });
+            // Update local state immediately for better UX
+            navigateToVideo("theory", nextVideoIndex);
+            // Update URL
+            router.replace(`?section=theory&video=${nextVideoIndex}`);
             setIsFinishVideo(false);
         } else {
             // All theory videos completed, move to practice section
@@ -119,6 +126,10 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                 videoIndex: 0,
                 currentTime: 0,
             });
+            // Update local state immediately for better UX
+            navigateToVideo("practice", 0);
+            // Update URL
+            router.replace(`?section=practice&video=0`);
         }
     };
 
