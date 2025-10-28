@@ -22,7 +22,11 @@ const MobileLayout = ({
         <div className="flex flex-col h-full w-full lg:hidden overflow-hidden">
             <MobileHeader title={title} onToggleSidebar={onToggleSidebar} />
 
-            <MobileSidebar isOpen={isSidebarOpen} onClose={onCloseSidebar} />
+            <MobileSidebar
+                isOpen={isSidebarOpen}
+                onClose={onCloseSidebar}
+                courseType={courseType}
+            />
 
             {/* Mobile Content Area */}
             <div className="flex-1 min-h-0 overflow-hidden p-4">

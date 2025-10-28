@@ -1,5 +1,7 @@
 import { ReactEventHandler, useEffect, useState } from "react";
 
+import { useSearchParams } from "next/navigation";
+
 import { Button, Card } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -14,13 +16,24 @@ interface LearnTheoryProps {
 }
 
 const LearnTheory = ({ courseType }: LearnTheoryProps) => {
-    const { learnDetail, progress } = useLearnContext();
+    const { learnDetail, progress, currentVideoIndex } = useLearnContext();
+
     const queryClient = useQueryClient();
+
     const theme = COURSE_THEMES[courseType];
 
-    // Ensure we have a valid video index and fallback to 0 if needed
-    const videoIndex = progress.currentVideoIndex ?? 0;
+    const searchParams = useSearchParams();
+
+    const sectionDB = searchParams.get("section");
+
+    const videoIndexDB = searchParams.get("video");
+
+    // Use client-side video index
+    const videoIndex = currentVideoIndex;
+
     const currentVideo = learnDetail.theory.videos[videoIndex];
+
+    const isShowNextButton = sectionDB === "theory" && Number(videoIndexDB) === videoIndex;
 
     // Check if current video is already completed
     const isCurrentVideoCompleted = progress.completedVideos.some(
@@ -33,6 +46,11 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
     useEffect(() => {
         setIsFinishVideo(isCurrentVideoCompleted);
     }, [isCurrentVideoCompleted]);
+
+    // Reset video state when video index changes
+    useEffect(() => {
+        setIsFinishVideo(isCurrentVideoCompleted);
+    }, [videoIndex, isCurrentVideoCompleted]);
 
     // Hook để update progress
     const { mutate: updateProgress, isPending: isUpdatingProgress } = useUpdateProgress(
@@ -141,7 +159,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                     </div>
 
                     {/* Progress Indicator */}
-                    <div className="flex items-center justify-between text-sm text-gray-500 flex-shrink-0 px-2 sm:px-0">
+                    <div className="flex items-center justify-between text-sm text-gray-500 flex-shrink-0 px-2 sm:px-0 mb-3">
                         <span>
                             Video {videoIndex + 1} / {learnDetail.theory.videos.length}
                         </span>
@@ -149,19 +167,21 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                     </div>
 
                     {/* Navigation Button */}
-                    <div className="w-full flex justify-end flex-shrink-0 p-2 sm:p-0">
-                        <Button
-                            disabled={!isFinishVideo || isUpdatingProgress}
-                            loading={isUpdatingProgress}
-                            size="md"
-                            className="px-6 lg:px-8 py-3 w-full sm:w-auto"
-                            onClick={handleNextVideo}
-                        >
-                            {videoIndex + 1 < learnDetail.theory.videos.length
-                                ? "Video tiếp theo"
-                                : "Chuyển sang thực hành"}
-                        </Button>
-                    </div>
+                    {isShowNextButton && (
+                        <div className="w-full flex justify-end flex-shrink-0 p-2 sm:p-0">
+                            <Button
+                                disabled={!isFinishVideo || isUpdatingProgress}
+                                loading={isUpdatingProgress}
+                                size="md"
+                                className="px-6 lg:px-8 py-3 w-full sm:w-auto"
+                                onClick={handleNextVideo}
+                            >
+                                {videoIndex + 1 < learnDetail.theory.videos.length
+                                    ? "Video tiếp theo"
+                                    : "Chuyển sang thực hành"}
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
         </Card>

@@ -1,13 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useParams } from "next/navigation";
 
-import { LearnProvider } from "@/contexts/LearnContext";
+import { LearnProvider, useLearnContext } from "@/contexts/LearnContext";
 import { useCourseDetail, useCourseProgress } from "@/hooks/api";
 
 import { CourseLoading, DesktopLayout, MobileLayout } from "../_components/learn";
+
+// Component to handle URL hash navigation
+const HashNavigationHandler = () => {
+    const { navigateToVideo, navigateToExam } = useLearnContext();
+
+    useEffect(() => {
+        const hash = window.location.hash.substring(1); // Remove # from hash
+        if (!hash) return;
+
+        // Parse hash format: "section-index" or "exam"
+        if (hash === "exam") {
+            navigateToExam();
+        } else {
+            const [section, indexStr] = hash.split("-");
+            const index = parseInt(indexStr, 10);
+
+            if (section && !isNaN(index)) {
+                navigateToVideo(section, index);
+            }
+        }
+    }, [navigateToVideo, navigateToExam]);
+
+    return null;
+};
 
 const LearnPage = () => {
     const { hocNgheId } = useParams();
@@ -19,8 +43,6 @@ const LearnPage = () => {
         "hoc-nghe",
         hocNgheId as string
     );
-
-    console.log({ courseDetail });
 
     // get course progress
     const { data: progressData, isLoading: isProgressLoading } = useCourseProgress(
@@ -35,6 +57,7 @@ const LearnPage = () => {
     return (
         <div className="h-[calc(100vh-70px)] w-full overflow-hidden">
             <LearnProvider progress={progressData} learnDetail={courseDetail}>
+                <HashNavigationHandler />
                 <MobileLayout
                     title={courseDetail.title}
                     isSidebarOpen={isSidebarOpen}

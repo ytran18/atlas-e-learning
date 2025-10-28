@@ -1,6 +1,6 @@
 import { useLearnContext } from "@/contexts/LearnContext";
-import { navigationPaths } from "@/utils/navigationPaths";
 
+import { CourseType } from "../../../types";
 import LearnSidebarContent from "./LearnSidebarContent";
 
 interface VideoContent {
@@ -22,12 +22,23 @@ interface SectionData {
     content: VideoContent[];
 }
 
-const LearnSidebar = () => {
-    const { learnDetail, progress } = useLearnContext();
+interface LearnSidebarProps {
+    courseType: CourseType;
+}
+
+const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
+    const {
+        learnDetail,
+        progress,
+        currentSection,
+        currentVideoIndex,
+        navigateToVideo,
+        navigateToExam,
+    } = useLearnContext();
 
     const { title } = learnDetail;
 
-    const { currentSection, currentVideoIndex, completedVideos, isCompleted } = progress;
+    const { completedVideos, isCompleted } = progress;
 
     // Helper function to check if a video is completed
     const isVideoCompleted = (section: string, index: number) => {
@@ -76,13 +87,13 @@ const LearnSidebar = () => {
         return false;
     };
 
-    // Navigation handlers
+    // Navigation handlers - Client-side only
     const handleViewAgain = (section: string, index: number) => {
-        window.location.href = `${navigationPaths.ATLD}/${learnDetail.id}/learn#${section}-${index}`;
+        navigateToVideo(section, index);
     };
 
     const handleViewExam = () => {
-        window.location.href = `${navigationPaths.ATLD}/${learnDetail.id}/learn#exam`;
+        navigateToExam();
     };
 
     // Build sections data
@@ -146,6 +157,7 @@ const LearnSidebar = () => {
             currentSection={currentSection}
             onViewAgain={handleViewAgain}
             onViewExam={handleViewExam}
+            courseType={courseType}
         />
     );
 };

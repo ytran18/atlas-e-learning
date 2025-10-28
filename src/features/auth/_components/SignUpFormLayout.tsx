@@ -32,7 +32,7 @@ const SignUpFormLayout = ({
     error,
 }: SignUpFormLayoutProps) => {
     return (
-        <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-50 px-4 py-8">
+        <div className="h-[calc(100vh-70px)] w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-50 px-4 py-8">
             <div className="w-full max-w-md">
                 {/* Logo/Header */}
                 <div className="text-center mb-8">

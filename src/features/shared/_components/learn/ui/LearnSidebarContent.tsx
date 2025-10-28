@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
 import { Accordion, Button } from "@mantine/core";
 import { IconChevronLeft } from "@tabler/icons-react";
@@ -33,6 +33,7 @@ interface LearnSidebarContentProps {
     currentSection?: string;
     onViewAgain: (section: string, index: number) => void;
     onViewExam: () => void;
+    courseType?: "atld" | "hoc-nghe";
 }
 
 const LearnSidebarContent = ({
@@ -44,11 +45,21 @@ const LearnSidebarContent = ({
 }: LearnSidebarContentProps) => {
     const { atldId, hocNgheId } = useParams();
 
+    const searchParams = useSearchParams();
+
+    const sectionDB = searchParams.get("section");
+
+    const videoIndexDB = searchParams.get("video");
+
     const backPath = atldId
         ? navigationPaths.ATLD_PREVIEW.replace(`[${ATLD_SLUG}]`, atldId as string)
         : hocNgheId
           ? navigationPaths.HOC_NGHE_PREVIEW.replace(`[${HOC_NGHE_SLUG}]`, hocNgheId as string)
           : "";
+
+    const handleReturnToCurrent = () => {
+        onViewAgain(sectionDB || "theory", Number(videoIndexDB) || 0);
+    };
 
     return (
         <div className="h-full flex flex-col gap-y-4">
@@ -66,10 +77,22 @@ const LearnSidebarContent = ({
                 </div>
             </div>
 
+            <div className="w-full">
+                <Button
+                    fullWidth
+                    variant="filled"
+                    color="blue"
+                    size="sm"
+                    onClick={handleReturnToCurrent}
+                    className="mb-2"
+                >
+                    Đến phần hiện tại
+                </Button>
+            </div>
+
             <Accordion
                 chevronPosition="right"
                 variant="contained"
-                value={currentSection}
                 defaultValue={currentSection || "theory"}
                 classNames={{
                     content: "pb-0",
