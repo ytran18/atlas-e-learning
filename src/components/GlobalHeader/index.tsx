@@ -28,6 +28,11 @@ const GlobalHeader = () => {
         { href: navigationPaths.HOC_NGHE, label: "Học nghề" },
     ];
 
+    const handleLogout = () => {
+        close();
+        signOut(() => router.push("/"));
+    };
+
     return (
         <Box className="sticky top-0 z-50 supports-[backdrop-filter]:bg-white">
             <header className="h-[60px] pl-[var(--mantine-spacing-md)] pr-[var(--mantine-spacing-md)] border-b border-[var(--mantine-color-gray-3)]">
@@ -80,7 +85,7 @@ const GlobalHeader = () => {
                 size="280px"
                 title={
                     <Text fw={600} size="lg">
-                        Menu
+                        An toàn lao động
                     </Text>
                 }
                 hiddenFrom="sm"
@@ -97,7 +102,7 @@ const GlobalHeader = () => {
                         </Link>
                     ))}
 
-                    <Button color="red" size="sm" onClick={() => signOut(() => router.push("/"))}>
+                    <Button color="red" size="sm" onClick={handleLogout}>
                         <div className="flex items-center gap-x-2">
                             <IconLogout className="text-white" size={16} />
                             <Text>Đăng xuất</Text>

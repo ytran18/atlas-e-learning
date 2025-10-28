@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { Accordion, Button } from "@mantine/core";
 import { IconChevronLeft } from "@tabler/icons-react";
 
-import { ATLD_SLUG, navigationPaths } from "@/utils/navigationPaths";
+import { ATLD_SLUG, HOC_NGHE_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 import SectionItem from "./SectionItem";
 
@@ -42,15 +42,19 @@ const LearnSidebarContent = ({
     onViewAgain,
     onViewExam,
 }: LearnSidebarContentProps) => {
-    const { atldId } = useParams();
+    const { atldId, hocNgheId } = useParams();
+
+    const backPath = atldId
+        ? navigationPaths.ATLD_PREVIEW.replace(`[${ATLD_SLUG}]`, atldId as string)
+        : hocNgheId
+          ? navigationPaths.HOC_NGHE_PREVIEW.replace(`[${HOC_NGHE_SLUG}]`, hocNgheId as string)
+          : "";
 
     return (
         <div className="h-full flex flex-col gap-y-4">
             {/* Desktop: Show title, Mobile: Title is in header */}
             <div className="flex items-center gap-x-2">
-                <Link
-                    href={navigationPaths.ATLD_PREVIEW.replace(`[${ATLD_SLUG}]`, atldId as string)}
-                >
+                <Link href={backPath}>
                     <Button leftSection={<IconChevronLeft className="w-6 h-6 min-h-6 min-w-6" />}>
                         Quay về
                     </Button>
