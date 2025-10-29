@@ -12,7 +12,7 @@ interface HocNgheCourseListContainerProps {
 
 const HocNgheCourseListContainer = ({ initialData }: HocNgheCourseListContainerProps) => {
     const { data, isLoading } = useCourseList("hoc-nghe", {
-        initialData,
+        // initialData,
     });
 
     const { categorizedCourses, isProgressLoading } = useCourseCategorization({

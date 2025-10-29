@@ -11,6 +11,7 @@ import {
     generateMetadata,
     generateOrganizationStructuredData,
 } from "@/configs/seo.config";
+import { getGrowthBookPayload } from "@/libs/growthbook/get-growthbook-payload";
 
 import "./globals.css";
 import Provider from "./provider";
@@ -39,11 +40,13 @@ export const metadata: Metadata = generateMetadata({
     url: "/",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const growthBookPayload = await getGrowthBookPayload();
+
     return (
         <html lang="vi" className={beVietnamPro.variable}>
             <head>
@@ -56,7 +59,7 @@ export default function RootLayout({
 
                 <Analytics />
 
-                <Provider>
+                <Provider growthBookPayload={growthBookPayload}>
                     <GlobalHeader />
                     {children}
                 </Provider>

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { viVN } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
+import { GrowthBookPayload, GrowthBookProvider } from "@growthbook/growthbook-react";
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
@@ -15,6 +16,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { createQueryClient } from "@/configs/reactQuery.config";
+import { makeGrowthBook } from "@/libs/growthbook/make-growthbook";
 import { initMixpanel } from "@/libs/mixpanel/mixpanel-client";
 
 // Custom localization để thay đổi text
@@ -26,32 +28,48 @@ const customViVN = {
     formButtonPrimary: "Tiếp tục",
 };
 
-export default function Provider({ children }: { children: React.ReactNode }) {
+export default function Provider({
+    children,
+    growthBookPayload,
+}: {
+    children: React.ReactNode;
+    growthBookPayload: GrowthBookPayload;
+}) {
     // Tạo QueryClient instance, chỉ tạo 1 lần duy nhất
     const [queryClient] = useState(() => createQueryClient());
+
+    const gb = useMemo(() => makeGrowthBook(growthBookPayload), [growthBookPayload]);
 
     useEffect(() => {
         initMixpanel();
     }, []);
 
-    return (
-        <ClerkProvider
-            localization={customViVN}
-            afterSignOutUrl="/sign-in"
-            signInUrl="/sign-in"
-            signUpUrl="/sign-up"
-        >
-            <QueryClientProvider client={queryClient}>
-                <MantineProvider>
-                    <ModalsProvider>
-                        <Notifications />
+    useEffect(() => {
+        // Load features from the GrowthBook API and initialize the SDK
+        gb.loadFeatures();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-                        {children}
-                    </ModalsProvider>
-                </MantineProvider>
-                {/* React Query Devtools - chỉ hiện trong development */}
-                <ReactQueryDevtools initialIsOpen={false} />
-            </QueryClientProvider>
-        </ClerkProvider>
+    return (
+        <GrowthBookProvider growthbook={gb}>
+            <ClerkProvider
+                localization={customViVN}
+                afterSignOutUrl="/sign-in"
+                signInUrl="/sign-in"
+                signUpUrl="/sign-up"
+            >
+                <QueryClientProvider client={queryClient}>
+                    <MantineProvider>
+                        <ModalsProvider>
+                            <Notifications />
+
+                            {children}
+                        </ModalsProvider>
+                    </MantineProvider>
+                    {/* React Query Devtools - chỉ hiện trong development */}
+                    <ReactQueryDevtools initialIsOpen={false} />
+                </QueryClientProvider>
+            </ClerkProvider>
+        </GrowthBookProvider>
     );
 }

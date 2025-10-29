@@ -1,11 +1,13 @@
-import { Button, Card, Divider, List, Radio, Text } from "@mantine/core";
+import { Button, Card, Divider, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useQueryClient } from "@tanstack/react-query";
-import { Controller, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { useLearnContext } from "@/contexts/LearnContext";
 import { courseProgressKeys, useSubmitExam, useUpdateProgress } from "@/hooks/api/user";
 import { CourseType, ExamAnswer } from "@/types/api";
+
+import ListQuestions from "./ListQuestions";
 
 interface ExamFormValues {
     [questionId: string]: string;
@@ -18,13 +20,13 @@ interface LearnExamProps {
 const LearnExam = ({ courseType }: LearnExamProps) => {
     const { learnDetail, progress } = useLearnContext();
 
-    console.log({ progress });
-
     const queryClient = useQueryClient();
 
     const submitExam = useSubmitExam(courseType);
 
     const updateProgress = useUpdateProgress(courseType);
+
+    const isFinishCourse = progress?.isCompleted;
 
     // Initialize form with empty values for all questions
     const form = useForm<ExamFormValues>({
@@ -100,68 +102,42 @@ const LearnExam = ({ courseType }: LearnExamProps) => {
 
     return (
         <Card withBorder shadow="sm" radius="md" h="100%">
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="h-full overflow-y-auto">
-                <div className="flex flex-col gap-y-6 overflow-y-auto">
-                    <div className="flex flex-col gap-y-1">
-                        <Text size="xl">{learnDetail.exam.title}</Text>
+            <FormProvider {...form}>
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="h-full overflow-y-auto">
+                    <div className="flex flex-col gap-y-6 overflow-y-auto">
+                        <div className="flex flex-col gap-y-1">
+                            <Text size="xl">{learnDetail.exam.title}</Text>
 
-                        <Text size="sm">{learnDetail.exam.description}</Text>
+                            <Text size="sm">{learnDetail.exam.description}</Text>
+                        </div>
+
+                        <ListQuestions
+                            questions={learnDetail.exam.questions}
+                            isFinishCourse={isFinishCourse}
+                        />
+
+                        {!isFinishCourse && (
+                            <>
+                                <Divider my="md" />
+
+                                <div className="flex justify-end">
+                                    <Button
+                                        type="submit"
+                                        disabled={!isAllQuestionsAnswered || submitExam.isPending}
+                                        loading={submitExam.isPending}
+                                        size="md"
+                                        variant="filled"
+                                    >
+                                        {submitExam.isPending
+                                            ? "Đang nộp bài..."
+                                            : "Nộp bài kiểm tra"}
+                                    </Button>
+                                </div>
+                            </>
+                        )}
                     </div>
-
-                    <div>
-                        <List type="ordered" className="list-decimal">
-                            {learnDetail.exam.questions.map((question) => (
-                                <List.Item key={question.id}>
-                                    <Text size="sm" fw={500} mb="xs">
-                                        {question.content}
-                                    </Text>
-
-                                    <div className="mt-2">
-                                        <Controller
-                                            name={question.id}
-                                            control={form.control}
-                                            render={({ field }) => (
-                                                <Radio.Group
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                >
-                                                    <div className="flex flex-col gap-y-2">
-                                                        {question.options.map((option) => (
-                                                            <div
-                                                                className="flex items-center gap-x-2"
-                                                                key={option.id}
-                                                            >
-                                                                <Radio value={option.id} />
-                                                                <Text size="sm">
-                                                                    {option.content}
-                                                                </Text>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </Radio.Group>
-                                            )}
-                                        />
-                                    </div>
-                                </List.Item>
-                            ))}
-                        </List>
-                    </div>
-
-                    <Divider my="md" />
-
-                    <div className="flex justify-end">
-                        <Button
-                            type="submit"
-                            disabled={!isAllQuestionsAnswered || submitExam.isPending}
-                            loading={submitExam.isPending}
-                            size="md"
-                            variant="filled"
-                        >
-                            {submitExam.isPending ? "Đang nộp bài..." : "Nộp bài kiểm tra"}
-                        </Button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </FormProvider>
         </Card>
     );
 };

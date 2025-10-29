@@ -12,7 +12,7 @@ interface AtldCourseListContainerProps {
 
 const AtldCourseListContainer = ({ initialData }: AtldCourseListContainerProps) => {
     const { data, isLoading } = useCourseList("atld", {
-        initialData,
+        // initialData,
     });
 
     const { categorizedCourses, isProgressLoading } = useCourseCategorization({
