@@ -187,7 +187,7 @@ const LandingPage = () => {
                                     động
                                 </p>
                                 <Button size="lg">
-                                    <Link href={navigationPaths.ATLD}>Đăng ký miễn phí</Link>
+                                    <Link href={navigationPaths.SIGN_UP}>Đăng ký miễn phí</Link>
                                 </Button>
                             </div>
                         </Card>
