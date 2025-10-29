@@ -194,11 +194,7 @@ const VideoPlayer = ({
                         <div className="w-full flex flex-col">
                             <div className="w-full flex items-center justify-between gap-x-2">
                                 <div className="flex items-center gap-x-4">
-                                    {isLoadingVideo ? (
-                                        <MediaLoadingIndicator />
-                                    ) : (
-                                        <MediaPlayButton className="size-5 bg-transparent" />
-                                    )}
+                                    <MediaPlayButton className="size-5 bg-transparent" />
 
                                     <MediaTimeDisplay showDuration className="bg-transparent" />
                                 </div>
