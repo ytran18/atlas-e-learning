@@ -129,6 +129,7 @@ export interface CourseProgress {
     isCompleted: boolean;
     startedAt: number; // timestamp
     lastUpdatedAt: number; // timestamp
+    finishImageUrl?: string; // Auto-captured finish image URL
 }
 
 export type GetProgressResponse = CourseProgress;
@@ -143,6 +144,7 @@ export interface UpdateProgressRequest {
     currentTime: number;
     isCompleted?: boolean;
     completedVideo?: CompletedVideo; // Mark a video as completed
+    finishImageUrl?: string; // Auto-captured finish image URL
 }
 
 export interface UpdateProgressResponse {

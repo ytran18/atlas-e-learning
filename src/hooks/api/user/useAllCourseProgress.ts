@@ -40,6 +40,6 @@ export function useAllCourseProgress({
             return progressMap;
         },
         enabled: enabled && courseIds.length > 0,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 0,
     });
 }

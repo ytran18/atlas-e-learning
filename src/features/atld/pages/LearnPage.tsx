@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { LearnProvider, useLearnContext } from "@/contexts/LearnContext";
 import { DesktopLayout, MobileLayout } from "@/features/shared/_components/learn";
 import { useCourseDetail, useCourseProgress } from "@/hooks/api";
+import { useAutoCapture } from "@/hooks/useAutoCapture";
 import { ATLD_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 import { CourseLoading } from "../_components/learn";
@@ -33,6 +34,31 @@ const HashNavigationHandler = () => {
             }
         }
     }, [navigateToVideo, navigateToExam]);
+
+    return null;
+};
+
+// Component to handle auto capture
+const AutoCaptureHandler = ({
+    groupId,
+    courseType = "atld",
+}: {
+    groupId: string;
+    courseType?: "atld" | "hoc-nghe";
+}) => {
+    const { currentSection, currentVideoIndex, learnDetail, progress } = useLearnContext();
+
+    // Check if we already have a finish image
+    const hasCaptured = !!progress.finishImageUrl;
+
+    useAutoCapture({
+        courseType,
+        groupId,
+        currentSection,
+        currentVideoIndex,
+        learnDetail,
+        hasCaptured,
+    });
 
     return null;
 };
@@ -73,6 +99,7 @@ const LearnPage = () => {
         <div className="h-[calc(100vh-70px)] w-full overflow-hidden">
             <LearnProvider progress={progressData} learnDetail={courseDetail}>
                 <HashNavigationHandler />
+                <AutoCaptureHandler groupId={atldId as string} courseType="atld" />
 
                 <MobileLayout
                     title={courseDetail.title}

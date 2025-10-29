@@ -47,6 +47,7 @@ export async function GET(
             isCompleted: progress.isCompleted,
             startedAt: progress.startedAt,
             lastUpdatedAt: progress.lastUpdatedAt,
+            finishImageUrl: progress.finishImageUrl,
         };
 
         return successResponse(response);
@@ -77,6 +78,7 @@ export async function PATCH(
             currentTime: body.currentTime,
             isCompleted: body.isCompleted,
             completedVideo: body.completedVideo,
+            finishImageUrl: body.finishImageUrl,
         });
 
         // Map to response format

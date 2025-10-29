@@ -168,6 +168,7 @@ export async function updateUserProgress(
         currentTime?: number;
         isCompleted?: boolean;
         completedVideo?: CompletedVideo;
+        finishImageUrl?: string;
         examResult?: {
             score: number;
             totalQuestions: number;
@@ -210,6 +211,11 @@ export async function updateUserProgress(
     // If a video is marked as completed, add it to completedVideos array
     if (updates.completedVideo) {
         updateData.completedVideos = admin.firestore.FieldValue.arrayUnion(updates.completedVideo);
+    }
+
+    // If finish image URL is provided, save it
+    if (updates.finishImageUrl !== undefined) {
+        updateData.finishImageUrl = updates.finishImageUrl;
     }
 
     // If exam result is provided, save it
