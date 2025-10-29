@@ -48,6 +48,7 @@ export async function GET(
             startedAt: progress.startedAt,
             lastUpdatedAt: progress.lastUpdatedAt,
             finishImageUrl: progress.finishImageUrl,
+            examResult: progress.examResult,
         };
 
         return successResponse(response);

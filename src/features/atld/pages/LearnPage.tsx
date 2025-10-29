@@ -84,6 +84,14 @@ const LearnPage = () => {
 
     useEffect(() => {
         if (progressData) {
+            if (progressData.isCompleted) {
+                router.replace(
+                    `${navigationPaths.ATLD_LEARN.replace(`[${ATLD_SLUG}]`, atldId as string)}`
+                );
+
+                return;
+            }
+
             router.replace(
                 `${navigationPaths.ATLD_LEARN.replace(`[${ATLD_SLUG}]`, atldId as string)}?section=${progressData?.currentSection ?? "theory"}&video=${progressData?.currentVideoIndex ?? 0}`
             );
@@ -99,6 +107,7 @@ const LearnPage = () => {
         <div className="h-[calc(100vh-70px)] w-full overflow-hidden">
             <LearnProvider progress={progressData} learnDetail={courseDetail}>
                 <HashNavigationHandler />
+
                 <AutoCaptureHandler groupId={atldId as string} courseType="atld" />
 
                 <MobileLayout

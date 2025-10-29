@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import { LearnProvider, useLearnContext } from "@/contexts/LearnContext";
 import { useCourseDetail, useCourseProgress } from "@/hooks/api";
 import { useAutoCapture } from "@/hooks/useAutoCapture";
+import { HOC_NGHE_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 import { CourseLoading, DesktopLayout, MobileLayout } from "../_components/learn";
 
@@ -62,6 +63,8 @@ const AutoCaptureHandler = ({
 const LearnPage = () => {
     const { hocNgheId } = useParams();
 
+    const router = useRouter();
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // get course detail
@@ -75,6 +78,22 @@ const LearnPage = () => {
         "hoc-nghe",
         hocNgheId as string
     );
+
+    useEffect(() => {
+        if (progressData) {
+            if (progressData.isCompleted) {
+                router.replace(
+                    `${navigationPaths.HOC_NGHE_LEARN.replace(`[${HOC_NGHE_SLUG}]`, hocNgheId as string)}`
+                );
+                return;
+            }
+
+            router.replace(
+                `${navigationPaths.HOC_NGHE_LEARN.replace(`[${HOC_NGHE_SLUG}]`, hocNgheId as string)}?section=${progressData?.currentSection ?? "theory"}&video=${progressData?.currentVideoIndex ?? 0}`
+            );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [progressData]);
 
     if (isCourseDetailLoading || !courseDetail || isProgressLoading || !progressData) {
         return <CourseLoading />;

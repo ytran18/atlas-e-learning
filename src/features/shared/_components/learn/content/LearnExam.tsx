@@ -16,11 +16,14 @@ interface LearnExamProps {
 }
 
 const LearnExam = ({ courseType }: LearnExamProps) => {
-    const { learnDetail } = useLearnContext();
+    const { learnDetail, progress } = useLearnContext();
+
+    console.log({ progress });
 
     const queryClient = useQueryClient();
 
     const submitExam = useSubmitExam(courseType);
+
     const updateProgress = useUpdateProgress(courseType);
 
     // Initialize form with empty values for all questions

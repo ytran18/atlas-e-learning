@@ -130,6 +130,13 @@ export interface CourseProgress {
     startedAt: number; // timestamp
     lastUpdatedAt: number; // timestamp
     finishImageUrl?: string; // Auto-captured finish image URL
+    examResult?: {
+        score: number;
+        totalQuestions: number;
+        passed: boolean;
+        completedAt: number;
+        answers?: ExamAnswer[];
+    };
 }
 
 export type GetProgressResponse = CourseProgress;

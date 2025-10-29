@@ -1,3 +1,5 @@
+import { useRouter } from "next/navigation";
+
 import { useLearnContext } from "@/contexts/LearnContext";
 
 import { CourseType } from "../../../types";
@@ -37,6 +39,8 @@ const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
     } = useLearnContext();
 
     const { title } = learnDetail;
+
+    const router = useRouter();
 
     const { completedVideos, isCompleted } = progress;
 
@@ -90,9 +94,13 @@ const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
     // Navigation handlers - Client-side only
     const handleViewAgain = (section: string, index: number) => {
         navigateToVideo(section, index);
+
+        router.push(`?viewAgain=true`);
     };
 
     const handleViewExam = () => {
+        router.push(`?viewAgain=true`);
+
         navigateToExam();
     };
 
