@@ -159,7 +159,7 @@ const VideoPlayer = ({
 
     return (
         <>
-            <Player slot="media" src={src} />
+            <Player slot="media" src={src} controls />
 
             <MediaController
                 style={{
