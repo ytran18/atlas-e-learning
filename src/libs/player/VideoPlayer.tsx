@@ -159,8 +159,6 @@ const VideoPlayer = ({
 
     return (
         <>
-            <Player slot="media" src={src} controls />
-
             <MediaController
                 style={{
                     width: "100%",
@@ -168,7 +166,7 @@ const VideoPlayer = ({
                     aspectRatio: "16/9",
                 }}
             >
-                <video
+                <Player
                     ref={videoElementRef}
                     slot="media"
                     src={!isHls ? src : undefined}
