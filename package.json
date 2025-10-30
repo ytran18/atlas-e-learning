@@ -11,7 +11,8 @@
         "type-check": "tsc --noEmit",
         "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
         "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-        "prepare": "husky"
+        "prepare": "husky",
+        "knip": "knip"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.901.0",
@@ -32,12 +33,10 @@
         "@tabler/icons-react": "^3.35.0",
         "@tanstack/react-query": "^5.90.3",
         "@tanstack/react-query-devtools": "^5.90.2",
-        "@types/hls.js": "^1.0.0",
         "@vercel/analytics": "^1.5.0",
         "@vercel/speed-insights": "^1.2.0",
         "axios": "^1.12.2",
         "dayjs": "^1.11.18",
-        "firebase": "^12.3.0",
         "firebase-admin": "^13.5.0",
         "framer-motion": "^12.23.22",
         "hls.js": "^1.6.13",
@@ -49,7 +48,6 @@
         "react-dom": "19.1.0",
         "react-hook-form": "^7.64.0",
         "react-player": "^3.3.3",
-        "react-webcam": "^7.2.0",
         "socket.io-client": "^4.8.1",
         "zod": "^4.1.11"
     },
@@ -59,7 +57,7 @@
         "@eslint/eslintrc": "^3",
         "@tailwindcss/postcss": "^4",
         "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-        "@types/node": "^20",
+        "@types/node": "^20.19.24",
         "@types/react": "^19",
         "@types/react-dom": "^19",
         "eslint": "^9",
@@ -68,12 +66,13 @@
         "eslint-plugin-import": "^2.32.0",
         "eslint-plugin-prettier": "^5.5.4",
         "husky": "^9.1.7",
+        "knip": "^5.66.4",
         "lint-staged": "^16.2.3",
         "postcss": "^8.5.6",
         "postcss-preset-mantine": "^1.18.0",
         "postcss-simple-vars": "^7.0.1",
         "prettier": "^3.6.2",
         "tailwindcss": "^4",
-        "typescript": "^5"
+        "typescript": "^5.9.3"
     }
 }
