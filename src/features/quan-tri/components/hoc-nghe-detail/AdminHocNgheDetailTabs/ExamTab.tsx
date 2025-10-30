@@ -81,7 +81,7 @@ const ExamTab = () => {
         );
 
     return (
-        <div className="flex flex-col gap-y-4 h-full">
+        <div className="flex flex-col gap-y-4 h-full px-4 sm:px-0">
             {isEditMode && (
                 <div className="w-full flex justify-end">
                     <Button leftSection={<IconPlus size={16} />} onClick={handleAddQuestion}>

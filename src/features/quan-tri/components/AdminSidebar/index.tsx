@@ -21,7 +21,7 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
     const { atldId, hocNgheId } = useParams();
 
     return (
-        <div className="flex-shrink-0 w-1/4">
+        <div className="flex-shrink-0 w-1/4 hidden sm:block">
             <Card withBorder shadow="md" radius="md" p="md" className="bg-white h-full">
                 <div className="w-full flex justify-between items-center mb-4">
                     <Title order={3}>{title}</Title>

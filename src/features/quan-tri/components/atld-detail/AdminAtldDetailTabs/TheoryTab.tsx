@@ -32,7 +32,7 @@ const TheoryTab = () => {
 
     return (
         <ScrollArea className="h-full">
-            <div className="flex flex-col w-full gap-y-6">
+            <div className="flex flex-col w-full gap-y-6 px-4 sm:px-0">
                 <div className="w-full flex justify-between items-start gap-x-6">
                     <div className="flex flex-col gap-y-3 flex-1">
                         <Controller

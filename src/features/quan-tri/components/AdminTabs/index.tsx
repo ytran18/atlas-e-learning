@@ -40,7 +40,7 @@ const AdminTabs = () => {
     const currentTab = getCurrentAdminPathname(pathname);
 
     return (
-        <Card withBorder radius="md" p="md">
+        <Card withBorder radius="md" p="md" visibleFrom="md">
             <Tabs
                 value={currentTab}
                 variant="pills"

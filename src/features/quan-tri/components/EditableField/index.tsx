@@ -1,4 +1,4 @@
-import { Input, Textarea } from "@mantine/core";
+import { Input, Text, Textarea } from "@mantine/core";
 
 interface EditableFieldProps {
     value: string;
@@ -25,6 +25,14 @@ const EditableField = ({
     multiline = false,
     className,
 }: EditableFieldProps) => {
+    if (!isEditing) {
+        return (
+            <Text size={size} fw={fw}>
+                {value}
+            </Text>
+        );
+    }
+
     if (multiline) {
         return (
             <Textarea

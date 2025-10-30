@@ -1,6 +1,7 @@
 import { useParams, useRouter } from "next/navigation";
 
 import { Card, Group } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { Controller } from "react-hook-form";
@@ -16,6 +17,8 @@ const AdminAtldDetailHeader = () => {
     const { atldId } = useParams();
 
     const router = useRouter();
+
+    const isMobile = useMediaQuery("(max-width: 640px)");
 
     const { isEditMode, setIsEditMode } = useAtldAdminDetailContext();
 
@@ -62,7 +65,13 @@ const AdminAtldDetailHeader = () => {
     };
 
     return (
-        <Card withBorder shadow="md" radius="md" p="md" className="!overflow-visible">
+        <Card
+            withBorder={!isMobile}
+            shadow={!isMobile ? "md" : undefined}
+            radius="md"
+            p={isMobile ? "xs" : "md"}
+            className={`!overflow-visible ${isMobile ? "!shadow-none" : ""}`}
+        >
             <Group justify="space-between" align="center">
                 <div className="flex-1 flex flex-col gap-y-3">
                     <div className="w-full flex items-start justify-between gap-x-4">
