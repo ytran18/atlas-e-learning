@@ -13,12 +13,12 @@ const adminHocNgheDetailTabs = [
     },
     {
         value: AdminHocNgheDetailTabs.PRACTICE,
-        label: "Phần Thực hành",
+        label: "Thực hành",
         icon: <IconCertificate size={20} className="text-green-600" />,
     },
     {
         value: AdminHocNgheDetailTabs.EXAM,
-        label: "Bài kiểm tra",
+        label: "Kiểm tra",
         icon: <IconFileText size={20} className="text-orange-600" />,
     },
 ];

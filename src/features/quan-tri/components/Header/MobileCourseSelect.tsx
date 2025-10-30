@@ -77,7 +77,7 @@ const MobileCourseSelect = ({ defaultCourseId, currentAdminPathname }: MobileCou
             </div>
 
             <ModalCreateNewCourse
-                type="atld"
+                type={currentAdminPathname}
                 title="Thêm khóa học"
                 opened={openedModalCreateNewCourse}
                 onClose={() => setOpenedModalCreateNewCourse(false)}
