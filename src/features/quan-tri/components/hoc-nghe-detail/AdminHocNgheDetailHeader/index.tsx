@@ -6,9 +6,9 @@ import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { Controller } from "react-hook-form";
 
+import { useDeleteCourse } from "@/api";
 import { useHocNgheAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
 import { useCourseFormContext } from "@/features/quan-tri/contexts/CourseFormContext";
-import { useDeleteCourse } from "@/hooks/api";
 
 import EditModeButtons from "../../EditModeButtons";
 import EditableField from "../../EditableField";

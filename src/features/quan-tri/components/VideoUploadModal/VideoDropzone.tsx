@@ -3,7 +3,8 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 import { Button } from "@mantine/core";
 import { DropzoneProps, FileWithPath } from "@mantine/dropzone";
 
-import { useVideoUpload } from "../../../../hooks/api/video/useVideoUpload";
+import { useVideoUpload } from "@/api/video/useVideoUpload";
+
 import { useVideoProgress } from "../../hooks/useVideoProgress";
 import { FinalResult, UploadResult } from "../../types/video";
 import DropZoneBlock from "./DropZoneBlock";

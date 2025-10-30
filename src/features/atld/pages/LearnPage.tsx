@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 
 import { useParams, useRouter } from "next/navigation";
 
+import { useCourseDetail, useCourseProgress } from "@/api";
 import { LearnProvider, useLearnContext } from "@/contexts/LearnContext";
 import { DesktopLayout, MobileLayout } from "@/features/shared/_components/learn";
-import { useCourseDetail, useCourseProgress } from "@/hooks/api";
 import { useAutoCapture } from "@/hooks/useAutoCapture";
 import { ATLD_SLUG, navigationPaths } from "@/utils/navigationPaths";
 

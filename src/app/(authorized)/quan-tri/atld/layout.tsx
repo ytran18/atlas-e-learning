@@ -8,9 +8,9 @@ import { Button } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 
+import { useCourseList } from "@/api";
 import AdminSidebar from "@/features/quan-tri/components/AdminSidebar";
 import ModalCreateNewCourse from "@/features/quan-tri/components/ModalCreateNewCourse";
-import { useCourseList } from "@/hooks/api";
 import { CourseListItem } from "@/types/api";
 
 export default function Layout({ children }: { children: React.ReactNode }) {

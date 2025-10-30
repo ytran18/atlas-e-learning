@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 
-import { useUploadCapture } from "@/hooks/api/user/useUploadCapture";
+import { useUploadCapture } from "@/api/user/useUploadCapture";
 
 import { ActionButtons } from "../_components/verify/ActionButtons";
 import { CameraPreview } from "../_components/verify/CameraPreview";

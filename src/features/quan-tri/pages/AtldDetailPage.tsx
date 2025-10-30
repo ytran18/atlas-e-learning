@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { Card } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
-import { useCourseDetail } from "@/hooks/api";
+import { useCourseDetail } from "@/api";
 
 import AdminAtldDetailHeader from "../components/atld-detail/AdminAtldDetailHeader";
 import AdminAtldDetailTabs from "../components/atld-detail/AdminAtldDetailTabs";

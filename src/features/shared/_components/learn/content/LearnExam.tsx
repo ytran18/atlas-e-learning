@@ -3,8 +3,8 @@ import { notifications } from "@mantine/notifications";
 import { useQueryClient } from "@tanstack/react-query";
 import { FormProvider, useForm } from "react-hook-form";
 
+import { courseProgressKeys, useSubmitExam, useUpdateProgress } from "@/api/user";
 import { useLearnContext } from "@/contexts/LearnContext";
-import { courseProgressKeys, useSubmitExam, useUpdateProgress } from "@/hooks/api/user";
 import { CourseType, ExamAnswer } from "@/types/api";
 
 import ListQuestions from "./ListQuestions";

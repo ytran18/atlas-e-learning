@@ -1,4 +1,4 @@
-import { useCourseList } from "@/hooks/api";
+import { useCourseList } from "@/api";
 import { GetCourseListResponse } from "@/types/api";
 
 import AtldHeroSection from "../_components/list/AtldHeroSection";

@@ -6,7 +6,7 @@ import { Button, Select, useCombobox } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 
-import { useCourseList } from "@/hooks/api";
+import { useCourseList } from "@/api";
 import { CourseType } from "@/types/api";
 
 import ModalCreateNewCourse from "../ModalCreateNewCourse";

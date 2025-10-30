@@ -4,9 +4,8 @@
 import { useAuth } from "@clerk/nextjs";
 import { useMutation } from "@tanstack/react-query";
 
+import { UploadResult } from "@/features/quan-tri/types/video";
 import { uploadVideo, validateVideoFile } from "@/services";
-
-import { UploadResult } from "../../../features/quan-tri/types/video";
 
 interface UseVideoUploadOptions {
     maxSizeMB?: number;

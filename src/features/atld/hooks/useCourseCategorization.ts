@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useAllCourseProgress } from "@/hooks/api/user/useAllCourseProgress";
+import { useAllCourseProgress } from "@/api/user/useAllCourseProgress";
 import { CourseListItem, CourseProgress, GetCourseListResponse } from "@/types/api";
 
 export type CourseStatus = "not-started" | "in-progress" | "incomplete" | "completed";

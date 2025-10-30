@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 import { useParams, useRouter } from "next/navigation";
 
+import { useCourseDetail, useCourseProgress } from "@/api";
 import { LearnProvider, useLearnContext } from "@/contexts/LearnContext";
-import { useCourseDetail, useCourseProgress } from "@/hooks/api";
 import { useAutoCapture } from "@/hooks/useAutoCapture";
 import { HOC_NGHE_SLUG, navigationPaths } from "@/utils/navigationPaths";
 

@@ -1,4 +1,4 @@
-import { useCourseList } from "@/hooks/api";
+import { useCourseList } from "@/api";
 import { GetCourseListResponse } from "@/types/api";
 
 import CourseListContainer from "../_components/list/CourseListContainer";
@@ -10,7 +10,7 @@ interface HocNgheCourseListContainerProps {
     initialData?: GetCourseListResponse;
 }
 
-const HocNgheCourseListContainer = ({ initialData }: HocNgheCourseListContainerProps) => {
+const HocNgheCourseListContainer = ({}: HocNgheCourseListContainerProps) => {
     const { data, isLoading } = useCourseList("hoc-nghe", {
         // initialData,
     });

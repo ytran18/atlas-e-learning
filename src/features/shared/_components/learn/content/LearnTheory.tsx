@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button, Card } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { courseProgressKeys, useUpdateProgress } from "@/api";
 import { useLearnContext } from "@/contexts/LearnContext";
-import { courseProgressKeys, useUpdateProgress } from "@/hooks/api";
 import VideoPlayer from "@/libs/player/VideoPlayer";
 
 import { COURSE_THEMES, CourseType } from "../../../types";

@@ -6,7 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { courseListKeys, useCreateCourse } from "@/hooks/api";
+import { courseListKeys, useCreateCourse } from "@/api";
 import { CourseType, CreateCourseRequest } from "@/types/api";
 
 type ModalCreateNewCourseProps = {

@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { Card } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
-import { useCourseDetail } from "@/hooks/api";
+import { useCourseDetail } from "@/api";
 
 import AdminHocNgheDetailHeader from "../components/hoc-nghe-detail/AdminHocNgheDetailHeader";
 import AdminHocNgheDetailTabs from "../components/hoc-nghe-detail/AdminHocNgheDetailTabs";
