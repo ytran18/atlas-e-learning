@@ -100,6 +100,10 @@ export type GetCoursePreviewResponse = CoursePreview;
 export interface StartCourseRequest {
     groupId: string;
     portraitUrl: string;
+    courseName: string;
+    userFullname: string;
+    userBirthDate: string;
+    userCompanyName: string;
 }
 
 export interface StartCourseResponse {
@@ -137,6 +141,10 @@ export interface CourseProgress {
         completedAt: number;
         answers?: ExamAnswer[];
     };
+    courseName?: string;
+    userFullname?: string;
+    userBirthDate?: string;
+    userCompanyName?: string;
 }
 
 export type GetProgressResponse = CourseProgress;

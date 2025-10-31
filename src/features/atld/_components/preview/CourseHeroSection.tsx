@@ -31,10 +31,10 @@ export const CourseHeroSection = ({
 
     const getLink = () => {
         if (isJoined) {
-            return navigationPaths.ATLD_LEARN.replace(`[${ATLD_SLUG}]`, atldId as string);
+            return `${navigationPaths.ATLD_LEARN.replace(`[${ATLD_SLUG}]`, atldId as string)}?name=${title}`;
         }
 
-        return navigationPaths.ATLD_VERIFY.replace(`[${ATLD_SLUG}]`, atldId as string);
+        return `${navigationPaths.ATLD_VERIFY.replace(`[${ATLD_SLUG}]`, atldId as string)}?name=${title}`;
     };
 
     return (

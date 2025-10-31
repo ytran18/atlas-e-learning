@@ -36,7 +36,19 @@ const COLLECTIONS = {
 /**
  * Get all active groups/courses
  */
-export async function getAllGroups(type: "atld" | "hoc-nghe"): Promise<FirestoreData[]> {
+export async function getAllGroups(type: "atld" | "hoc-nghe" | "all"): Promise<FirestoreData[]> {
+    if (type === "all") {
+        const snapshot = await adminDb
+            .collection(COLLECTIONS.GROUPS)
+            .where("isActive", "==", true)
+            .get();
+
+        return snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+    }
+
     const snapshot = await adminDb
         .collection(COLLECTIONS.GROUPS)
         .where("isActive", "==", true)
@@ -128,7 +140,11 @@ export async function getUserProgress(
 export async function createUserProgress(
     userId: string,
     groupId: string,
-    portraitUrl: string
+    portraitUrl: string,
+    courseName: string,
+    userFullname: string,
+    userBirthDate: string,
+    userCompanyName: string
 ): Promise<CourseProgress> {
     const now = Date.now();
 
@@ -143,17 +159,34 @@ export async function createUserProgress(
         lastUpdatedAt: now,
     };
 
-    await adminDb
-        .collection(COLLECTIONS.USERS)
-        .doc(userId)
-        .collection(COLLECTIONS.PROGRESS)
-        .doc(groupId)
-        .set({
-            ...progressData,
-            startImageUrl: portraitUrl,
-        });
+    const progressGroupRef = adminDb.collection(COLLECTIONS.PROGRESS).doc(groupId);
+    const docSnap = await progressGroupRef.get();
 
-    return progressData;
+    if (!docSnap.exists) {
+        // Quan trọng: chờ hoàn tất set này trước khi ghi xuống subcollection
+        await progressGroupRef.set({ createdAt: now });
+    }
+
+    const userProgressData = {
+        ...progressData,
+        startImageUrl: portraitUrl,
+        courseName,
+        userFullname,
+        userBirthDate,
+        userCompanyName,
+    };
+
+    // Ghi tuần tự để chắc chắn parent đã tồn tại
+    // await adminDb
+    //     .collection(COLLECTIONS.USERS)
+    //     .doc(userId)
+    //     .collection(COLLECTIONS.PROGRESS)
+    //     .doc(groupId)
+    //     .set(userProgressData);
+
+    await progressGroupRef.collection(COLLECTIONS.USERS).doc(userId).set(userProgressData);
+
+    return userProgressData;
 }
 
 /**
@@ -186,6 +219,12 @@ export async function updateUserProgress(
         .doc(userId)
         .collection(COLLECTIONS.PROGRESS)
         .doc(groupId);
+
+    const progressRefAdmin = adminDb
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId)
+        .collection(COLLECTIONS.USERS)
+        .doc(userId);
 
     const updateData: FirestoreData = {
         lastUpdatedAt: updates.lastUpdatedAt || now,
@@ -224,6 +263,8 @@ export async function updateUserProgress(
     }
 
     await progressRef.update(updateData);
+
+    await progressRefAdmin.update(updateData);
 
     return { success: true, lastUpdatedAt: now };
 }

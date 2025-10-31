@@ -1,7 +1,10 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 
+import { useUser } from "@clerk/nextjs";
+
+import { useStartCourse } from "@/api";
 import { useUploadCapture } from "@/api/user/useUploadCapture";
 
 import { ActionButtons } from "../_components/verify/ActionButtons";
@@ -27,8 +30,15 @@ export const PhotoCaptureContainer = ({
     paramKey,
     learnPath,
 }: PhotoCaptureContainerProps) => {
+    const { user } = useUser();
+
     const router = useRouter();
+
     const params = useParams();
+
+    const searchParams = useSearchParams();
+
+    const courseName = searchParams.get("name");
 
     const courseId = params[paramKey] as string;
 
@@ -44,7 +54,7 @@ export const PhotoCaptureContainer = ({
 
     // Hook để upload ảnh lên Cloudflare R2
     const {
-        mutate: uploadCapture,
+        mutateAsync: uploadCapture,
         isPending: isUploading,
         error: uploadError,
     } = useUploadCapture(courseType, {
@@ -57,6 +67,8 @@ export const PhotoCaptureContainer = ({
             console.error("[v0] Error uploading photo:", error);
         },
     });
+
+    const { mutateAsync: startCourse, isPending: isStarting } = useStartCourse(courseType);
 
     /**
      * Convert data URL to File object
@@ -76,17 +88,26 @@ export const PhotoCaptureContainer = ({
     };
 
     const handleUploadAndContinue = async () => {
-        if (!capturedPhoto || !courseId) return;
+        if (!capturedPhoto || !courseId || !user?.unsafeMetadata) return;
 
         try {
             // Convert data URL to File
             const file = dataURLtoFile(capturedPhoto, `verification-${Date.now()}.jpg`);
 
             // Upload using the hook
-            uploadCapture({
+            await uploadCapture({
                 file,
                 groupId: courseId,
                 captureType: "start", // Ảnh verification trước khi bắt đầu
+            });
+
+            await startCourse({
+                groupId: courseId,
+                portraitUrl: capturedPhoto,
+                courseName: courseName as string,
+                userFullname: user?.unsafeMetadata?.fullName as string,
+                userBirthDate: user?.unsafeMetadata?.birthDate as string,
+                userCompanyName: user?.unsafeMetadata?.companyName as string,
             });
         } catch (err) {
             console.error("Error preparing photo upload:", err);
@@ -165,7 +186,7 @@ export const PhotoCaptureContainer = ({
                         <ActionButtons
                             onRetake={retakePhoto}
                             onConfirm={handleUploadAndContinue}
-                            isUploading={isUploading}
+                            isUploading={isUploading || isStarting}
                         />
                     )}
                 </div>

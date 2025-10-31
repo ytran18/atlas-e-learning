@@ -24,12 +24,28 @@ export async function POST(request: NextRequest) {
 
         // Parse and validate request body
         const body = await parseJsonBody<StartCourseRequest>(request);
-        validateRequiredFields(body, ["groupId", "portraitUrl"]);
+        validateRequiredFields(body, [
+            "groupId",
+            "portraitUrl",
+            "courseName",
+            "userFullname",
+            "userBirthDate",
+            "userCompanyName",
+        ]);
 
-        const { groupId, portraitUrl } = body;
+        const { groupId, portraitUrl, courseName, userFullname, userBirthDate, userCompanyName } =
+            body;
 
         // Create initial progress
-        const progress = await createUserProgress(userId, groupId, portraitUrl);
+        const progress = await createUserProgress(
+            userId,
+            groupId,
+            portraitUrl,
+            courseName,
+            userFullname,
+            userBirthDate,
+            userCompanyName
+        );
 
         // Map to response format
         const response: StartCourseResponse = {

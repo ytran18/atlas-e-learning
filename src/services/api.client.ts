@@ -69,8 +69,13 @@ async function apiFetch<T>(
 /**
  * Get list of all courses
  */
-export async function getCourseList(type: CourseType): Promise<GetCourseListResponse> {
-    const endpoint = type === "atld" ? "/api/v1/atld/lists" : "/api/v1/hoc-nghe/lists";
+export async function getCourseList(type: CourseType | "all"): Promise<GetCourseListResponse> {
+    const endpoint =
+        type === "atld"
+            ? "/api/v1/atld/lists"
+            : type === "hoc-nghe"
+              ? "/api/v1/hoc-nghe/lists"
+              : "/api/v1/course/all";
 
     const response = await apiFetch<GetCourseListResponse>(endpoint);
 
@@ -154,8 +159,11 @@ export async function uploadLearningCapture(
             : "/api/v1/hoc-nghe/upload-learning-capture";
 
     const formData = new FormData();
+
     formData.append("file", file);
+
     formData.append("groupId", groupId);
+
     formData.append("type", captureType);
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -216,7 +224,9 @@ export async function getStudentStats(
     cursor?: string
 ): Promise<GetStatsResponse> {
     const params = new URLSearchParams({ groupId });
+
     if (pageSize) params.append("pageSize", pageSize.toString());
+
     if (cursor) params.append("cursor", cursor);
 
     const endpoint =
@@ -225,6 +235,7 @@ export async function getStudentStats(
             : `/api/v1/admin/hoc-nghe/stats?${params}`;
 
     const response = await apiFetch<GetStatsResponse>(endpoint);
+
     return response.data;
 }
 

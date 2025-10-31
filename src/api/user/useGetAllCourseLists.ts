@@ -7,18 +7,14 @@
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 
 import { getCourseList } from "@/services/api.client";
-import { CourseType, GetCourseListResponse } from "@/types/api";
+import { GetCourseListResponse } from "@/types/api";
+
+import { courseListKeys } from "./useCourseList";
 
 /**
  * Query key factory cho course list
  * Giúp dễ dàng invalidate cache khi cần
  */
-export const courseListKeys = {
-    all: ["courseList"] as const,
-    lists: () => [...courseListKeys.all, "list"] as const,
-    list: (type: CourseType | "all") => [...courseListKeys.lists(), type] as const,
-};
-
 /**
  * Hook lấy danh sách khóa học
  *
@@ -35,16 +31,15 @@ export const courseListKeys = {
  *   refetchInterval: 5000, // Refetch mỗi 5 giây
  * });
  */
-export function useCourseList(
-    type: CourseType,
+export function useGetAllCourseLists(
     options?: Omit<
         UseQueryOptions<GetCourseListResponse, Error, GetCourseListResponse>,
         "queryKey" | "queryFn"
     >
 ) {
     return useQuery({
-        queryKey: courseListKeys.list(type),
-        queryFn: () => getCourseList(type),
+        queryKey: courseListKeys.list("all"),
+        queryFn: () => getCourseList("all"),
         ...options,
     });
 }
