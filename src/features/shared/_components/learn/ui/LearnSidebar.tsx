@@ -1,4 +1,4 @@
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useLearnContext } from "@/contexts/LearnContext";
 
@@ -39,6 +39,8 @@ const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
     } = useLearnContext();
 
     const { title } = learnDetail;
+
+    const searchParams = useSearchParams();
 
     const router = useRouter();
 
@@ -95,11 +97,19 @@ const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
     const handleViewAgain = (section: string, index: number) => {
         navigateToVideo(section, index);
 
-        router.push(`?viewAgain=true`);
+        const params = new URLSearchParams(searchParams.toString());
+
+        params.set("viewAgain", "true");
+
+        router.push(`?${params.toString()}`);
     };
 
     const handleViewExam = () => {
-        router.push(`?viewAgain=true`);
+        const params = new URLSearchParams(searchParams.toString());
+
+        params.set("viewAgain", "true");
+
+        router.push(`?${params.toString()}`);
 
         navigateToExam();
     };

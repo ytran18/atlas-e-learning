@@ -25,6 +25,8 @@ const AtldPreview = ({ initialData }: AtldPreviewProps) => {
 
     const isJoined = !!progressData;
 
+    const isCompleted = progressData?.isCompleted;
+
     if (!data || isLoading) {
         return null;
     }
@@ -34,6 +36,7 @@ const AtldPreview = ({ initialData }: AtldPreviewProps) => {
             course={data}
             isJoined={isJoined}
             isLoadingJoiabled={isProgressLoading}
+            isCompleted={isCompleted}
         />
     );
 };

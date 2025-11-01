@@ -13,12 +13,14 @@ interface AtldPreviewContainerProps {
     course: CoursePreview;
     isJoined: boolean;
     isLoadingJoiabled: boolean;
+    isCompleted?: boolean;
 }
 
 export const AtldPreviewContainer = ({
     course,
     isJoined,
     isLoadingJoiabled,
+    isCompleted,
 }: AtldPreviewContainerProps) => {
     const totlaLessons = course.theory.videos.length + course.practice.videos.length;
 
@@ -30,6 +32,7 @@ export const AtldPreviewContainer = ({
                 title={course.title}
                 description={course.description}
                 isLoadingJoiabled={isLoadingJoiabled}
+                isCompleted={isCompleted}
             >
                 <CourseStats totalLessons={totlaLessons} totalQuestions={10} />
             </CourseHeroSection>
