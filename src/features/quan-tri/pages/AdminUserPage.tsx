@@ -1,0 +1,70 @@
+"use client";
+
+import { useSearchParams } from "next/navigation";
+
+import { Card } from "@mantine/core";
+
+import { useStudentStats } from "@/api";
+import { useGetAllCourseLists } from "@/api/user/useGetAllCourseLists";
+import { CourseType } from "@/types/api";
+
+import UserFilter from "../components/AdminUser/UserFilter";
+import UserTable from "../components/AdminUser/UserTable";
+import { AdminUserProvider } from "../contexts/AdminUserContext";
+
+const AdminUserPage = () => {
+    const searchParams = useSearchParams();
+
+    const courseId = searchParams.get("courseId");
+
+    const type = searchParams.get("type");
+
+    const page = searchParams.get("page");
+
+    const pageSize = searchParams.get("pageSize");
+
+    const { data: courseList } = useGetAllCourseLists();
+
+    const { data: stats } = useStudentStats(
+        type as CourseType,
+        courseId as string,
+        Number(pageSize) ?? 10
+    );
+
+    if (!courseList) return null;
+
+    if (!stats) {
+        return (
+            <AdminUserProvider courseList={courseList} tableData={[]} totalDocs={0} totalPages={0}>
+                <div className="flex-1 flex w-full">
+                    <Card withBorder className="w-full h-full flex flex-col gap-y-4 flex-1">
+                        <UserFilter />
+
+                        <div className="flex items-center justify-center w-full h-full min-h-[250px] text-lg text-gray-700 font-semibold">
+                            Vui lòng chọn khóa học để xem dữ liệu
+                        </div>
+                    </Card>
+                </div>
+            </AdminUserProvider>
+        );
+    }
+
+    return (
+        <AdminUserProvider
+            courseList={courseList}
+            tableData={stats.data}
+            totalDocs={stats.totalDocs}
+            totalPages={stats.totalPages}
+        >
+            <div className="flex-1 flex w-full">
+                <Card withBorder className="w-full h-full flex flex-col gap-y-4 flex-1">
+                    <UserFilter />
+
+                    <UserTable />
+                </Card>
+            </div>
+        </AdminUserProvider>
+    );
+};
+
+export default AdminUserPage;

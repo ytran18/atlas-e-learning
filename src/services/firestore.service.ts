@@ -323,15 +323,38 @@ export async function saveLearningCapture(
 /**
  * Get all students progress for a specific group (with pagination)
  */
-export async function getGroupStats(groupId: string, pageSize: number = 20, cursor?: string) {
+export async function getGroupStats(
+    groupId: string,
+    page: number,
+    pageSize: number = 20,
+    cursor?: string
+) {
+    // Đếm tổng số document trong progress/{groupId}/users
+    const countSnap = await adminDb
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId)
+        .collection(COLLECTIONS.USERS)
+        .count()
+        .get();
+
+    const totalDocs = countSnap.data().count || 0;
+    const totalPages = Math.ceil(totalDocs / pageSize);
+
+    // Query phân trang
     let query = adminDb
-        .collectionGroup(COLLECTIONS.PROGRESS)
-        .where("groupId", "==", groupId)
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId)
+        .collection(COLLECTIONS.USERS)
         .orderBy("lastUpdatedAt", "desc")
-        .limit(pageSize + 1); // +1 to check if there are more
+        .limit(pageSize + 1);
 
     if (cursor) {
-        const cursorDoc = await adminDb.doc(cursor).get();
+        const cursorDoc = await adminDb
+            .collection(COLLECTIONS.PROGRESS)
+            .doc(groupId)
+            .collection(COLLECTIONS.USERS)
+            .doc(cursor)
+            .get();
 
         if (cursorDoc.exists) {
             query = query.startAfter(cursorDoc);
@@ -341,51 +364,39 @@ export async function getGroupStats(groupId: string, pageSize: number = 20, curs
     const snapshot = await query.get();
 
     const hasMore = snapshot.docs.length > pageSize;
-
     const docs = hasMore ? snapshot.docs.slice(0, pageSize) : snapshot.docs;
 
-    // Get user info for each progress
     const data: StudentStats[] = await Promise.all(
         docs.map(async (doc) => {
             const progressData = doc.data();
-
-            const userId = doc.ref.parent.parent?.id;
-
-            // Get user info
-            let userInfo = { fullname: "Unknown", companyName: "" };
-
-            if (userId) {
-                const userDoc = await adminDb.collection(COLLECTIONS.USERS).doc(userId).get();
-
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-
-                    userInfo = {
-                        fullname: userData?.fullname || userData?.displayName || "Unknown",
-                        companyName: userData?.companyName || "",
-                    };
-                }
-            }
+            const userId = doc.id;
 
             return {
                 userId: userId || "",
-                fullname: userInfo.fullname,
-                companyName: userInfo.companyName,
+                fullname: progressData.userFullname || "",
+                companyName: progressData.userCompanyName || "",
                 isCompleted: progressData.isCompleted || false,
                 startedAt: progressData.startedAt || 0,
                 lastUpdatedAt: progressData.lastUpdatedAt || 0,
                 startImageUrl: progressData.startImageUrl,
                 finishImageUrl: progressData.finishImageUrl,
+                completedVideos: progressData.completedVideos || [],
+                courseName: progressData.courseName || "",
+                currentSection: progressData.currentSection || "",
+                currentVideoIndex: progressData.currentVideoIndex || 0,
+                birthDate: progressData.userBirthDate || "",
             };
         })
     );
 
-    const nextCursor = hasMore ? docs[docs.length - 1].ref.path : undefined;
+    const nextCursor = hasMore ? docs[docs.length - 1].id : undefined;
 
     return {
         data,
         nextCursor,
         hasMore,
+        totalDocs,
+        totalPages,
     };
 }
 

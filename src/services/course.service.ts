@@ -22,6 +22,7 @@ export async function getCourseList(
     const courseList: GetCourseListResponse = groups.map((group) => {
         const item: CourseListItem = {
             id: group.id,
+            type: group.type,
             title: group.title || "",
             description: group.description || "",
             numberOfTheory: group.theory?.videos?.length || 0,

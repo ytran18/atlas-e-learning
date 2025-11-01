@@ -220,10 +220,11 @@ export async function submitExamAnswers(
 export async function getStudentStats(
     type: CourseType,
     groupId: string,
+    page: number,
     pageSize?: number,
     cursor?: string
 ): Promise<GetStatsResponse> {
-    const params = new URLSearchParams({ groupId });
+    const params = new URLSearchParams({ groupId, page: page.toString() });
 
     if (pageSize) params.append("pageSize", pageSize.toString());
 

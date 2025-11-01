@@ -22,6 +22,8 @@ export async function GET(request: NextRequest) {
 
         const groupId = queryParams.groupId;
 
+        const page = parseInt(queryParams.page || "1", 10);
+
         const pageSize = parseInt(queryParams.pageSize || "20", 10);
 
         const cursor = queryParams.cursor;
@@ -32,13 +34,15 @@ export async function GET(request: NextRequest) {
         }
 
         // Get stats from Firestore
-        const stats = await getGroupStats(groupId, pageSize, cursor);
+        const stats = await getGroupStats(groupId, page, pageSize, cursor);
 
         // Map to response format
         const response: GetStatsResponse = {
             data: stats.data,
             nextCursor: stats.nextCursor,
             hasMore: stats.hasMore,
+            totalDocs: stats.totalDocs,
+            totalPages: stats.totalPages,
         };
 
         return successResponse(response);

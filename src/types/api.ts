@@ -69,6 +69,7 @@ export interface ExamSection {
 
 export interface CourseListItem {
     id: string;
+    type?: CourseType;
     title: string;
     description: string;
     numberOfTheory: number;
@@ -195,18 +196,32 @@ export interface GetStatsQueryParams {
 export interface StudentStats {
     userId: string;
     fullname: string;
+    birthDate: string;
     companyName?: string;
     isCompleted: boolean;
     startedAt: number;
     lastUpdatedAt: number;
     startImageUrl?: string;
     finishImageUrl?: string;
+    completedVideos: CompletedVideo[];
+    courseName: string;
+    currentSection: SectionType;
+    currentVideoIndex: number;
+    examResult?: {
+        score: number;
+        totalQuestions: number;
+        passed: boolean;
+        completedAt: number;
+        answers?: ExamAnswer[];
+    };
 }
 
 export interface GetStatsResponse {
     data: StudentStats[];
     nextCursor?: string;
     hasMore: boolean;
+    totalDocs: number;
+    totalPages: number;
 }
 
 // ============================================================================

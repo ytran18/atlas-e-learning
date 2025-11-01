@@ -2,9 +2,9 @@
  * Hook: useStudentStats (Admin)
  *
  * Lấy thống kê học viên cho một khóa học
- * Hỗ trợ pagination với cursor-based
+ * Không sử dụng infinite query, chỉ trả về dữ liệu một trang (GetStatsResponse)
  */
-import { UseInfiniteQueryOptions, useInfiniteQuery } from "@tanstack/react-query";
+import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 
 import { getStudentStats } from "@/services/api.client";
 import { CourseType, GetStatsResponse } from "@/types/api";
@@ -20,49 +20,33 @@ export const studentStatsKeys = {
 };
 
 /**
- * Hook lấy thống kê học viên với infinite scroll/pagination
+ * Hook lấy thống kê học viên cho một trang (không infinite)
  *
  * @param type - Loại khóa học: "atld" hoặc "hoc-nghe"
  * @param groupId - ID của khóa học
  * @param pageSize - Số lượng học viên mỗi trang (default: 20)
+ * @param cursor - Cursor cho trang hiện tại (nếu có)
  * @param options - React Query options
- * @returns Infinite query result với data phân trang
+ * @returns Query result với data theo dạng GetStatsResponse
  *
  * @example
- * const {
- *   data,
- *   fetchNextPage,
- *   hasNextPage,
- *   isFetchingNextPage,
- * } = useStudentStats("atld", "group_001", 20);
- *
- * // Render data
- * const allStudents = data?.pages.flatMap(page => page.data) || [];
- *
- * // Load more
- * <button onClick={() => fetchNextPage()} disabled={!hasNextPage}>
- *   {isFetchingNextPage ? "Loading..." : "Load More"}
- * </button>
+ * const { data, isLoading } = useStudentStats("atld", "group_001", 20);
  */
 export function useStudentStats(
     type: CourseType,
     groupId: string,
+    page: number,
     pageSize: number = 20,
+    cursor?: string,
     options?: Omit<
-        UseInfiniteQueryOptions<GetStatsResponse, Error>,
-        "queryKey" | "queryFn" | "getNextPageParam" | "initialPageParam"
+        UseQueryOptions<GetStatsResponse, Error>,
+        "queryKey" | "queryFn" // omit these because we set them below
     >
 ) {
-    return useInfiniteQuery({
+    return useQuery({
         queryKey: studentStatsKeys.stat(type, groupId, pageSize),
-        queryFn: ({ pageParam }) =>
-            getStudentStats(type, groupId, pageSize, pageParam as string | undefined),
-        getNextPageParam: (lastPage) => {
-            // Trả về cursor cho trang tiếp theo nếu có
-            return lastPage.hasMore ? lastPage.nextCursor : undefined;
-        },
-        initialPageParam: undefined,
-        enabled: !!groupId, // Chỉ fetch khi có groupId
+        queryFn: () => getStudentStats(type, groupId, page, pageSize, cursor),
+        enabled: !!groupId,
         ...options,
     });
 }

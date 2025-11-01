@@ -38,7 +38,7 @@ const MobileCourseSelect = ({ defaultCourseId, currentAdminPathname }: MobileCou
             return;
         }
 
-        if (courseList) {
+        if (courseList && currentAdminPathname !== ("user" as CourseType)) {
             router.push(`/quan-tri/${currentAdminPathname}/${courseList?.[0]?.id}`);
         }
     }, [courseList, defaultCourseId, router, isMobile, currentAdminPathname]);
