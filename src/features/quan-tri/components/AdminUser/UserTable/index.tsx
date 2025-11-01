@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Checkbox, Image, Pagination, Table } from "@mantine/core";
 
@@ -6,11 +6,27 @@ import { tableHeader } from "@/features/quan-tri/constants/userTable";
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
 
 const UserTable = () => {
-    const { tableData, totalPages } = useAdminUserContext();
+    const router = useRouter();
 
-    const [currentPage, setCurrentPage] = useState<number>(1);
+    const searchParams = useSearchParams();
+
+    const { tableData, totalPages, totalDocs } = useAdminUserContext();
+
+    const page = searchParams.get("page");
+
+    const currentPage = Number(page) || 1;
+
+    const isShowPagination = totalDocs > 10;
 
     if (!tableData) return <div>No data</div>;
+
+    const handlePageChange = (newPage: number) => {
+        const params = new URLSearchParams(searchParams.toString());
+
+        params.set("page", String(newPage));
+
+        router.push(`?${params.toString()}`);
+    };
 
     const rows = tableData?.map((element) => {
         const isCompleted = element.isCompleted;
@@ -81,9 +97,15 @@ const UserTable = () => {
                 </Table>
             </div>
 
-            <div className="w-full flex justify-end">
-                <Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} />
-            </div>
+            {isShowPagination && (
+                <div className="w-full flex justify-end">
+                    <Pagination
+                        total={totalPages}
+                        value={currentPage}
+                        onChange={handlePageChange}
+                    />
+                </div>
+            )}
         </div>
     );
 };

@@ -220,15 +220,17 @@ export async function submitExamAnswers(
 export async function getStudentStats(
     type: CourseType,
     groupId: string,
-    page: number,
     pageSize?: number,
-    cursor?: string
+    cursor?: string,
+    search?: string
 ): Promise<GetStatsResponse> {
-    const params = new URLSearchParams({ groupId, page: page.toString() });
+    const params = new URLSearchParams({ groupId });
 
     if (pageSize) params.append("pageSize", pageSize.toString());
 
     if (cursor) params.append("cursor", cursor);
+
+    if (search) params.append("search", search);
 
     const endpoint =
         type === "atld"

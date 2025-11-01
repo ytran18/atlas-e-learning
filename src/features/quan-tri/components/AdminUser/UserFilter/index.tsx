@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button, CloseButton, Input, Select } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { useDebouncedValue, useMediaQuery } from "@mantine/hooks";
 import { IconPdf, IconSearch } from "@tabler/icons-react";
 
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
@@ -14,11 +14,17 @@ import { navigationPaths } from "@/utils/navigationPaths";
 const UserFilter = () => {
     const router = useRouter();
 
+    const searchParams = useSearchParams();
+
+    const courseId = searchParams.get("courseId");
+
     const { courseList } = useAdminUserContext();
 
     const isMobile = useMediaQuery("(max-width: 640px)");
 
     const [value, setValue] = useState<string>("");
+
+    const [debouncedValue] = useDebouncedValue(value, 200);
 
     const handleSelectCourse = (value: string, option: any) => {
         if (!option?.type) return;
@@ -40,6 +46,18 @@ const UserFilter = () => {
         );
     };
 
+    useEffect(() => {
+        const params = new URLSearchParams(searchParams.toString());
+
+        if (debouncedValue) {
+            params.set("search", debouncedValue);
+        } else {
+            params.delete("search");
+        }
+
+        router.push(`?${params.toString()}`);
+    }, [debouncedValue, router, searchParams]);
+
     return (
         <div className="w-full flex items-center gap-x-2">
             <Input
@@ -55,6 +73,7 @@ const UserFilter = () => {
             {!isMobile && (
                 <Select
                     searchable
+                    defaultValue={courseId}
                     placeholder="Chọn khóa học"
                     nothingFoundMessage="Chưa có khóa học nào!"
                     data={courseList.map((item) => ({

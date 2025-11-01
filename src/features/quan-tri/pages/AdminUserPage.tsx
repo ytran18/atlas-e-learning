@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { useSearchParams } from "next/navigation";
 
 import { Card } from "@mantine/core";
@@ -11,6 +13,7 @@ import { CourseType } from "@/types/api";
 import UserFilter from "../components/AdminUser/UserFilter";
 import UserTable from "../components/AdminUser/UserTable";
 import { AdminUserProvider } from "../contexts/AdminUserContext";
+import { useCursorPagination } from "../hooks/useCursorPagination";
 
 const AdminUserPage = () => {
     const searchParams = useSearchParams();
@@ -23,13 +26,30 @@ const AdminUserPage = () => {
 
     const pageSize = searchParams.get("pageSize");
 
+    const search = searchParams.get("search");
+
+    const { getCursor, saveCursor } = useCursorPagination();
+
     const { data: courseList } = useGetAllCourseLists();
+
+    // Cursor của trang trước
+    const cursor = getCursor(Number(page) || 1);
 
     const { data: stats } = useStudentStats(
         type as CourseType,
         courseId as string,
-        Number(pageSize) ?? 10
+        Number(pageSize) ?? 10,
+        cursor,
+        search as string
     );
+
+    // Sau khi fetch xong → lưu lại nextCursor cho page hiện tại
+    useEffect(() => {
+        if (stats?.nextCursor) {
+            saveCursor(Number(page) || 1, stats.nextCursor);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stats?.nextCursor, page]);
 
     if (!courseList) return null;
 

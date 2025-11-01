@@ -15,8 +15,13 @@ import { CourseType, GetStatsResponse } from "@/types/api";
 export const studentStatsKeys = {
     all: ["studentStats"] as const,
     stats: () => [...studentStatsKeys.all, "stats"] as const,
-    stat: (type: CourseType, groupId: string, pageSize?: number) =>
-        [...studentStatsKeys.stats(), type, groupId, pageSize] as const,
+    stat: (
+        type: CourseType,
+        groupId: string,
+        pageSize?: number,
+        cursor?: string,
+        search?: string
+    ) => [...studentStatsKeys.stats(), type, groupId, pageSize, cursor, search] as const,
 };
 
 /**
@@ -35,18 +40,19 @@ export const studentStatsKeys = {
 export function useStudentStats(
     type: CourseType,
     groupId: string,
-    page: number,
     pageSize: number = 20,
     cursor?: string,
+    search?: string,
     options?: Omit<
         UseQueryOptions<GetStatsResponse, Error>,
         "queryKey" | "queryFn" // omit these because we set them below
     >
 ) {
     return useQuery({
-        queryKey: studentStatsKeys.stat(type, groupId, pageSize),
-        queryFn: () => getStudentStats(type, groupId, page, pageSize, cursor),
+        queryKey: studentStatsKeys.stat(type, groupId, pageSize, cursor, search),
+        queryFn: () => getStudentStats(type, groupId, pageSize, cursor, search),
         enabled: !!groupId,
+        placeholderData: (previousData) => previousData,
         ...options,
     });
 }

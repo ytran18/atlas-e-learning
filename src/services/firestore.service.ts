@@ -325,11 +325,10 @@ export async function saveLearningCapture(
  */
 export async function getGroupStats(
     groupId: string,
-    page: number,
     pageSize: number = 20,
-    cursor?: string
+    cursor?: string,
+    searchName?: string
 ) {
-    // Đếm tổng số document trong progress/{groupId}/users
     const countSnap = await adminDb
         .collection(COLLECTIONS.PROGRESS)
         .doc(groupId)
@@ -338,15 +337,23 @@ export async function getGroupStats(
         .get();
 
     const totalDocs = countSnap.data().count || 0;
+
     const totalPages = Math.ceil(totalDocs / pageSize);
 
-    // Query phân trang
-    let query = adminDb
+    let queryRef: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = adminDb
         .collection(COLLECTIONS.PROGRESS)
         .doc(groupId)
-        .collection(COLLECTIONS.USERS)
-        .orderBy("lastUpdatedAt", "desc")
-        .limit(pageSize + 1);
+        .collection(COLLECTIONS.USERS);
+
+    // Nếu có search name thì order theo tên
+    if (searchName) {
+        const searchEnd = searchName + "\uf8ff";
+        queryRef = queryRef.orderBy("userFullname").startAt(searchName).endAt(searchEnd);
+    } else {
+        queryRef = queryRef.orderBy("lastUpdatedAt", "desc");
+    }
+
+    let query = queryRef.limit(pageSize + 1);
 
     if (cursor) {
         const cursorDoc = await adminDb
@@ -356,9 +363,7 @@ export async function getGroupStats(
             .doc(cursor)
             .get();
 
-        if (cursorDoc.exists) {
-            query = query.startAfter(cursorDoc);
-        }
+        if (cursorDoc.exists) query = query.startAfter(cursorDoc);
     }
 
     const snapshot = await query.get();
@@ -366,28 +371,25 @@ export async function getGroupStats(
     const hasMore = snapshot.docs.length > pageSize;
     const docs = hasMore ? snapshot.docs.slice(0, pageSize) : snapshot.docs;
 
-    const data: StudentStats[] = await Promise.all(
-        docs.map(async (doc) => {
-            const progressData = doc.data();
-            const userId = doc.id;
+    const data: StudentStats[] = docs.map((doc) => {
+        const d = doc.data();
 
-            return {
-                userId: userId || "",
-                fullname: progressData.userFullname || "",
-                companyName: progressData.userCompanyName || "",
-                isCompleted: progressData.isCompleted || false,
-                startedAt: progressData.startedAt || 0,
-                lastUpdatedAt: progressData.lastUpdatedAt || 0,
-                startImageUrl: progressData.startImageUrl,
-                finishImageUrl: progressData.finishImageUrl,
-                completedVideos: progressData.completedVideos || [],
-                courseName: progressData.courseName || "",
-                currentSection: progressData.currentSection || "",
-                currentVideoIndex: progressData.currentVideoIndex || 0,
-                birthDate: progressData.userBirthDate || "",
-            };
-        })
-    );
+        return {
+            userId: doc.id,
+            fullname: d.userFullname || "",
+            companyName: d.userCompanyName || "",
+            isCompleted: d.isCompleted || false,
+            startedAt: d.startedAt || 0,
+            lastUpdatedAt: d.lastUpdatedAt || 0,
+            startImageUrl: d.startImageUrl,
+            finishImageUrl: d.finishImageUrl,
+            completedVideos: d.completedVideos || [],
+            courseName: d.courseName || "",
+            currentSection: d.currentSection || "",
+            currentVideoIndex: d.currentVideoIndex || 0,
+            birthDate: d.userBirthDate || "",
+        };
+    });
 
     const nextCursor = hasMore ? docs[docs.length - 1].id : undefined;
 
