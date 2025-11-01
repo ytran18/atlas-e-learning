@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
-import { Button, Image } from "@mantine/core";
+import { Button, Checkbox, Image, Input } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
+import { useFormContext, useWatch } from "react-hook-form";
 
 import { Video } from "@/types/api";
 
@@ -31,6 +32,14 @@ const VideoBlock = ({
 
     const videoDropzoneRef = useRef<VideoDropzoneRef>(null);
 
+    const {
+        control,
+        register,
+        formState: { errors },
+    } = useFormContext();
+
+    const isUsingLink = useWatch({ name: "isUsingLink", control });
+
     // Notify parent component when upload state changes
     useEffect(() => {
         onUploadStateChange?.(isUploading, hasSelectedFile);
@@ -44,6 +53,7 @@ const VideoBlock = ({
                 title: "Thành công",
                 message: "Video mới đã được tải lên và chuyển đổi thành công",
                 color: "green",
+                position: "top-right",
             });
 
             // Reset state
@@ -104,10 +114,14 @@ const VideoBlock = ({
     };
 
     return (
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-y-4">
             <div className="flex gap-x-4 items-start mb-4">
                 <div className="w-[200px] h-[100px]">
-                    <Image src={newThumbnailUrl || video.thumbnailUrl} alt={video.title} />
+                    <Image
+                        src={newThumbnailUrl || video?.thumbnailUrl}
+                        alt={video.title}
+                        fallbackSrc="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-9.png"
+                    />
                 </div>
 
                 <div className="flex flex-col gap-y-2">
@@ -170,28 +184,45 @@ const VideoBlock = ({
             </div>
 
             {showUploadArea && (
-                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <div className="mb-4">
-                        <VideoDropzone
-                            ref={videoDropzoneRef}
-                            onFileSelect={handleFileSelect}
-                            onUploadComplete={handleUploadComplete}
-                        />
-                    </div>
+                <>
+                    <Checkbox
+                        label="Sử dụng link video"
+                        checked={isUsingLink}
+                        {...register("isUsingLink")}
+                        error={errors.isUsingLink?.message as string}
+                    />
 
-                    {hasSelectedFile && (
-                        <div className="flex justify-end gap-x-2">
-                            <Button
-                                color="blue"
-                                loading={isUploading}
-                                disabled={isUploading}
-                                onClick={handleUploadVideo}
-                            >
-                                {isUploading ? "Đang tải lên..." : "Tải lên video"}
-                            </Button>
+                    {isUsingLink ? (
+                        <Input
+                            placeholder="Nhập link video"
+                            {...register("url")}
+                            error={errors.url?.message as string}
+                        />
+                    ) : (
+                        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                            <div className="mb-4">
+                                <VideoDropzone
+                                    ref={videoDropzoneRef}
+                                    onFileSelect={handleFileSelect}
+                                    onUploadComplete={handleUploadComplete}
+                                />
+                            </div>
+
+                            {hasSelectedFile && (
+                                <div className="flex justify-end gap-x-2">
+                                    <Button
+                                        color="blue"
+                                        loading={isUploading}
+                                        disabled={isUploading}
+                                        onClick={handleUploadVideo}
+                                    >
+                                        {isUploading ? "Đang tải lên..." : "Tải lên video"}
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     )}
-                </div>
+                </>
             )}
         </div>
     );

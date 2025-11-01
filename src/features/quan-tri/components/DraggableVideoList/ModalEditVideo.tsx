@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Button, Checkbox, Input, Modal, Textarea } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { Video } from "@/types/api";
 
@@ -26,6 +26,8 @@ type ModalEditVideoProps = {
 
 type ModalEditVideoFormData = {
     title: string;
+    isUsingLink: boolean;
+    url: string;
     thumbnailUrl: string;
     description: string;
     canSeek: boolean;
@@ -50,6 +52,7 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
             canSeek: video?.canSeek || false,
             shouldCompleteToPassed: video?.shouldCompleteToPassed || true,
             thumbnailUrl: video?.thumbnailUrl || "",
+            isUsingLink: video?.isUsingLink || false,
         },
     });
 
@@ -61,7 +64,8 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
                 description: video.description || "",
                 canSeek: video.canSeek || false,
                 shouldCompleteToPassed: video.shouldCompleteToPassed || true,
-                thumbnailUrl: video.thumbnailUrl || "",
+                thumbnailUrl: video?.thumbnailUrl || "",
+                isUsingLink: video?.isUsingLink || false,
             });
 
             setNewVideoUrl(null);
@@ -81,7 +85,7 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
             const value = {
                 ...data,
                 id: video.id,
-                url: newVideoUrl || video.url,
+                url: data.isUsingLink ? data.url : newVideoUrl || video.url,
                 thumbnailUrl: data.thumbnailUrl,
             };
 
@@ -151,54 +155,58 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
             closeOnClickOutside={false}
             centered
         >
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-y-4">
-                <Input.Wrapper label="Tiêu đề video" withAsterisk>
-                    <Input
-                        placeholder="Tiêu đề video"
-                        {...form.register("title", { required: "Tiêu đề video là bắt buộc" })}
-                        error={form.formState.errors.title?.message}
+            <FormProvider {...form}>
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-y-4">
+                    <Input.Wrapper label="Tiêu đề video" withAsterisk>
+                        <Input
+                            placeholder="Tiêu đề video"
+                            {...form.register("title", { required: "Tiêu đề video là bắt buộc" })}
+                            error={form.formState.errors.title?.message}
+                        />
+                    </Input.Wrapper>
+
+                    <Input.Wrapper label="Mô tả video" withAsterisk>
+                        <Textarea
+                            placeholder="Mô tả video"
+                            {...form.register("description", {
+                                required: "Mô tả video là bắt buộc",
+                            })}
+                            error={form.formState.errors.description?.message}
+                        />
+                    </Input.Wrapper>
+
+                    <VideoBlock
+                        video={video}
+                        onVideoReplace={handleVideoReplace}
+                        newThumbnailUrl={newThumbnailUrl}
+                        newVideoUrl={newVideoUrl}
+                        onUploadStateChange={(uploading, fileSelected) => {
+                            setIsUploading(uploading);
+                            setHasSelectedFile(fileSelected);
+                        }}
                     />
-                </Input.Wrapper>
 
-                <Input.Wrapper label="Mô tả video" withAsterisk>
-                    <Textarea
-                        placeholder="Mô tả video"
-                        {...form.register("description", { required: "Mô tả video là bắt buộc" })}
-                        error={form.formState.errors.description?.message}
+                    <Checkbox label="Cho phép tua" {...form.register("canSeek")} />
+
+                    <Checkbox
+                        label="Xem hết để hoàn thành"
+                        {...form.register("shouldCompleteToPassed")}
                     />
-                </Input.Wrapper>
 
-                <VideoBlock
-                    video={video}
-                    onVideoReplace={handleVideoReplace}
-                    newThumbnailUrl={newThumbnailUrl}
-                    newVideoUrl={newVideoUrl}
-                    onUploadStateChange={(uploading, fileSelected) => {
-                        setIsUploading(uploading);
-                        setHasSelectedFile(fileSelected);
-                    }}
-                />
-
-                <Checkbox label="Cho phép tua" {...form.register("canSeek")} />
-
-                <Checkbox
-                    label="Xem hết để hoàn thành"
-                    {...form.register("shouldCompleteToPassed")}
-                />
-
-                <div className="flex justify-end gap-x-2 mt-4">
-                    <Button variant="outline" onClick={handleClose} type="button">
-                        Hủy
-                    </Button>
-                    <Button
-                        type="submit"
-                        loading={isSubmitting}
-                        disabled={(!form.formState.isDirty && !newVideoUrl) || isUploading}
-                    >
-                        Cập nhật
-                    </Button>
-                </div>
-            </form>
+                    <div className="flex justify-end gap-x-2 mt-4">
+                        <Button variant="outline" onClick={handleClose} type="button">
+                            Hủy
+                        </Button>
+                        <Button
+                            type="submit"
+                            loading={isSubmitting}
+                            disabled={(!form.formState.isDirty && !newVideoUrl) || isUploading}
+                        >
+                            Cập nhật
+                        </Button>
+                    </div>
+                </form>
+            </FormProvider>
         </Modal>
     );
 };

@@ -27,6 +27,7 @@ export interface Video {
     canSeek?: boolean;
     shouldCompleteToPassed?: boolean;
     thumbnailUrl?: string;
+    isUsingLink?: boolean;
 }
 
 // ============================================================================

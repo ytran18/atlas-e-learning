@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Checkbox, Group, Input, Modal, Text, Textarea } from "@mantine/core";
@@ -25,6 +25,8 @@ const VideoUploadModal = ({
     title = "Thêm video mới",
 }: VideoUploadModalProps) => {
     const videoDropzoneRef = useRef<VideoDropzoneRef>(null);
+
+    const [isUsingLink, setIsUsingLink] = useState<boolean>(false);
 
     const {
         register,
@@ -76,8 +78,29 @@ const VideoUploadModal = ({
         };
     }, [opened]);
 
-    const handleFormSubmit = async () => {
+    const handleFormSubmit = async (data: VideoUploadFormData) => {
         try {
+            if (isUsingLink) {
+                const videoPayload: Video = {
+                    id: crypto.randomUUID(), // Generate temporary ID
+                    sortNo: 0, // Will be set by parent component
+                    title: data.title,
+                    description: data.description,
+                    url: data?.url ?? "",
+                    length: 0, // Will be updated when video metadata is available
+                    canSeek: data.canSeek,
+                    shouldCompleteToPassed: data.shouldCompleteToPassed,
+                    thumbnailUrl: "",
+                    isUsingLink: true,
+                };
+
+                onSubmit(videoPayload);
+
+                handleResetForm();
+
+                return;
+            }
+
             // First upload the video
             if (videoDropzoneRef.current) {
                 await videoDropzoneRef.current.uploadVideo();
@@ -167,11 +190,25 @@ const VideoUploadModal = ({
                     />
                 </div>
 
-                <VideoDropzone
-                    ref={videoDropzoneRef}
-                    onFileSelect={handleFileSelect}
-                    onUploadComplete={handleUploadComplete}
+                <Checkbox
+                    label="Sử dụng link video"
+                    checked={isUsingLink}
+                    onChange={(event) => setIsUsingLink(event.currentTarget.checked)}
                 />
+
+                {isUsingLink ? (
+                    <Input
+                        placeholder="Nhập link video"
+                        {...register("url")}
+                        error={errors.url?.message}
+                    />
+                ) : (
+                    <VideoDropzone
+                        ref={videoDropzoneRef}
+                        onFileSelect={handleFileSelect}
+                        onUploadComplete={handleUploadComplete}
+                    />
+                )}
 
                 {errors.file && (
                     <Text size="sm" c="red">
@@ -179,7 +216,7 @@ const VideoUploadModal = ({
                     </Text>
                 )}
 
-                {watchedFile && !isSubmitting && (
+                {((watchedFile && !isSubmitting) || isUsingLink) && (
                     <>
                         <Checkbox label="Cho phép tua" {...register("canSeek")} />
                         <Checkbox
@@ -197,7 +234,11 @@ const VideoUploadModal = ({
                     <Button
                         type="submit"
                         loading={isSubmitting || videoDropzoneRef.current?.isUploading}
-                        disabled={!watchedFile || videoDropzoneRef.current?.isUploading}
+                        disabled={
+                            isUsingLink
+                                ? false
+                                : !watchedFile || videoDropzoneRef.current?.isUploading
+                        }
                     >
                         {videoDropzoneRef.current?.isUploading ? "Đang tải lên..." : "Upload Video"}
                     </Button>

@@ -152,6 +152,9 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                         onPlay={handleVideoPlay}
                         onPause={handleVideoPaused}
                         onProgress={handleProgress}
+                        isUsingLink={
+                            currentVideo?.isUsingLink || learnDetail.theory.videos[0].isUsingLink
+                        }
                     />
                 </div>
 

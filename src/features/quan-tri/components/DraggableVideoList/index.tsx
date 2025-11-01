@@ -70,7 +70,6 @@ const DraggableVideoList = ({
         thumbnailUrl: string;
     }) => {
         if (selectedVideo && onUpdateVideo) {
-            console.log("handleUpdateVideo", data);
             onUpdateVideo(data.id, data);
         }
     };
@@ -128,8 +127,9 @@ const DraggableVideoList = ({
 
                                                     <div className="w-[100px] h-[50px]">
                                                         <Image
-                                                            src={video.thumbnailUrl}
+                                                            src={video?.thumbnailUrl}
                                                             alt={video.title}
+                                                            fallbackSrc="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-9.png"
                                                         />
                                                     </div>
 
@@ -207,7 +207,11 @@ const DraggableVideoList = ({
                     >
                         <div className="flex items-center gap-x-3 cursor-pointer">
                             <div className="w-[100px] h-[50px]">
-                                <Image src={video.thumbnailUrl} alt={video.title} />
+                                <Image
+                                    src={video?.thumbnailUrl}
+                                    alt={video.title}
+                                    fallbackSrc="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-9.png"
+                                />
                             </div>
 
                             <div className="">

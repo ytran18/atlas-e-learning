@@ -145,8 +145,8 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
             <div className="flex flex-col gap-4 h-full">
                 <div className="flex-1 min-h-0">
                     <VideoPlayer
-                        src={currentVideo?.url || learnDetail.practice.videos[0].url}
-                        canSeek={currentVideo?.canSeek || learnDetail.practice.videos[0].canSeek}
+                        src={currentVideo?.url || learnDetail.practice.videos?.[0]?.url}
+                        canSeek={currentVideo?.canSeek || learnDetail.practice.videos?.[0]?.canSeek}
                         onEnded={handleVideoEndedInternal}
                         onPlay={handleVideoPlay}
                         onPause={handleVideoPaused}
@@ -156,7 +156,7 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
 
                 <div className="space-y-2 flex-shrink-0 px-2 sm:px-0">
                     <h3 className="text-lg lg:text-xl font-semibold text-gray-900">
-                        {currentVideo?.title || learnDetail.practice.videos[0].title}
+                        {currentVideo?.title || learnDetail.practice.videos?.[0]?.title}
                     </h3>
                     {currentVideo?.description && (
                         <p className="text-sm lg:text-base text-gray-600">

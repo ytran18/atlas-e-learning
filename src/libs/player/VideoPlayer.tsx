@@ -7,7 +7,6 @@ import {
     MediaControlBar,
     MediaController,
     MediaFullscreenButton,
-    MediaLoadingIndicator,
     MediaPlayButton,
     MediaTimeDisplay,
     MediaTimeRange,
@@ -24,6 +23,7 @@ interface VideoPlayerProps {
     onPlay?: () => void; // when video played
     onProgress?: ReactEventHandler<HTMLVideoElement> | undefined; // when video progress
     isHls?: boolean; // whether the video source is HLS stream
+    isUsingLink?: boolean; // whether the video source is using link
 }
 
 const LOADING_DEBOUNCE_TIME = 200;
@@ -37,6 +37,7 @@ const VideoPlayer = ({
     onPlay,
     onProgress,
     isHls = true,
+    isUsingLink = false,
 }: VideoPlayerProps) => {
     const videoElementRef = useRef<HTMLVideoElement | null>(null);
 
@@ -44,12 +45,12 @@ const VideoPlayer = ({
 
     const isLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(false);
+    const [, setIsLoadingVideo] = useState<boolean>(false);
 
     // Convert R2 URLs to proxy URLs for same-origin requests
     const getProxyUrl = (originalUrl: string): string => {
         // Check if it's an R2 URL that needs proxying
-        if (!originalUrl.includes(process.env.NEXT_PUBLIC_R2_PUBLIC_URL!)) {
+        if (!originalUrl?.includes(process.env.NEXT_PUBLIC_R2_PUBLIC_URL!)) {
             return originalUrl; // Not an R2 URL, return as is
         }
 
@@ -92,7 +93,7 @@ const VideoPlayer = ({
         const proxySrc = getProxyUrl(src);
 
         // Check if HLS is supported natively
-        if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+        if (videoElement?.canPlayType("application/vnd.apple.mpegurl")) {
             // Native HLS support (Safari) - use proxy URL
             videoElement.src = proxySrc;
         } else if (Hls.isSupported()) {
@@ -169,7 +170,7 @@ const VideoPlayer = ({
                 <Player
                     ref={videoElementRef}
                     slot="media"
-                    src={!isHls ? src : undefined}
+                    src={isUsingLink || !isHls ? src : undefined}
                     crossOrigin="anonymous"
                     playsInline
                     onEnded={onEnded}
