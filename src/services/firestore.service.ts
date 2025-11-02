@@ -388,6 +388,7 @@ export async function getGroupStats(
             currentSection: d.currentSection || "",
             currentVideoIndex: d.currentVideoIndex || 0,
             birthDate: d.userBirthDate || "",
+            examResult: d.examResult || {},
         };
     });
 

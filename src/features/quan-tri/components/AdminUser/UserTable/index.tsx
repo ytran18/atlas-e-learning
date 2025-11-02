@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -6,6 +6,9 @@ import { Checkbox, Image, Pagination, Table } from "@mantine/core";
 
 import { tableHeader } from "@/features/quan-tri/constants/userTable";
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
+import { StudentStats } from "@/types/api";
+
+import ModalUserDetail from "./ModalUserDetail";
 
 type UserTableProps = {
     className?: string;
@@ -15,6 +18,10 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
     const router = useRouter();
 
     const searchParams = useSearchParams();
+
+    const [openedModalUserDetail, setOpenedModalUserDetail] = useState<boolean>(false);
+
+    const [userDetail, setUserDetail] = useState<StudentStats | null>(null);
 
     const { tableData, totalPages, totalDocs } = useAdminUserContext();
 
@@ -42,8 +49,14 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
 
         const isPracticeCompleted = element.currentSection === "exam";
 
+        const handleRowClick = () => {
+            setUserDetail(element);
+
+            setOpenedModalUserDetail(true);
+        };
+
         return (
-            <Table.Tr key={element.userId}>
+            <Table.Tr key={element.userId} onClick={handleRowClick}>
                 <Table.Td>{element.fullname}</Table.Td>
 
                 <Table.Td>{element.birthDate}</Table.Td>
@@ -112,6 +125,12 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
                     />
                 </div>
             )}
+
+            <ModalUserDetail
+                opened={openedModalUserDetail}
+                onClose={() => setOpenedModalUserDetail(false)}
+                user={userDetail}
+            />
         </div>
     );
 });
