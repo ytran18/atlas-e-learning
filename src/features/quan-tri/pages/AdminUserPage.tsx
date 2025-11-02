@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { useSearchParams } from "next/navigation";
 
@@ -31,6 +31,8 @@ const AdminUserPage = () => {
     const { getCursor, saveCursor } = useCursorPagination();
 
     const { data: courseList } = useGetAllCourseLists();
+
+    const tableRef = useRef<HTMLDivElement>(null);
 
     // Cursor của trang trước
     const cursor = getCursor(Number(page) || 1);
@@ -78,9 +80,9 @@ const AdminUserPage = () => {
         >
             <div className="flex-1 flex w-full">
                 <Card withBorder className="w-full h-full flex flex-col gap-y-4 flex-1">
-                    <UserFilter />
+                    <UserFilter ref={tableRef as React.RefObject<HTMLDivElement>} />
 
-                    <UserTable />
+                    <UserTable ref={tableRef} />
                 </Card>
             </div>
         </AdminUserProvider>

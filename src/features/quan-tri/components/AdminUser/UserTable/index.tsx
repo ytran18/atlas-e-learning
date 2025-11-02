@@ -1,3 +1,5 @@
+import { forwardRef } from "react";
+
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { Checkbox, Image, Pagination, Table } from "@mantine/core";
@@ -5,7 +7,11 @@ import { Checkbox, Image, Pagination, Table } from "@mantine/core";
 import { tableHeader } from "@/features/quan-tri/constants/userTable";
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
 
-const UserTable = () => {
+type UserTableProps = {
+    className?: string;
+};
+
+const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref) => {
     const router = useRouter();
 
     const searchParams = useSearchParams();
@@ -82,7 +88,7 @@ const UserTable = () => {
     });
 
     return (
-        <div className="flex flex-col gap-y-2 flex-1">
+        <div className={`flex flex-col gap-y-2 flex-1 ${className}`} ref={ref}>
             <div className="flex-1 max-h-[calc(100vh-270px)] sm:max-h-[calc(100vh-470px)] overflow-y-auto">
                 <Table highlightOnHover withTableBorder withColumnBorders stickyHeader>
                     <Table.Thead>
@@ -108,6 +114,8 @@ const UserTable = () => {
             )}
         </div>
     );
-};
+});
+
+UserTable.displayName = "UserTable";
 
 export default UserTable;

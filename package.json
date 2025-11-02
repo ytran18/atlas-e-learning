@@ -48,6 +48,7 @@
         "react-dom": "19.1.0",
         "react-hook-form": "^7.64.0",
         "react-player": "^3.3.3",
+        "react-to-pdf": "^2.0.1",
         "socket.io-client": "^4.8.1",
         "zod": "^4.1.11"
     },

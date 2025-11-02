@@ -87,6 +87,8 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
                 id: video.id,
                 url: data.isUsingLink ? data.url : newVideoUrl || video.url,
                 thumbnailUrl: data.thumbnailUrl,
+                canSeek: data.canSeek,
+                shouldCompleteToPassed: data.shouldCompleteToPassed,
             };
 
             await onSubmit(value);

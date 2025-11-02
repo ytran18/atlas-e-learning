@@ -213,6 +213,9 @@ export const useCourseForm = ({ courseDetail, courseType }: UseCourseFormProps) 
                 title: data.title,
                 description: data.description,
                 thumbnailUrl: data.thumbnailUrl,
+                canSeek: data.canSeek,
+                shouldCompleteToPassed: data.shouldCompleteToPassed,
+                url: data.url,
             };
             setValue("practice.videos", practiceVideos, { shouldDirty: true });
         }
