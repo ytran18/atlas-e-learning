@@ -13,12 +13,14 @@ interface HocNghePreviewContainerProps {
     course: CoursePreview;
     isJoined: boolean;
     isLoadingJoiabled: boolean;
+    isCompleted?: boolean;
 }
 
 export const HocNghePreviewContainer = ({
     course,
     isJoined,
     isLoadingJoiabled,
+    isCompleted,
 }: HocNghePreviewContainerProps) => {
     const totlaLessons = course.theory.videos.length + course.practice.videos.length;
 
@@ -30,6 +32,7 @@ export const HocNghePreviewContainer = ({
                 title={course.title}
                 description={course.description}
                 isLoadingJoiabled={isLoadingJoiabled}
+                isCompleted={isCompleted}
             >
                 <CourseStats
                     totalLessons={totlaLessons}

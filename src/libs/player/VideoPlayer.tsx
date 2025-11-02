@@ -87,13 +87,17 @@ const VideoPlayer = ({
     useEffect(() => {
         const videoElement = videoElementRef.current;
 
-        if (!videoElement || !isHls) return;
+        if (!videoElement || !isHls || isUsingLink) return;
 
         // Convert R2 URL to proxy URL for same-origin requests
         const proxySrc = getProxyUrl(src);
 
-        // Check if HLS is supported natively
-        if (videoElement?.canPlayType("application/vnd.apple.mpegurl")) {
+        // Prevent crash if `canPlayType` is not a function
+        const canNativePlayHls =
+            typeof videoElement.canPlayType === "function" &&
+            videoElement.canPlayType("application/vnd.apple.mpegurl");
+
+        if (canNativePlayHls) {
             // Native HLS support (Safari) - use proxy URL
             videoElement.src = proxySrc;
         } else if (Hls.isSupported()) {
@@ -149,7 +153,7 @@ const VideoPlayer = ({
                 hlsRef.current = null;
             }
         };
-    }, [src, isHls]);
+    }, [src, isHls, isUsingLink]);
 
     // Cleanup timeout on unmount
     useEffect(() => {
@@ -161,6 +165,7 @@ const VideoPlayer = ({
     return (
         <>
             <MediaController
+                id="media-controller-atld"
                 style={{
                     width: "100%",
                     height: "100%",

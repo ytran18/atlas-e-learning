@@ -16,7 +16,8 @@ interface LearnTheoryProps {
 }
 
 const LearnTheory = ({ courseType }: LearnTheoryProps) => {
-    const { learnDetail, progress, currentVideoIndex, navigateToVideo } = useLearnContext();
+    const { learnDetail, progress, currentVideoIndex, navigateToVideo, navigateToExam } =
+        useLearnContext();
 
     const queryClient = useQueryClient();
 
@@ -29,6 +30,8 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
     const sectionDB = searchParams.get("section");
 
     const videoIndexDB = searchParams.get("video");
+
+    const hasCaptured = !!progress.finishImageUrl;
 
     // Use client-side video index
     const videoIndex = currentVideoIndex;
@@ -96,13 +99,16 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
     };
 
     const handleVideoPaused = () => {
-        console.log("video paused");
+        if (hasCaptured) return;
     };
 
-    const handleProgress: ReactEventHandler<HTMLVideoElement> = () => {};
+    const handleProgress: ReactEventHandler<HTMLVideoElement> = () => {
+        console.log("handleProgress");
+    };
 
     const handleNextVideo = () => {
         const nextVideoIndex = videoIndex + 1;
+
         const totalVideos = learnDetail.theory.videos.length;
 
         if (nextVideoIndex < totalVideos) {
@@ -117,19 +123,24 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
             navigateToVideo("theory", nextVideoIndex);
             // Update URL
             router.replace(`?section=theory&video=${nextVideoIndex}`);
+
             setIsFinishVideo(false);
         } else {
             // All theory videos completed, move to practice section
             updateProgress({
                 groupId: learnDetail.id,
-                section: "practice",
+                section: learnDetail?.practice?.videos?.length > 0 ? "practice" : "exam",
                 videoIndex: 0,
                 currentTime: 0,
             });
             // Update local state immediately for better UX
-            navigateToVideo("practice", 0);
-            // Update URL
-            router.replace(`?section=practice&video=0`);
+            if (learnDetail?.practice?.videos?.length > 0) {
+                navigateToVideo("practice", 0);
+
+                router.replace(`?section=practice&video=0`);
+            } else {
+                navigateToExam();
+            }
         }
     };
 
@@ -146,14 +157,15 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                 {/* Video Player Container */}
                 <div className="min-h-0">
                     <VideoPlayer
-                        src={currentVideo?.url || learnDetail.theory.videos?.[0]?.url}
-                        canSeek={currentVideo?.canSeek || learnDetail.theory.videos[0].canSeek}
+                        src={currentVideo?.url || learnDetail?.theory?.videos?.[0]?.url}
+                        canSeek={currentVideo?.canSeek || learnDetail?.theory?.videos?.[0]?.canSeek}
                         onEnded={handleVideoEndedInternal}
                         onPlay={handleVideoPlay}
                         onPause={handleVideoPaused}
                         onProgress={handleProgress}
                         isUsingLink={
-                            currentVideo?.isUsingLink || learnDetail.theory.videos[0].isUsingLink
+                            currentVideo?.isUsingLink ||
+                            learnDetail?.theory?.videos?.[0]?.isUsingLink
                         }
                     />
                 </div>

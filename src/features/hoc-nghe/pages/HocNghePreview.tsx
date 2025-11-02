@@ -25,6 +25,8 @@ const HocNghePreview = ({ initialData }: HocNghePreviewProps) => {
 
     const isJoined = !!progressData;
 
+    const isCompleted = progressData?.isCompleted;
+
     if (!data || isLoading) {
         return null;
     }
@@ -34,6 +36,7 @@ const HocNghePreview = ({ initialData }: HocNghePreviewProps) => {
             course={data}
             isJoined={isJoined}
             isLoadingJoiabled={isProgressLoading}
+            isCompleted={isCompleted}
         />
     );
 };

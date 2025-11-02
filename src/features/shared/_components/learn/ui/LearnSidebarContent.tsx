@@ -25,6 +25,7 @@ interface SectionData {
     description: string;
     isAccessible: boolean;
     content: VideoContent[];
+    isVisible: boolean;
 }
 
 interface LearnSidebarContentProps {
@@ -99,14 +100,20 @@ const LearnSidebarContent = ({
                     item: "border-b border-gray-100 last:border-b-0",
                 }}
             >
-                {sections.map((section) => (
-                    <SectionItem
-                        key={section.id}
-                        {...section}
-                        onViewAgain={onViewAgain}
-                        onViewExam={onViewExam}
-                    />
-                ))}
+                {sections.map((section) => {
+                    if (section.isVisible) {
+                        return (
+                            <SectionItem
+                                key={section.id}
+                                {...section}
+                                onViewAgain={onViewAgain}
+                                onViewExam={onViewExam}
+                            />
+                        );
+                    }
+
+                    return null;
+                })}
             </Accordion>
         </div>
     );

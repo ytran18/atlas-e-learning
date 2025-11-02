@@ -22,6 +22,7 @@ interface SectionData {
     description: string;
     isAccessible: boolean;
     content: VideoContent[];
+    isVisible: boolean;
 }
 
 interface LearnSidebarProps {
@@ -121,10 +122,11 @@ const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
             label: "Bài học lý thuyết",
             description: "Video",
             isAccessible: isSectionAccessible("theory"),
-            content: learnDetail.theory.videos.map((video, index) => ({
-                id: video.url,
-                label: video.title,
-                description: video.description || "",
+            isVisible: learnDetail?.theory?.videos?.length > 0,
+            content: learnDetail?.theory?.videos?.map((video, index) => ({
+                id: video?.url,
+                label: video?.title,
+                description: video?.description || "",
                 isCompleted: isVideoCompleted("theory", index),
                 isAccessible: true, // Theory videos are always accessible
                 isActive: isVideoActive("theory", index),
@@ -137,10 +139,11 @@ const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
             label: "Bài học thực hành",
             description: "Video",
             isAccessible: isSectionAccessible("practice"),
-            content: learnDetail.practice.videos.map((video, index) => ({
-                id: video.url,
-                label: video.title,
-                description: video.description || "",
+            isVisible: learnDetail?.practice?.videos?.length > 0,
+            content: learnDetail?.practice?.videos?.map((video, index) => ({
+                id: video?.url,
+                label: video?.title,
+                description: video?.description || "",
                 isCompleted: isVideoCompleted("practice", index),
                 isAccessible: isSectionAccessible("practice"),
                 isActive: isVideoActive("practice", index),
@@ -152,12 +155,13 @@ const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
             id: "exam",
             label: "Bài kiểm tra",
             description: "Trắc nghiệm",
+            isVisible: learnDetail?.exam?.questions?.length > 0,
             isAccessible: isSectionAccessible("exam"),
             content: [
                 {
-                    id: learnDetail.exam.title,
-                    label: learnDetail.exam.title,
-                    description: learnDetail.exam.description || "",
+                    id: learnDetail?.exam?.title,
+                    label: learnDetail?.exam?.title,
+                    description: learnDetail?.exam?.description || "",
                     isCompleted: isCompleted,
                     isAccessible: isSectionAccessible("exam"),
                     isActive: isVideoActive("exam", 0),

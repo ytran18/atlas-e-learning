@@ -103,7 +103,9 @@ const LearnPage = () => {
         <div className="h-[calc(100vh-70px)] w-full overflow-hidden">
             <LearnProvider progress={progressData} learnDetail={courseDetail}>
                 <HashNavigationHandler />
+
                 <AutoCaptureHandler groupId={hocNgheId as string} courseType="hoc-nghe" />
+
                 <MobileLayout
                     title={courseDetail.title}
                     isSidebarOpen={isSidebarOpen}
