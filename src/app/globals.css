@@ -97,14 +97,14 @@ body {
     /* Ensure video players are responsive */
     video {
         width: 100% !important;
-        height: auto !important;
-        max-height: 50vh;
+        /* height: auto !important; */
+        /* max-height: 50vh; */
     }
 
     /* Improve touch targets */
     button,
     [role="button"] {
-        min-height: 44px;
+        /* min-height: 44px; */
         min-width: 44px;
     }
 

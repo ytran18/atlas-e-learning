@@ -5,7 +5,13 @@
  * Provides type-safe methods for database operations.
  */
 import { admin, adminDb } from "@/libs/firebase/firebaseAdmin.config";
-import { CompletedVideo, CourseDetail, CourseProgress, StudentStats } from "@/types/api";
+import {
+    CompletedVideo,
+    CourseDetail,
+    CourseProgress,
+    ExamAnswer,
+    StudentStats,
+} from "@/types/api";
 
 // ============================================================================
 // Internal Types
@@ -30,7 +36,19 @@ const COLLECTIONS = {
 /**
  * Get all active groups/courses
  */
-export async function getAllGroups(type: "atld" | "hoc-nghe"): Promise<FirestoreData[]> {
+export async function getAllGroups(type: "atld" | "hoc-nghe" | "all"): Promise<FirestoreData[]> {
+    if (type === "all") {
+        const snapshot = await adminDb
+            .collection(COLLECTIONS.GROUPS)
+            .where("isActive", "==", true)
+            .get();
+
+        return snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+    }
+
     const snapshot = await adminDb
         .collection(COLLECTIONS.GROUPS)
         .where("isActive", "==", true)
@@ -122,7 +140,11 @@ export async function getUserProgress(
 export async function createUserProgress(
     userId: string,
     groupId: string,
-    portraitUrl: string
+    portraitUrl: string,
+    courseName: string,
+    userFullname: string,
+    userBirthDate: string,
+    userCompanyName: string
 ): Promise<CourseProgress> {
     const now = Date.now();
 
@@ -137,17 +159,34 @@ export async function createUserProgress(
         lastUpdatedAt: now,
     };
 
-    await adminDb
-        .collection(COLLECTIONS.USERS)
-        .doc(userId)
-        .collection(COLLECTIONS.PROGRESS)
-        .doc(groupId)
-        .set({
-            ...progressData,
-            startImageUrl: portraitUrl,
-        });
+    const progressGroupRef = adminDb.collection(COLLECTIONS.PROGRESS).doc(groupId);
+    const docSnap = await progressGroupRef.get();
 
-    return progressData;
+    if (!docSnap.exists) {
+        // Quan trọng: chờ hoàn tất set này trước khi ghi xuống subcollection
+        await progressGroupRef.set({ createdAt: now });
+    }
+
+    const userProgressData = {
+        ...progressData,
+        startImageUrl: portraitUrl,
+        courseName,
+        userFullname,
+        userBirthDate,
+        userCompanyName,
+    };
+
+    // Ghi tuần tự để chắc chắn parent đã tồn tại
+    // await adminDb
+    //     .collection(COLLECTIONS.USERS)
+    //     .doc(userId)
+    //     .collection(COLLECTIONS.PROGRESS)
+    //     .doc(groupId)
+    //     .set(userProgressData);
+
+    await progressGroupRef.collection(COLLECTIONS.USERS).doc(userId).set(userProgressData);
+
+    return userProgressData;
 }
 
 /**
@@ -162,11 +201,13 @@ export async function updateUserProgress(
         currentTime?: number;
         isCompleted?: boolean;
         completedVideo?: CompletedVideo;
+        finishImageUrl?: string;
         examResult?: {
             score: number;
             totalQuestions: number;
             passed: boolean;
             completedAt: number;
+            answers?: ExamAnswer[];
         };
         lastUpdatedAt?: number;
     }
@@ -178,6 +219,12 @@ export async function updateUserProgress(
         .doc(userId)
         .collection(COLLECTIONS.PROGRESS)
         .doc(groupId);
+
+    const progressRefAdmin = adminDb
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId)
+        .collection(COLLECTIONS.USERS)
+        .doc(userId);
 
     const updateData: FirestoreData = {
         lastUpdatedAt: updates.lastUpdatedAt || now,
@@ -205,12 +252,19 @@ export async function updateUserProgress(
         updateData.completedVideos = admin.firestore.FieldValue.arrayUnion(updates.completedVideo);
     }
 
+    // If finish image URL is provided, save it
+    if (updates.finishImageUrl !== undefined) {
+        updateData.finishImageUrl = updates.finishImageUrl;
+    }
+
     // If exam result is provided, save it
     if (updates.examResult) {
         updateData.examResult = updates.examResult;
     }
 
     await progressRef.update(updateData);
+
+    await progressRefAdmin.update(updateData);
 
     return { success: true, lastUpdatedAt: now };
 }
@@ -269,69 +323,83 @@ export async function saveLearningCapture(
 /**
  * Get all students progress for a specific group (with pagination)
  */
-export async function getGroupStats(groupId: string, pageSize: number = 20, cursor?: string) {
-    let query = adminDb
-        .collectionGroup(COLLECTIONS.PROGRESS)
-        .where("groupId", "==", groupId)
-        .orderBy("lastUpdatedAt", "desc")
-        .limit(pageSize + 1); // +1 to check if there are more
+export async function getGroupStats(
+    groupId: string,
+    pageSize: number = 20,
+    cursor?: string,
+    searchName?: string
+) {
+    const countSnap = await adminDb
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId)
+        .collection(COLLECTIONS.USERS)
+        .count()
+        .get();
+
+    const totalDocs = countSnap.data().count || 0;
+
+    const totalPages = Math.ceil(totalDocs / pageSize);
+
+    let queryRef: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = adminDb
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId)
+        .collection(COLLECTIONS.USERS);
+
+    // Nếu có search name thì order theo tên
+    if (searchName) {
+        const searchEnd = searchName + "\uf8ff";
+        queryRef = queryRef.orderBy("userFullname").startAt(searchName).endAt(searchEnd);
+    } else {
+        queryRef = queryRef.orderBy("lastUpdatedAt", "desc");
+    }
+
+    let query = queryRef.limit(pageSize + 1);
 
     if (cursor) {
-        const cursorDoc = await adminDb.doc(cursor).get();
+        const cursorDoc = await adminDb
+            .collection(COLLECTIONS.PROGRESS)
+            .doc(groupId)
+            .collection(COLLECTIONS.USERS)
+            .doc(cursor)
+            .get();
 
-        if (cursorDoc.exists) {
-            query = query.startAfter(cursorDoc);
-        }
+        if (cursorDoc.exists) query = query.startAfter(cursorDoc);
     }
 
     const snapshot = await query.get();
 
     const hasMore = snapshot.docs.length > pageSize;
-
     const docs = hasMore ? snapshot.docs.slice(0, pageSize) : snapshot.docs;
 
-    // Get user info for each progress
-    const data: StudentStats[] = await Promise.all(
-        docs.map(async (doc) => {
-            const progressData = doc.data();
+    const data: StudentStats[] = docs.map((doc) => {
+        const d = doc.data();
 
-            const userId = doc.ref.parent.parent?.id;
+        return {
+            userId: doc.id,
+            fullname: d.userFullname || "",
+            companyName: d.userCompanyName || "",
+            isCompleted: d.isCompleted || false,
+            startedAt: d.startedAt || 0,
+            lastUpdatedAt: d.lastUpdatedAt || 0,
+            startImageUrl: d.startImageUrl,
+            finishImageUrl: d.finishImageUrl,
+            completedVideos: d.completedVideos || [],
+            courseName: d.courseName || "",
+            currentSection: d.currentSection || "",
+            currentVideoIndex: d.currentVideoIndex || 0,
+            birthDate: d.userBirthDate || "",
+            examResult: d.examResult || {},
+        };
+    });
 
-            // Get user info
-            let userInfo = { fullname: "Unknown", companyName: "" };
-
-            if (userId) {
-                const userDoc = await adminDb.collection(COLLECTIONS.USERS).doc(userId).get();
-
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-
-                    userInfo = {
-                        fullname: userData?.fullname || userData?.displayName || "Unknown",
-                        companyName: userData?.companyName || "",
-                    };
-                }
-            }
-
-            return {
-                userId: userId || "",
-                fullname: userInfo.fullname,
-                companyName: userInfo.companyName,
-                isCompleted: progressData.isCompleted || false,
-                startedAt: progressData.startedAt || 0,
-                lastUpdatedAt: progressData.lastUpdatedAt || 0,
-                startImageUrl: progressData.startImageUrl,
-                finishImageUrl: progressData.finishImageUrl,
-            };
-        })
-    );
-
-    const nextCursor = hasMore ? docs[docs.length - 1].ref.path : undefined;
+    const nextCursor = hasMore ? docs[docs.length - 1].id : undefined;
 
     return {
         data,
         nextCursor,
         hasMore,
+        totalDocs,
+        totalPages,
     };
 }
 

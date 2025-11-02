@@ -66,10 +66,10 @@ export const CameraPreview = ({ videoRef, isCameraReady, courseType }: CameraPre
                 autoPlay
                 playsInline
                 muted
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover absolute inset-0"
             />
             {/* Face Guide Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-transparent">
                 {/* Oval Face Guide */}
                 <div className="relative">
                     <svg className="w-36 h-44 sm:w-40 sm:h-48 animate-pulse" viewBox="0 0 160 200">

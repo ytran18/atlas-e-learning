@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
                 totalQuestions,
                 passed,
                 completedAt,
+                answers,
             },
             lastUpdatedAt: completedAt,
         });

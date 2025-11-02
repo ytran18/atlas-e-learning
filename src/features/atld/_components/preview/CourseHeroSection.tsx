@@ -3,7 +3,7 @@ import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import { Button } from "@mantine/core";
+import { Button, Text } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 
 import { ATLD_SLUG, navigationPaths } from "@/utils/navigationPaths";
@@ -15,6 +15,7 @@ interface CourseHeroSectionProps {
     isJoined: boolean;
     isLoadingJoiabled: boolean;
     children?: ReactNode;
+    isCompleted?: boolean;
 }
 
 export const CourseHeroSection = ({
@@ -24,6 +25,7 @@ export const CourseHeroSection = ({
     isJoined,
     isLoadingJoiabled,
     children,
+    isCompleted,
 }: CourseHeroSectionProps) => {
     const { atldId } = useParams();
 
@@ -31,10 +33,10 @@ export const CourseHeroSection = ({
 
     const getLink = () => {
         if (isJoined) {
-            return navigationPaths.ATLD_LEARN.replace(`[${ATLD_SLUG}]`, atldId as string);
+            return `${navigationPaths.ATLD_LEARN.replace(`[${ATLD_SLUG}]`, atldId as string)}?name=${title}`;
         }
 
-        return navigationPaths.ATLD_VERIFY.replace(`[${ATLD_SLUG}]`, atldId as string);
+        return `${navigationPaths.ATLD_VERIFY.replace(`[${ATLD_SLUG}]`, atldId as string)}?name=${title}`;
     };
 
     return (
@@ -74,17 +76,27 @@ export const CourseHeroSection = ({
                     {children}
 
                     {/* CTA Button */}
-                    <Link href={getLink()} onClick={() => setIsNavigating(true)}>
-                        <Button
-                            size="sm"
-                            className="bg-gray-900 hover:bg-gray-800"
-                            radius="md"
-                            loading={isLoadingJoiabled || isNavigating}
-                            loaderProps={{ type: "dots" }}
-                        >
-                            {isJoined ? "Tiếp tục học" : "Bắt đầu học ngay"}
-                        </Button>
-                    </Link>
+                    <div className="flex flex-col gap-y-2">
+                        {isCompleted && (
+                            <Text className="!text-green-600">Bạn đã hoàn thành khóa học này</Text>
+                        )}
+
+                        <Link href={getLink()} onClick={() => setIsNavigating(true)}>
+                            <Button
+                                size="sm"
+                                className="bg-gray-900 hover:bg-gray-800"
+                                radius="md"
+                                loading={isLoadingJoiabled || isNavigating}
+                                loaderProps={{ type: "dots" }}
+                            >
+                                {isCompleted
+                                    ? "Xem lại khóa học"
+                                    : isJoined
+                                      ? "Tiếp tục học"
+                                      : "Bắt đầu học ngay"}
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

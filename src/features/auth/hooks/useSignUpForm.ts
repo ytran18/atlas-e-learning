@@ -8,6 +8,8 @@ import { useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { navigationPaths } from "@/utils/navigationPaths";
+
 import { Role, authService } from "../services";
 import { SignUpFormData, signUpSchema } from "../validations/signUpSchema";
 
@@ -85,7 +87,7 @@ export const useSignUpForm = () => {
                     console.error("Error creating user in Firestore:", firestoreError);
                 }
 
-                router.push("/home");
+                router.push(navigationPaths.LANDING_PAGE);
             } else if (result.status === "missing_requirements") {
                 setError("Thiếu thông tin bắt buộc. Vui lòng thử lại.");
             } else {
@@ -106,7 +108,7 @@ export const useSignUpForm = () => {
                         console.error("Error creating user in Firestore:", firestoreError);
                     }
 
-                    router.push("/home");
+                    router.push(navigationPaths.LANDING_PAGE);
                 } else {
                     setError("Đăng ký không hoàn tất. Vui lòng thử lại hoặc liên hệ hỗ trợ.");
                 }

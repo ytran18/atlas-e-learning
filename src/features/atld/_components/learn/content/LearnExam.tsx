@@ -2,8 +2,8 @@ import { Button, Card, Divider, List, Radio, Text } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 
+import { courseProgressKeys, useSubmitExam, useUpdateProgress } from "@/api/user";
 import { useLearnContext } from "@/contexts/LearnContext";
-import { courseProgressKeys, useSubmitExam, useUpdateProgress } from "@/hooks/api/user";
 import { ExamAnswer } from "@/types/api";
 
 interface ExamFormValues {

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { useUser } from "@clerk/nextjs";
 import { Badge, Button, Card } from "@mantine/core";
 import {
     IconAward,
@@ -17,6 +18,8 @@ import { fadeInUp, staggerContainer } from "@/animations/landing-page";
 import { navigationPaths } from "@/utils/navigationPaths";
 
 const LandingPage = () => {
+    const { isSignedIn } = useUser();
+
     return (
         <div className="min-h-screen">
             {/* Hero Section */}
@@ -62,12 +65,12 @@ const LandingPage = () => {
                         <motion.div variants={fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <Link href={navigationPaths.ATLD}>
-                                    <Button size="lg">Bắt đầu học ngay</Button>
+                                    <Button size="lg">An Toàn Lao Động</Button>
                                 </Link>
 
-                                <Link href={navigationPaths.ATLD}>
+                                <Link href={navigationPaths.HOC_NGHE}>
                                     <Button size="lg" variant="outline">
-                                        Khám phá khóa học
+                                        Học Nghề
                                     </Button>
                                 </Link>
                             </div>
@@ -165,30 +168,32 @@ const LandingPage = () => {
             </section>
 
             {/* CTA Section */}
-            <section className="py-20 bg-gradient-to-b from-[var(--primary)]/10 to-[var(--background)]">
-                <div className="container mx-auto px-4">
-                    <Card
-                        shadow="sm"
-                        padding="lg"
-                        radius="md"
-                        className="bg-gradient-to-br from-[var(--primary)]/10 to-[var(--accent)]/10"
-                        withBorder
-                    >
-                        <div className="max-w-3xl mx-auto text-center">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--mantine-color-dark-9)]">
-                                Sẵn sàng bắt đầu học?
-                            </h2>
-                            <p className="text-lg text-[var(--mantine-color-dark-5)] mb-8">
-                                Đăng ký ngay hôm nay để truy cập đầy đủ các khóa học an toàn lao
-                                động
-                            </p>
-                            <Button size="lg">
-                                <Link href={navigationPaths.ATLD}>Đăng ký miễn phí</Link>
-                            </Button>
-                        </div>
-                    </Card>
-                </div>
-            </section>
+            {!isSignedIn && (
+                <section className="py-20 bg-gradient-to-b from-[var(--primary)]/10 to-[var(--background)]">
+                    <div className="container mx-auto px-4">
+                        <Card
+                            shadow="sm"
+                            padding="lg"
+                            radius="md"
+                            className="bg-gradient-to-br from-[var(--primary)]/10 to-[var(--accent)]/10"
+                            withBorder
+                        >
+                            <div className="max-w-3xl mx-auto text-center">
+                                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--mantine-color-dark-9)]">
+                                    Sẵn sàng bắt đầu học?
+                                </h2>
+                                <p className="text-lg text-[var(--mantine-color-dark-5)] mb-8">
+                                    Đăng ký ngay hôm nay để truy cập đầy đủ các khóa học an toàn lao
+                                    động
+                                </p>
+                                <Button size="lg">
+                                    <Link href={navigationPaths.SIGN_UP}>Đăng ký miễn phí</Link>
+                                </Button>
+                            </div>
+                        </Card>
+                    </div>
+                </section>
+            )}
         </div>
     );
 };

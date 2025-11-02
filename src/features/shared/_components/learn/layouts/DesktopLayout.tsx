@@ -9,7 +9,7 @@ const DesktopLayout = ({ courseType }: DesktopLayoutProps) => {
     return (
         <div className="hidden lg:flex h-full w-full p-4 gap-4 overflow-hidden">
             <div className="w-80 flex-shrink-0 h-full overflow-y-auto">
-                <LearnSidebar />
+                <LearnSidebar courseType={courseType} />
             </div>
 
             <div className="flex-1 h-full">

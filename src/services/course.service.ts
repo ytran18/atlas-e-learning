@@ -12,7 +12,9 @@ import { CourseListItem, GetCourseListResponse, GetCoursePreviewResponse } from 
  * This function contains the business logic that can be shared
  * between API routes and server-side components
  */
-export async function getCourseList(type: "atld" | "hoc-nghe"): Promise<GetCourseListResponse> {
+export async function getCourseList(
+    type: "atld" | "hoc-nghe" | "all"
+): Promise<GetCourseListResponse> {
     // Get all active groups from Firestore
     const groups = await getAllGroups(type);
 
@@ -20,6 +22,7 @@ export async function getCourseList(type: "atld" | "hoc-nghe"): Promise<GetCours
     const courseList: GetCourseListResponse = groups.map((group) => {
         const item: CourseListItem = {
             id: group.id,
+            type: group.type,
             title: group.title || "",
             description: group.description || "",
             numberOfTheory: group.theory?.videos?.length || 0,

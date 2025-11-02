@@ -1,12 +1,14 @@
 import { LearnSidebar } from "../";
+import { CourseType } from "../../../types";
 import { CloseIcon } from "../icons";
 
 interface MobileSidebarProps {
     isOpen: boolean;
     onClose: () => void;
+    courseType: CourseType;
 }
 
-const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
+const MobileSidebar = ({ isOpen, onClose, courseType }: MobileSidebarProps) => {
     if (!isOpen) return null;
 
     return (
@@ -26,7 +28,7 @@ const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
                 </div>
 
                 <div className="p-4">
-                    <LearnSidebar />
+                    <LearnSidebar courseType={courseType} />
                 </div>
             </div>
         </div>

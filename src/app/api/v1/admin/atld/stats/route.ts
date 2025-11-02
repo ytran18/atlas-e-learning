@@ -26,19 +26,23 @@ export async function GET(request: NextRequest) {
 
         const cursor = queryParams.cursor;
 
+        const search = queryParams.search;
+
         // Validate required params
         if (!groupId) {
             throw new Error("VALIDATION: groupId is required");
         }
 
         // Get stats from Firestore
-        const stats = await getGroupStats(groupId, pageSize, cursor);
+        const stats = await getGroupStats(groupId, pageSize, cursor, search);
 
         // Map to response format
         const response: GetStatsResponse = {
             data: stats.data,
             nextCursor: stats.nextCursor,
             hasMore: stats.hasMore,
+            totalDocs: stats.totalDocs,
+            totalPages: stats.totalPages,
         };
 
         return successResponse(response);

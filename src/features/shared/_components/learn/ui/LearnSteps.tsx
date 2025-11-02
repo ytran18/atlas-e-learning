@@ -2,6 +2,8 @@
 
 import { FunctionComponent, ReactNode, useEffect, useState } from "react";
 
+import { useSearchParams } from "next/navigation";
+
 import { Stepper } from "@mantine/core";
 
 import { useLearnContext } from "@/contexts/LearnContext";
@@ -26,16 +28,21 @@ const sectionToIndex = {
 } as const;
 
 const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots }) => {
-    const { progress } = useLearnContext();
+    const { progress, currentSection } = useLearnContext();
 
-    const { currentSection } = progress;
+    const searchParams = useSearchParams();
 
-    const [active, setActive] = useState<number>(sectionToIndex?.[currentSection ?? "theory"]);
+    const viewAgain = searchParams.get("viewAgain");
+
+    const [active, setActive] = useState<number>(
+        sectionToIndex[currentSection as keyof typeof sectionToIndex] ?? 0
+    );
 
     const isCompleted = progress.isCompleted;
 
     useEffect(() => {
-        setActive(sectionToIndex?.[currentSection ?? "theory"]);
+        const newActive = sectionToIndex[currentSection as keyof typeof sectionToIndex] ?? 0;
+        setActive(newActive);
     }, [currentSection]);
 
     const handleTabChange = (value: string | null) => {
@@ -45,7 +52,7 @@ const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots }) => {
         }
     };
 
-    if (isCompleted) {
+    if (isCompleted && !viewAgain) {
         return (
             <div className="w-full h-full">
                 <CompletedContent />

@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 
-import { useCoursePreview, useCourseProgress } from "@/hooks/api";
+import { useCoursePreview, useCourseProgress } from "@/api";
 import { GetCoursePreviewResponse } from "@/types/api";
 
 import { HocNghePreviewContainer } from "../_widgets/HocNghePreviewContainer";
@@ -25,6 +25,8 @@ const HocNghePreview = ({ initialData }: HocNghePreviewProps) => {
 
     const isJoined = !!progressData;
 
+    const isCompleted = progressData?.isCompleted;
+
     if (!data || isLoading) {
         return null;
     }
@@ -34,6 +36,7 @@ const HocNghePreview = ({ initialData }: HocNghePreviewProps) => {
             course={data}
             isJoined={isJoined}
             isLoadingJoiabled={isProgressLoading}
+            isCompleted={isCompleted}
         />
     );
 };

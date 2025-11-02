@@ -18,6 +18,7 @@ export type CaptureType = "start" | "learning" | "finish";
 // ============================================================================
 
 export interface Video {
+    id: string;
     sortNo: number;
     title: string;
     description?: string;
@@ -25,6 +26,8 @@ export interface Video {
     length: number; // duration in seconds
     canSeek?: boolean;
     shouldCompleteToPassed?: boolean;
+    thumbnailUrl?: string;
+    isUsingLink?: boolean;
 }
 
 // ============================================================================
@@ -67,6 +70,7 @@ export interface ExamSection {
 
 export interface CourseListItem {
     id: string;
+    type?: CourseType;
     title: string;
     description: string;
     numberOfTheory: number;
@@ -98,6 +102,10 @@ export type GetCoursePreviewResponse = CoursePreview;
 export interface StartCourseRequest {
     groupId: string;
     portraitUrl: string;
+    courseName: string;
+    userFullname: string;
+    userBirthDate: string;
+    userCompanyName: string;
 }
 
 export interface StartCourseResponse {
@@ -127,6 +135,18 @@ export interface CourseProgress {
     isCompleted: boolean;
     startedAt: number; // timestamp
     lastUpdatedAt: number; // timestamp
+    finishImageUrl?: string; // Auto-captured finish image URL
+    examResult?: {
+        score: number;
+        totalQuestions: number;
+        passed: boolean;
+        completedAt: number;
+        answers?: ExamAnswer[];
+    };
+    courseName?: string;
+    userFullname?: string;
+    userBirthDate?: string;
+    userCompanyName?: string;
 }
 
 export type GetProgressResponse = CourseProgress;
@@ -141,6 +161,7 @@ export interface UpdateProgressRequest {
     currentTime: number;
     isCompleted?: boolean;
     completedVideo?: CompletedVideo; // Mark a video as completed
+    finishImageUrl?: string; // Auto-captured finish image URL
 }
 
 export interface UpdateProgressResponse {
@@ -176,18 +197,32 @@ export interface GetStatsQueryParams {
 export interface StudentStats {
     userId: string;
     fullname: string;
+    birthDate: string;
     companyName?: string;
     isCompleted: boolean;
     startedAt: number;
     lastUpdatedAt: number;
     startImageUrl?: string;
     finishImageUrl?: string;
+    completedVideos: CompletedVideo[];
+    courseName: string;
+    currentSection: SectionType;
+    currentVideoIndex: number;
+    examResult?: {
+        score: number;
+        totalQuestions: number;
+        passed: boolean;
+        completedAt: number;
+        answers?: ExamAnswer[];
+    };
 }
 
 export interface GetStatsResponse {
     data: StudentStats[];
     nextCursor?: string;
     hasMore: boolean;
+    totalDocs: number;
+    totalPages: number;
 }
 
 // ============================================================================

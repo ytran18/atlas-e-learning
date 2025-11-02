@@ -34,12 +34,12 @@ const AuthButton = () => {
             <Group className="hover:cursor-pointer">
                 <Avatar src={user?.imageUrl || ""} radius="xl" size="sm" />
 
-                <Box style={{ flex: 1 }} visibleFrom="sm">
+                <Box style={{ flex: 1 }}>
                     <Text size="sm" fw={500}>
                         {userData?.fullName as string}
                     </Text>
 
-                    <Text c="dimmed" size="xs">
+                    <Text c="dimmed" size="xs" hiddenFrom="sm">
                         {userData?.cccd as string}
                     </Text>
                 </Box>

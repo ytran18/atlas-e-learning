@@ -1,10 +1,12 @@
 import { ReactEventHandler, useEffect, useState } from "react";
 
+import { useRouter, useSearchParams } from "next/navigation";
+
 import { Button, Card } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { courseProgressKeys, useUpdateProgress } from "@/api";
 import { useLearnContext } from "@/contexts/LearnContext";
-import { courseProgressKeys, useUpdateProgress } from "@/hooks/api";
 import VideoPlayer from "@/libs/player/VideoPlayer";
 
 import { COURSE_THEMES, CourseType } from "../../../types";
@@ -14,13 +16,29 @@ interface LearnTheoryProps {
 }
 
 const LearnTheory = ({ courseType }: LearnTheoryProps) => {
-    const { learnDetail, progress } = useLearnContext();
+    const { learnDetail, progress, currentVideoIndex, navigateToVideo, navigateToExam } =
+        useLearnContext();
+
     const queryClient = useQueryClient();
+
+    const router = useRouter();
+
     const theme = COURSE_THEMES[courseType];
 
-    // Ensure we have a valid video index and fallback to 0 if needed
-    const videoIndex = progress.currentVideoIndex ?? 0;
+    const searchParams = useSearchParams();
+
+    const sectionDB = searchParams.get("section");
+
+    const videoIndexDB = searchParams.get("video");
+
+    const hasCaptured = !!progress.finishImageUrl;
+
+    // Use client-side video index
+    const videoIndex = currentVideoIndex;
+
     const currentVideo = learnDetail.theory.videos[videoIndex];
+
+    const isShowNextButton = sectionDB === "theory" && Number(videoIndexDB) === videoIndex;
 
     // Check if current video is already completed
     const isCurrentVideoCompleted = progress.completedVideos.some(
@@ -34,11 +52,17 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
         setIsFinishVideo(isCurrentVideoCompleted);
     }, [isCurrentVideoCompleted]);
 
+    // Reset video state when video index changes
+    useEffect(() => {
+        setIsFinishVideo(isCurrentVideoCompleted);
+    }, [videoIndex, isCurrentVideoCompleted]);
+
     // Hook để update progress
     const { mutate: updateProgress, isPending: isUpdatingProgress } = useUpdateProgress(
         courseType,
         {
             onSuccess: async () => {
+                console.log("update progress success");
                 await queryClient.invalidateQueries({
                     queryKey: courseProgressKeys.progress(courseType, learnDetail.id),
                 });
@@ -75,13 +99,16 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
     };
 
     const handleVideoPaused = () => {
-        console.log("video paused");
+        if (hasCaptured) return;
     };
 
-    const handleProgress: ReactEventHandler<HTMLVideoElement> = () => {};
+    const handleProgress: ReactEventHandler<HTMLVideoElement> = () => {
+        console.log("handleProgress");
+    };
 
     const handleNextVideo = () => {
         const nextVideoIndex = videoIndex + 1;
+
         const totalVideos = learnDetail.theory.videos.length;
 
         if (nextVideoIndex < totalVideos) {
@@ -92,15 +119,28 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                 videoIndex: nextVideoIndex,
                 currentTime: 0,
             });
+            // Update local state immediately for better UX
+            navigateToVideo("theory", nextVideoIndex);
+            // Update URL
+            router.replace(`?section=theory&video=${nextVideoIndex}`);
+
             setIsFinishVideo(false);
         } else {
             // All theory videos completed, move to practice section
             updateProgress({
                 groupId: learnDetail.id,
-                section: "practice",
+                section: learnDetail?.practice?.videos?.length > 0 ? "practice" : "exam",
                 videoIndex: 0,
                 currentTime: 0,
             });
+            // Update local state immediately for better UX
+            if (learnDetail?.practice?.videos?.length > 0) {
+                navigateToVideo("practice", 0);
+
+                router.replace(`?section=practice&video=0`);
+            } else {
+                navigateToExam();
+            }
         }
     };
 
@@ -115,14 +155,18 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
         >
             <div className="flex flex-col gap-4 lg:gap-6 h-full">
                 {/* Video Player Container */}
-                <div className="flex-1 min-h-0">
+                <div className="min-h-0">
                     <VideoPlayer
-                        src={currentVideo?.url || learnDetail.theory.videos[0].url}
-                        canSeek={currentVideo?.canSeek || learnDetail.theory.videos[0].canSeek}
+                        src={currentVideo?.url || learnDetail?.theory?.videos?.[0]?.url}
+                        canSeek={currentVideo?.canSeek || learnDetail?.theory?.videos?.[0]?.canSeek}
                         onEnded={handleVideoEndedInternal}
                         onPlay={handleVideoPlay}
                         onPause={handleVideoPaused}
                         onProgress={handleProgress}
+                        isUsingLink={
+                            currentVideo?.isUsingLink ||
+                            learnDetail?.theory?.videos?.[0]?.isUsingLink
+                        }
                     />
                 </div>
 
@@ -141,7 +185,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                     </div>
 
                     {/* Progress Indicator */}
-                    <div className="flex items-center justify-between text-sm text-gray-500 flex-shrink-0 px-2 sm:px-0">
+                    <div className="flex items-center justify-between text-sm text-gray-500 flex-shrink-0 px-2 sm:px-0 mb-3">
                         <span>
                             Video {videoIndex + 1} / {learnDetail.theory.videos.length}
                         </span>
@@ -149,19 +193,21 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                     </div>
 
                     {/* Navigation Button */}
-                    <div className="w-full flex justify-end flex-shrink-0 p-2 sm:p-0">
-                        <Button
-                            disabled={!isFinishVideo || isUpdatingProgress}
-                            loading={isUpdatingProgress}
-                            size="md"
-                            className="px-6 lg:px-8 py-3 w-full sm:w-auto"
-                            onClick={handleNextVideo}
-                        >
-                            {videoIndex + 1 < learnDetail.theory.videos.length
-                                ? "Video tiếp theo"
-                                : "Chuyển sang thực hành"}
-                        </Button>
-                    </div>
+                    {isShowNextButton && (
+                        <div className="w-full flex justify-end flex-shrink-0 p-2 sm:p-0">
+                            <Button
+                                disabled={!isFinishVideo || isUpdatingProgress}
+                                loading={isUpdatingProgress}
+                                size="md"
+                                className="px-6 lg:px-8 py-3 w-full sm:w-auto"
+                                onClick={handleNextVideo}
+                            >
+                                {videoIndex + 1 < learnDetail.theory.videos.length
+                                    ? "Video tiếp theo"
+                                    : "Chuyển sang thực hành"}
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
         </Card>

@@ -3,9 +3,13 @@ import type { Metadata } from "next";
 // Base SEO configuration
 export const baseSeoConfig = {
     siteName: "ATLD E-Learning",
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://atld-elearning.com",
+    siteUrl:
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        (process.env.NODE_ENV === "production"
+            ? "https://antoanlaodongso.com"
+            : "https://staging.antoanlaodongso.com"),
     defaultTitle: "Hệ thống đào tạo An Toàn Lao Động",
-    defaultDescription: "Hệ thống đào tạo trực tuyến chuyên nghiệp về An Toàn Lao Động. Cung cấp các khóa học chất lượng cao, chứng chỉ uy tín và trải nghiệm học tập hiệu quả.",
+    defaultDescription: "Hệ thống đào tạo trực tuyến chuyên nghiệp về An Toàn Lao Động. Cung cấp các khóa học chất lượng cao, chứng chỉ uy tín và trải nghiệm học tập hiệu quả. Đăng ký ngay hôm nay với ưu đãi đặc biệt!",
     defaultKeywords: [
         "an toàn lao động",
         "đào tạo an toàn",
@@ -14,8 +18,12 @@ export const baseSeoConfig = {
         "e-learning",
         "học trực tuyến",
         "ATLD",
+        "AGK Safety",
         "safety training",
-        "workplace safety"
+        "workplace safety",
+        "đăng ký khóa học",
+        "giảm giá 50%",
+        "an toàn vệ sinh lao động"
     ],
     author: "ATLD E-Learning",
     locale: "vi_VN",
@@ -54,7 +62,7 @@ export function generateMetadata({
     const fullDescription = description || baseSeoConfig.defaultDescription;
     const fullKeywords = keywords ? [...baseSeoConfig.defaultKeywords, ...keywords] : baseSeoConfig.defaultKeywords;
     const fullUrl = url ? `${baseSeoConfig.siteUrl}${url}` : baseSeoConfig.siteUrl;
-    const fullImage = image ? `${baseSeoConfig.siteUrl}${image}` : `${baseSeoConfig.siteUrl}/images/atld-logo.webp`;
+    const fullImage = image ? `${baseSeoConfig.siteUrl}${image}` : `${baseSeoConfig.siteUrl}/images/banner.jpg`;
 
     const metadata: Metadata = {
         title: fullTitle,
@@ -82,7 +90,7 @@ export function generateMetadata({
                     url: fullImage,
                     width: 1200,
                     height: 630,
-                    alt: fullTitle,
+                    alt: fullTitle.includes("ATLD") ? "Banner khóa học An Toàn Lao Động - AGK Safety" : fullTitle,
                 },
             ],
             locale: baseSeoConfig.locale,
@@ -107,9 +115,11 @@ export function generateMetadata({
                 "max-snippet": -1,
             },
         },
-        verification: {
-            google: process.env.GOOGLE_SITE_VERIFICATION,
-        },
+    verification: {
+        google: process.env.GOOGLE_SITE_VERIFICATION,
+        yandex: process.env.YANDEX_VERIFICATION,
+        yahoo: process.env.YAHOO_VERIFICATION,
+    },
     };
 
     return metadata;
@@ -207,7 +217,7 @@ export function generateCourseStructuredData(course: {
         educationalLevel: "beginner",
         inLanguage: "vi",
         url: `${baseSeoConfig.siteUrl}${course.url}`,
-        image: course.image ? `${baseSeoConfig.siteUrl}${course.image}` : `${baseSeoConfig.siteUrl}/images/atld-logo.webp`,
+        image: course.image ? `${baseSeoConfig.siteUrl}${course.image}` : `${baseSeoConfig.siteUrl}/images/banner.jpg`,
         offers: course.price ? {
             "@type": "Offer",
             price: course.price,
@@ -224,7 +234,7 @@ export function generateOrganizationStructuredData() {
         "@type": "EducationalOrganization",
         name: baseSeoConfig.siteName,
         url: baseSeoConfig.siteUrl,
-        logo: `${baseSeoConfig.siteUrl}/images/atld-logo.webp`,
+        logo: `${baseSeoConfig.siteUrl}/images/banner.jpg`,
         description: baseSeoConfig.defaultDescription,
         address: {
             "@type": "PostalAddress",
