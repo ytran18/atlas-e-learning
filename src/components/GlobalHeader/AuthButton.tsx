@@ -1,5 +1,7 @@
 "use client";
 
+import { FunctionComponent } from "react";
+
 import { useRouter } from "next/navigation";
 
 import { useClerk, useUser } from "@clerk/nextjs";
@@ -8,7 +10,21 @@ import { IconLogout } from "@tabler/icons-react";
 
 import { navigationPaths } from "@/utils/navigationPaths";
 
-const AuthButton = () => {
+type AuthButtonProps = {
+    className?: string;
+    signInButtonClassName?: string;
+    signUpButtonClassName?: string;
+    onLogin?: () => void;
+    onSignUp?: () => void;
+};
+
+const AuthButton: FunctionComponent<AuthButtonProps> = ({
+    className,
+    signInButtonClassName,
+    signUpButtonClassName,
+    onLogin,
+    onSignUp,
+}) => {
     const router = useRouter();
 
     const { signOut } = useClerk();
@@ -16,6 +32,22 @@ const AuthButton = () => {
     const { user, isLoaded } = useUser();
 
     const userData = user?.unsafeMetadata;
+
+    const handleLogin = () => {
+        router.push(navigationPaths.SIGN_IN);
+
+        if (onLogin) {
+            onLogin();
+        }
+    };
+
+    const handleSignUp = () => {
+        router.push(navigationPaths.SIGN_UP);
+
+        if (onSignUp) {
+            onSignUp();
+        }
+    };
 
     // Show loading state while checking authentication
     if (!isLoaded) {
@@ -60,16 +92,17 @@ const AuthButton = () => {
     }
 
     return (
-        <Group gap="xs">
+        <Group gap="xs" className={className}>
             <Button
                 variant="default"
                 size="xs"
-                onClick={() => router.push(navigationPaths.SIGN_IN)}
+                onClick={handleLogin}
+                className={signInButtonClassName}
             >
-                Log in
+                Đăng nhập
             </Button>
-            <Button size="xs" onClick={() => router.push(navigationPaths.SIGN_UP)}>
-                Sign up
+            <Button size="xs" onClick={handleSignUp} className={signUpButtonClassName}>
+                Đăng ký
             </Button>
         </Group>
     );

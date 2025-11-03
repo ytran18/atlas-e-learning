@@ -44,7 +44,7 @@ const SignInPage = () => {
             <SignInFormDatePicker
                 label="Ngày sinh"
                 name="birthDate"
-                placeholder="Chọn ngày sinh của bạn"
+                placeholder="Nhập ngày sinh (dd/mm/yyyy)"
                 required
                 control={control}
                 error={errors.birthDate?.message}

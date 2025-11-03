@@ -13,6 +13,14 @@ import { navigationPaths } from "@/utils/navigationPaths";
 import { Role, authService } from "../services";
 import { SignUpFormData, signUpSchema } from "../validations/signUpSchema";
 
+// Raw form inputs: birthDate entered as string (dd/mm/yyyy) before zod preprocess
+type SignUpFormInputs = {
+    fullName: string;
+    birthDate: unknown;
+    cccd: string;
+    companyName?: string;
+};
+
 export const useSignUpForm = () => {
     const { isLoaded, signUp, setActive } = useSignUp();
 
@@ -22,7 +30,7 @@ export const useSignUpForm = () => {
 
     const [error, setError] = useState("");
 
-    const form = useForm<SignUpFormData>({
+    const form = useForm<SignUpFormInputs, unknown, SignUpFormData>({
         resolver: zodResolver(signUpSchema),
         mode: "onChange",
         defaultValues: {
@@ -50,8 +58,13 @@ export const useSignUpForm = () => {
         setIsLoading(true);
 
         try {
-            // Format birthDate to YYYY-MM-DD
-            const birthDateString = data.birthDate.toISOString().split("T")[0];
+            // Format birthDate to YYYY-MM-DD using local date components to avoid
+            // timezone shifts caused by toISOString() (which converts to UTC).
+            const d = data.birthDate as Date;
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, "0");
+            const dd = String(d.getDate()).padStart(2, "0");
+            const birthDateString = `${yyyy}-${mm}-${dd}`;
 
             // Use birthDate + CCCD as password for better security
             const password = `${birthDateString}_${data.cccd}`;

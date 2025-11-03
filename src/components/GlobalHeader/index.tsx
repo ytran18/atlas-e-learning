@@ -16,7 +16,7 @@ import AuthButton from "./AuthButton";
 const GlobalHeader = () => {
     const router = useRouter();
 
-    const { signOut, user } = useClerk();
+    const { signOut, user, isSignedIn } = useClerk();
 
     const isAdmin = user?.unsafeMetadata?.role === "admin" ? true : false;
 
@@ -79,8 +79,11 @@ const GlobalHeader = () => {
                     </Box>
 
                     {/* Mobile Menu Button */}
-                    <Group hiddenFrom="sm" gap="xs">
-                        <AuthButton />
+                    <Group gap="xs" hiddenFrom="sm">
+                        <Group visibleFrom="xs" hiddenFrom="sm">
+                            <AuthButton />
+                        </Group>
+
                         <Burger opened={opened} onClick={toggle} size="sm" />
                     </Group>
                 </Group>
@@ -100,23 +103,43 @@ const GlobalHeader = () => {
                 hiddenFrom="sm"
             >
                 <Stack gap="md" mt="md">
-                    {navigationItems.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            onClick={close}
-                            className="block p-3 rounded-md no-underline text-[var(--mantine-color-black)] font-medium hover:bg-[var(--mantine-color-gray-0)] transition-colors"
-                        >
-                            {item.label}
-                        </Link>
-                    ))}
+                    {!isSignedIn && (
+                        <Group hiddenFrom="xs">
+                            <AuthButton
+                                className="!flex !flex-col !w-full"
+                                signInButtonClassName="!w-full"
+                                signUpButtonClassName="!w-full"
+                                onLogin={close}
+                                onSignUp={close}
+                            />
+                        </Group>
+                    )}
 
-                    <Button color="red" size="sm" onClick={handleLogout}>
-                        <div className="flex items-center gap-x-2">
-                            <IconLogout className="text-white" size={16} />
-                            <Text>Đăng xuất</Text>
-                        </div>
-                    </Button>
+                    {navigationItems.map((item) => {
+                        if (!item.isVisible) {
+                            return null;
+                        }
+
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={close}
+                                className="block p-3 rounded-md no-underline text-[var(--mantine-color-black)] font-medium hover:bg-[var(--mantine-color-gray-0)] transition-colors"
+                            >
+                                {item.label}
+                            </Link>
+                        );
+                    })}
+
+                    {isSignedIn && (
+                        <Button color="red" size="sm" onClick={handleLogout}>
+                            <div className="flex items-center gap-x-2">
+                                <IconLogout className="text-white" size={16} />
+                                <Text>Đăng xuất</Text>
+                            </div>
+                        </Button>
+                    )}
                 </Stack>
             </Drawer>
         </Box>

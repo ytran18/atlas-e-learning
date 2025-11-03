@@ -12,6 +12,12 @@ import { navigationPaths } from "@/utils/navigationPaths";
 
 import { SignInFormData, signInSchema } from "../validations/signInSchema";
 
+// Raw form inputs: birthDate is entered as string in dd/mm/yyyy
+type SignInFormInputs = {
+    cccd: string;
+    birthDate: unknown;
+};
+
 export const useSignInForm = () => {
     const { isLoaded, signIn, setActive } = useSignIn();
     const router = useRouter();
@@ -19,7 +25,7 @@ export const useSignInForm = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const form = useForm<SignInFormData>({
+    const form = useForm<SignInFormInputs, unknown, SignInFormData>({
         resolver: zodResolver(signInSchema),
         mode: "onChange",
         defaultValues: {
@@ -44,8 +50,13 @@ export const useSignInForm = () => {
         setIsLoading(true);
 
         try {
-            // Format birthDate to YYYY/MM/DD
-            const birthDateString = data.birthDate.toISOString().split("T")[0];
+            // Format birthDate to YYYY/MM/DD using local date components to avoid
+            // timezone shifts caused by toISOString() (which converts to UTC).
+            const d = data.birthDate as Date;
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, "0");
+            const dd = String(d.getDate()).padStart(2, "0");
+            const birthDateString = `${yyyy}-${mm}-${dd}`;
 
             // Use birthDate + CCCD as password for better security
             const password = `${birthDateString}_${data.cccd}`;
