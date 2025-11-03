@@ -8,15 +8,21 @@ import { IconPlus } from "@tabler/icons-react";
 
 import { useCourseList } from "@/api";
 import { CourseType } from "@/types/api";
+import { navigationPaths } from "@/utils/navigationPaths";
 
 import ModalCreateNewCourse from "../ModalCreateNewCourse";
 
 type MobileCourseSelectProps = {
     defaultCourseId: string;
     currentAdminPathname: CourseType;
+    isAdminUser?: boolean;
 };
 
-const MobileCourseSelect = ({ defaultCourseId, currentAdminPathname }: MobileCourseSelectProps) => {
+const MobileCourseSelect = ({
+    defaultCourseId,
+    currentAdminPathname,
+    isAdminUser,
+}: MobileCourseSelectProps) => {
     const router = useRouter();
 
     const isMobile = useMediaQuery("(max-width: 640px)");
@@ -45,8 +51,18 @@ const MobileCourseSelect = ({ defaultCourseId, currentAdminPathname }: MobileCou
 
     if (!courseList) return <div>Loading...</div>;
 
-    const handleSelectCourse = (value: string | null) => {
+    const handleSelectCourse = (value: string | null, option: any) => {
         setValue(value);
+
+        if (isAdminUser) {
+            if (!option?.type) return;
+
+            router.push(
+                `${navigationPaths.QUAN_TRI_USER}?type=${option?.type}&courseId=${value}&page=1&pageSize=10`
+            );
+
+            return;
+        }
 
         if (value) {
             router.push(`/quan-tri/${currentAdminPathname}/${value}`);
@@ -62,12 +78,15 @@ const MobileCourseSelect = ({ defaultCourseId, currentAdminPathname }: MobileCou
                         data={courseList.map((item) => ({
                             value: item.id,
                             label: item.title,
+                            type: item.type,
                         }))}
                         defaultValue={defaultCourseId}
                         searchable
                         nothingFoundMessage="Chưa có khóa học nào!"
                         value={value}
-                        onChange={handleSelectCourse}
+                        onChange={(value, option: any) =>
+                            handleSelectCourse(value as string, option)
+                        }
                     />
                 </div>
 

@@ -22,6 +22,8 @@ const Header = () => {
 
     const currentAdminPathname = getCurrentAdminPathname(pathname) as CourseType;
 
+    const isAdminUser = getCurrentAdminPathname(pathname) === "user";
+
     const isMobile = useMediaQuery("(max-width: 640px)");
 
     const navigationItems = [
@@ -44,6 +46,7 @@ const Header = () => {
                                             : (hocNgheId as string)
                                     }
                                     currentAdminPathname={currentAdminPathname}
+                                    isAdminUser={isAdminUser}
                                 />
                             ) : (
                                 "Quản trị hệ thống"
