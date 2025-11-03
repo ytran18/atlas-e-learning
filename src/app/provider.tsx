@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { viVN } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
 import { GrowthBookPayload, GrowthBookProvider } from "@growthbook/growthbook-react";
@@ -59,13 +60,15 @@ export default function Provider({
                 signUpUrl="/sign-up"
             >
                 <QueryClientProvider client={queryClient}>
-                    <MantineProvider>
-                        <ModalsProvider>
-                            <Notifications />
+                    <AntdRegistry>
+                        <MantineProvider>
+                            <ModalsProvider>
+                                <Notifications />
 
-                            {children}
-                        </ModalsProvider>
-                    </MantineProvider>
+                                {children}
+                            </ModalsProvider>
+                        </MantineProvider>
+                    </AntdRegistry>
                     {/* React Query Devtools - chỉ hiện trong development */}
                     <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>

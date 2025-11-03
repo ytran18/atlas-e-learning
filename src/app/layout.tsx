@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import GlobalHeader from "@/components/GlobalHeader";
+import MaintenanceWrapper from "@/components/Mantainace/MantainaceWrapper";
 import { StructuredData } from "@/components/SEO";
 import {
     baseSeoConfig,
@@ -60,8 +61,10 @@ export default async function RootLayout({
                 <Analytics />
 
                 <Provider growthBookPayload={growthBookPayload}>
-                    <GlobalHeader />
-                    {children}
+                    <MaintenanceWrapper>
+                        <GlobalHeader />
+                        {children}
+                    </MaintenanceWrapper>
                 </Provider>
             </body>
         </html>

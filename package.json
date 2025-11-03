@@ -15,6 +15,7 @@
         "knip": "knip"
     },
     "dependencies": {
+        "@ant-design/nextjs-registry": "^1.2.0",
         "@aws-sdk/client-s3": "^3.901.0",
         "@aws-sdk/lib-storage": "^3.901.0",
         "@aws-sdk/s3-request-presigner": "^3.901.0",
@@ -35,6 +36,7 @@
         "@tanstack/react-query-devtools": "^5.90.2",
         "@vercel/analytics": "^1.5.0",
         "@vercel/speed-insights": "^1.2.0",
+        "antd": "^5.28.0",
         "axios": "^1.12.2",
         "dayjs": "^1.11.18",
         "firebase-admin": "^13.5.0",
