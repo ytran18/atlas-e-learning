@@ -1,4 +1,4 @@
-import { ReactEventHandler, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -8,6 +8,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { courseProgressKeys, useUpdateProgress } from "@/api/user";
 import { useLearnContext } from "@/contexts/LearnContext";
 import VideoPlayer from "@/libs/player/VideoPlayer";
+import { updateCourseProgress, uploadLearningCapture } from "@/services/api.client";
+import type { CaptureType } from "@/types/api";
 
 import { COURSE_THEMES, CourseType } from "../../../types";
 
@@ -44,6 +46,55 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
     );
 
     const [isFinishVideo, setIsFinishVideo] = useState<boolean>(isCurrentVideoCompleted);
+
+    // -------- Auto-capture helpers (mirrors LearnTheory) --------
+    const isCapturingRef = useRef<boolean>(false);
+    const lastCaptureTimeRef = useRef<number>(0);
+    const fallbackTriggeredRef = useRef<boolean>(false);
+    const seedRef = useRef<number>(0);
+    const plannedTargetRef = useRef<Map<string, number>>(new Map());
+    // Track last seen currentTime per video to detect "crossing" the planned target
+    const lastSeenTimeRef = useRef<Map<string, number>>(new Map());
+    // Ref to the actual HTMLVideoElement exposed by VideoPlayer
+    const videoRef = useRef<HTMLVideoElement | null>(null);
+
+    useEffect(() => {
+        if (!learnDetail?.id) return;
+        const key = `atlas-capture-seed:${learnDetail.id}`;
+        try {
+            let stored = typeof window !== "undefined" ? localStorage.getItem(key) : null;
+            if (!stored) {
+                stored = String(Math.floor(Math.random() * 2 ** 31));
+                localStorage.setItem(key, stored);
+            }
+            seedRef.current = Number(stored) || 1;
+            console.debug("[auto-capture] seed initialized", { key, seed: seedRef.current });
+        } catch {
+            seedRef.current = Math.floor(Math.random() * 2 ** 31) || 1;
+            console.debug("[auto-capture] seed init fallback", { seed: seedRef.current });
+        }
+        plannedTargetRef.current.clear();
+        fallbackTriggeredRef.current = false;
+    }, [learnDetail?.id]);
+
+    const hash32 = (s: string) => {
+        let h = 2166136261 >>> 0;
+        for (let i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+        }
+        return h >>> 0;
+    };
+
+    const mulberry32 = (a: number) => () => {
+        let t = (a += 0x6d2b79f5);
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+
+    const canvasToBlob = (canvas: HTMLCanvasElement, type = "image/png") =>
+        new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type));
 
     // Update isFinishVideo state when current video changes
     useEffect(() => {
@@ -99,7 +150,197 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
         console.log("video paused");
     };
 
-    const handleProgress: ReactEventHandler<HTMLVideoElement> = () => {};
+    const handleProgress = useCallback(() => {
+        if (!!progress.finishImageUrl || isCapturingRef.current) {
+            console.debug("[auto-capture] skip: already captured or capturing", {
+                hasCaptured: !!progress.finishImageUrl,
+                isCapturing: isCapturingRef.current,
+                courseId: learnDetail?.id,
+                videoIndex,
+            });
+            return;
+        }
+
+        if (!learnDetail || !currentVideo) return;
+
+        const now = Date.now();
+        if (now - lastCaptureTimeRef.current < 20000) {
+            console.debug("[auto-capture] skip: throttle", {
+                sinceLastMs: now - lastCaptureTimeRef.current,
+            });
+            return;
+        }
+
+        if (typeof document !== "undefined" && document.visibilityState !== "visible") {
+            console.debug("[auto-capture] skip: document not visible");
+            return;
+        }
+
+        const videoEl = (videoRef.current as HTMLVideoElement | null) ?? null;
+        if (!videoEl || (videoEl.readyState ?? 0) < 2 || (videoEl.duration ?? 0) <= 0) {
+            console.debug("[auto-capture] skip: video not ready", {
+                readyState: videoEl?.readyState,
+                duration: videoEl?.duration,
+            });
+            return;
+        }
+
+        const totalTheory = learnDetail?.theory?.videos?.length ?? 0;
+        const totalPractice = learnDetail?.practice?.videos?.length ?? 0;
+        const totalVideos = totalTheory + totalPractice;
+        if (totalVideos <= 0) return;
+
+        const videoKey = `practice-${videoIndex}`;
+        let targetTime = plannedTargetRef.current.get(videoKey);
+
+        if (targetTime == null) {
+            const dur = videoEl.duration;
+            const seed = hash32(`${seedRef.current}:${learnDetail.id}:${videoKey}`);
+            const rng = mulberry32(seed);
+
+            const minSec = Math.min(Math.max(5, dur * 0.15), Math.max(5, dur - 10));
+            const maxSec = Math.max(minSec + 1, Math.min(dur - 5, dur * 0.85));
+            targetTime = minSec + rng() * (maxSec - minSec);
+            plannedTargetRef.current.set(videoKey, targetTime);
+            console.debug("[auto-capture] planned target time", {
+                videoKey,
+                targetTime: Math.floor(targetTime),
+                duration: Math.floor(dur),
+            });
+        }
+
+        const currentPos = totalTheory + videoIndex; // practice index offset
+        const totalProgress = currentPos / totalVideos;
+        const shouldForce = totalProgress >= 0.8 && !fallbackTriggeredRef.current;
+
+        // Determine crossing similarly to LearnTheory (guard against prev=0)
+        const prev = lastSeenTimeRef.current.get(videoKey) ?? 0;
+        const current = videoEl.currentTime ?? 0;
+
+        const reachedTarget =
+            prev < (targetTime ?? Infinity) && current >= (targetTime ?? Infinity);
+        const fallbackReady = shouldForce && prev < 10 && current >= 10;
+
+        // store last seen time for next invocation
+        lastSeenTimeRef.current.set(videoKey, current);
+
+        if (!reachedTarget && !fallbackReady) {
+            // not yet time to capture
+            return;
+        }
+
+        console.debug("[auto-capture] capture condition met", {
+            videoKey,
+            currentTime: Math.floor(videoEl.currentTime ?? 0),
+            reachedTarget,
+            fallbackReady,
+            totalProgress: Number(totalProgress.toFixed(3)),
+        });
+
+        if (shouldForce) fallbackTriggeredRef.current = true;
+
+        (async () => {
+            if (isCapturingRef.current) return;
+            isCapturingRef.current = true;
+            try {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+                if (!ctx) return;
+
+                const vw = videoEl.videoWidth || videoEl.clientWidth;
+                const vh = videoEl.videoHeight || videoEl.clientHeight;
+                if (!vw || !vh) return;
+                canvas.width = vw;
+                canvas.height = vh;
+
+                try {
+                    console.debug("[auto-capture] starting capture", {
+                        videoKey,
+                        currentTime: Math.floor(videoEl.currentTime || 0),
+                    });
+                    const rVFC = (videoEl as any).requestVideoFrameCallback;
+                    if (typeof rVFC === "function") {
+                        await new Promise<void>((resolve) => {
+                            rVFC(() => resolve());
+                        });
+                    }
+                } catch {}
+
+                ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+                ctx.fillRect(10, 10, 380, 84);
+                ctx.fillStyle = "white";
+                ctx.font = "14px Arial";
+                ctx.fillText(`Course: ${String(courseType).toUpperCase()}`, 20, 30);
+                ctx.fillText(`Section: practice - Video ${videoIndex + 1}`, 20, 50);
+                ctx.fillText(`Time: ${Math.floor(videoEl.currentTime || 0)}s`, 20, 70);
+
+                const blob = await canvasToBlob(canvas, "image/png");
+                if (!blob) return;
+
+                const file = new File(
+                    [blob],
+                    `learning-proof-practice-${videoIndex}-${Date.now()}.png`,
+                    { type: "image/png" }
+                );
+
+                const uploadRes = await uploadLearningCapture(
+                    courseType,
+                    file,
+                    learnDetail.id,
+                    "finish" as CaptureType
+                );
+
+                console.debug("[auto-capture] upload result", { imageUrl: uploadRes?.imageUrl });
+
+                await updateCourseProgress(courseType, learnDetail.id, {
+                    section: "practice",
+                    videoIndex: videoIndex,
+                    currentTime: videoEl.currentTime || 0,
+                    finishImageUrl: uploadRes.imageUrl,
+                });
+
+                await queryClient.invalidateQueries({
+                    queryKey: courseProgressKeys.progress(courseType, learnDetail.id),
+                });
+
+                lastCaptureTimeRef.current = Date.now();
+                console.info("[auto-capture] capture completed", {
+                    courseId: learnDetail.id,
+                    videoKey,
+                    imageUrl: uploadRes?.imageUrl,
+                });
+            } catch (err) {
+                console.error("Learning proof capture failed:", err);
+            } finally {
+                isCapturingRef.current = false;
+            }
+        })();
+    }, [progress.finishImageUrl, learnDetail, currentVideo, videoIndex, courseType, queryClient]);
+
+    // Attach timeupdate listener and initialize lastSeen for the current video
+    useEffect(() => {
+        const v = videoRef.current;
+        if (!v) return;
+
+        const videoKey = `practice-${videoIndex}`;
+        // initialize to current playback position to avoid prev=0 false positives
+        lastSeenTimeRef.current.set(videoKey, v.currentTime ?? 0);
+
+        const handler = () => {
+            try {
+                handleProgress();
+            } catch (e) {
+                console.error("timeupdate handler error:", e);
+            }
+        };
+
+        v.addEventListener("timeupdate", handler);
+        return () => {
+            v.removeEventListener("timeupdate", handler);
+        };
+    }, [videoIndex, learnDetail?.id, handleProgress]);
 
     const handleNextVideo = () => {
         const nextVideoIndex = videoIndex + 1;
@@ -151,6 +392,7 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
                         onPlay={handleVideoPlay}
                         onPause={handleVideoPaused}
                         onProgress={handleProgress}
+                        videoRef={videoRef}
                     />
                 </div>
 

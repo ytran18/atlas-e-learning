@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactEventHandler, useEffect, useRef, useState } from "react";
+import { ReactEventHandler, RefObject, useEffect, useRef, useState } from "react";
 
 import Hls from "hls.js";
 import {
@@ -24,6 +24,8 @@ interface VideoPlayerProps {
     onProgress?: ReactEventHandler<HTMLVideoElement> | undefined; // when video progress
     isHls?: boolean; // whether the video source is HLS stream
     isUsingLink?: boolean; // whether the video source is using link
+    // optional external ref to the underlying HTMLVideoElement
+    videoRef?: RefObject<HTMLVideoElement | null>;
 }
 
 const LOADING_DEBOUNCE_TIME = 200;
@@ -38,9 +40,8 @@ const VideoPlayer = ({
     onProgress,
     isHls = true,
     isUsingLink = false,
+    videoRef,
 }: VideoPlayerProps) => {
-    const videoElementRef = useRef<HTMLVideoElement | null>(null);
-
     const hlsRef = useRef<Hls | null>(null);
 
     const isLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -85,7 +86,7 @@ const VideoPlayer = ({
 
     // Initialize HLS if needed
     useEffect(() => {
-        const videoElement = videoElementRef.current;
+        const videoElement = videoRef?.current;
 
         if (!videoElement || !isHls || isUsingLink) return;
 
@@ -153,7 +154,7 @@ const VideoPlayer = ({
                 hlsRef.current = null;
             }
         };
-    }, [src, isHls, isUsingLink]);
+    }, [src, isHls, isUsingLink, videoRef]);
 
     // Cleanup timeout on unmount
     useEffect(() => {
@@ -173,7 +174,7 @@ const VideoPlayer = ({
                 }}
             >
                 <Player
-                    ref={videoElementRef}
+                    ref={videoRef}
                     slot="media"
                     src={isUsingLink || !isHls ? src : undefined}
                     crossOrigin="anonymous"

@@ -21,15 +21,13 @@ const AtldHeroSection = ({ data }: AtldHeroSectionProps) => {
                     </p>
 
                     <div className="flex flex-wrap gap-8 text-base text-gray-600">
-                        <div className="flex items-center gap-2.5">
-                            {data?.length && (
-                                <>
-                                    <IconBook className="h-5 w-5 text-blue-600" strokeWidth={1.5} />
+                        {data?.length !== 0 && (
+                            <div className="flex items-center gap-2.5">
+                                <IconBook className="h-5 w-5 text-blue-600" strokeWidth={1.5} />
 
-                                    <span className="font-medium">{data?.length} Nhóm đào tạo</span>
-                                </>
-                            )}
-                        </div>
+                                <span className="font-medium">{data?.length} Nhóm đào tạo</span>
+                            </div>
+                        )}
                         <div className="flex items-center gap-2.5">
                             <IconCertificate className="h-5 w-5 text-blue-600" strokeWidth={1.5} />
                             <span className="font-medium">Chứng chỉ công nhận</span>
