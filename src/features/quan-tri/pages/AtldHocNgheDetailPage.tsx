@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 
-import { Card } from "@mantine/core";
+import { Card, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
 import { useCourseDetail } from "@/api";
@@ -19,7 +19,16 @@ const AtldHocNgheDetailPage = () => {
 
     const { data: courseDetail } = useCourseDetail("hoc-nghe", hocNgheId as string);
 
-    if (!courseDetail) return <div>Loading...</div>;
+    if (!courseDetail)
+        return (
+            <div className="flex-1">
+                <Card withBorder className="w-full h-full">
+                    <div className="w-full h-full flex justify-center">
+                        <Text>Hãy chọn khóa học để xem chi tiết</Text>
+                    </div>
+                </Card>
+            </div>
+        );
 
     return (
         <Card

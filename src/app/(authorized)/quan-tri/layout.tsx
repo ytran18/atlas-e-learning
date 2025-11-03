@@ -12,7 +12,7 @@ import { navigationPaths } from "@/utils/navigationPaths";
 export default function Layout({ children }: { children: React.ReactNode }) {
     const { user } = useClerk();
 
-    const isAdmin = user?.publicMetadata.role === "admin";
+    const isAdmin = user?.unsafeMetadata.role === "admin";
 
     if (!isAdmin) {
         redirect(navigationPaths.LANDING_PAGE);

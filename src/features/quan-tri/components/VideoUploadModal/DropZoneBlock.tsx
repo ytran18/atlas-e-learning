@@ -40,8 +40,8 @@ const DropZoneBlock: FunctionComponent<DropZoneBlockProps> = ({
                     <p>Kéo thả video vào đây hoặc nhấn để chọn file</p>
 
                     <p className="text-gray-500 text-sm">
-                        Kéo thả video vào đây hoặc nhấn để chọn file, mỗi file không được vượt quá 1
-                        GB
+                        Kéo thả video vào đây hoặc nhấn để chọn file, mỗi file không được vượt quá
+                        90MB
                     </p>
                 </div>
             </Group>

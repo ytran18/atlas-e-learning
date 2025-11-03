@@ -3,6 +3,7 @@ import { FunctionComponent, PropsWithChildren } from "react";
 import { useParams } from "next/navigation";
 
 import { Card, Group, Stack, Text, Title } from "@mantine/core";
+import { IconDatabase } from "@tabler/icons-react";
 
 import { CourseListItem, GetCourseListResponse } from "@/types/api";
 
@@ -29,35 +30,42 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
                     {children}
                 </div>
 
-                <Stack gap="sm">
-                    {courseList.map((course) => {
-                        const isSelected = course.id === atldId || course.id === hocNgheId;
+                {courseList.length === 0 ? (
+                    <div className="flex flex-col gap-y-2 items-center">
+                        <IconDatabase size={32} />
+                        <Text>Chưa có khóa học nào</Text>
+                    </div>
+                ) : (
+                    <Stack gap="sm">
+                        {courseList?.map((course) => {
+                            const isSelected = course.id === atldId || course.id === hocNgheId;
 
-                        return (
-                            <Card
-                                key={course.id}
-                                withBorder
-                                shadow="md"
-                                radius="md"
-                                p="md"
-                                onClick={() => onSelectCourse(course)}
-                                className={`cursor-pointer transition-all duration-200 ${
-                                    isSelected
-                                        ? "bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-300"
-                                        : "bg-gray-50 hover:bg-blue-50"
-                                }`}
-                            >
-                                <Group justify="space-between">
-                                    <Group gap="sm">
-                                        <Text fw={500} size="sm">
-                                            {course.title}
-                                        </Text>
+                            return (
+                                <Card
+                                    key={course.id}
+                                    withBorder
+                                    shadow="md"
+                                    radius="md"
+                                    p="md"
+                                    onClick={() => onSelectCourse(course)}
+                                    className={`cursor-pointer transition-all duration-200 ${
+                                        isSelected
+                                            ? "bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-300"
+                                            : "bg-gray-50 hover:bg-blue-50"
+                                    }`}
+                                >
+                                    <Group justify="space-between">
+                                        <Group gap="sm">
+                                            <Text fw={500} size="sm">
+                                                {course.title}
+                                            </Text>
+                                        </Group>
                                     </Group>
-                                </Group>
-                            </Card>
-                        );
-                    })}
-                </Stack>
+                                </Card>
+                            );
+                        })}
+                    </Stack>
+                )}
             </Card>
         </div>
     );

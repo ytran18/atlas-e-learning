@@ -29,7 +29,7 @@ export interface VideoDropzoneRef {
 }
 
 const VideoDropzone = forwardRef<VideoDropzoneRef, VideoDropzoneProps>(
-    ({ onFileSelect, onUploadComplete, maxSize = 1000, ...props }, ref) => {
+    ({ onFileSelect, onUploadComplete, maxSize = 90, ...props }, ref) => {
         const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
         const [uploadProgress, setUploadProgress] = useState(0);

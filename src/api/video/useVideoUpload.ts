@@ -20,7 +20,7 @@ interface VideoUploadParams {
 
 export function useVideoUpload(options: UseVideoUploadOptions = {}) {
     const { getToken } = useAuth();
-    const { maxSizeMB = 1000, onSuccess, onError, onProgress } = options;
+    const { maxSizeMB = 90, onSuccess, onError, onProgress } = options;
 
     const mutation = useMutation({
         mutationFn: async ({ file }: VideoUploadParams): Promise<UploadResult> => {
