@@ -16,16 +16,19 @@ import AuthButton from "./AuthButton";
 const GlobalHeader = () => {
     const router = useRouter();
 
-    const { signOut } = useClerk();
+    const { signOut, user } = useClerk();
+
+    const isAdmin = user?.unsafeMetadata?.role === "admin" ? true : false;
 
     const currentPath = usePathname();
 
     const [opened, { toggle, close }] = useDisclosure(false);
 
     const navigationItems = [
-        { href: navigationPaths.LANDING_PAGE, label: "Trang chủ" },
-        { href: navigationPaths.ATLD, label: "Đào tạo ATLD" },
-        { href: navigationPaths.HOC_NGHE, label: "Học nghề" },
+        { href: navigationPaths.LANDING_PAGE, label: "Trang chủ", isVisible: true },
+        { href: navigationPaths.ATLD, label: "Đào tạo ATLD", isVisible: true },
+        { href: navigationPaths.HOC_NGHE, label: "Học nghề", isVisible: true },
+        { href: navigationPaths.QUAN_TRI_ATLD, label: "Quản trị", isVisible: isAdmin },
     ];
 
     const handleLogout = () => {
@@ -49,19 +52,25 @@ const GlobalHeader = () => {
 
                     {/* Desktop Navigation */}
                     <Group h="100%" gap={0} visibleFrom="sm">
-                        {navigationItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className="flex items-center h-[42px] sm:h-full w-full sm:w-auto pl-[var(--mantine-spacing-md)] pr-[var(--mantine-spacing-md)] no-underline text-[var(--mantine-color-black)] font-medium hover:bg-[var(--mantine-color-gray-0)]"
-                                style={{
-                                    fontSize: "var(--mantine-font-size-sm)",
-                                    color: currentPath === item.href ? "#1D72FE" : "",
-                                }}
-                            >
-                                {item.label}
-                            </Link>
-                        ))}
+                        {navigationItems.map((item) => {
+                            if (!item.isVisible) {
+                                return null;
+                            }
+
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className="flex items-center h-[42px] sm:h-full w-full sm:w-auto pl-[var(--mantine-spacing-md)] pr-[var(--mantine-spacing-md)] no-underline text-[var(--mantine-color-black)] font-medium hover:bg-[var(--mantine-color-gray-0)]"
+                                    style={{
+                                        fontSize: "var(--mantine-font-size-sm)",
+                                        color: currentPath === item.href ? "#1D72FE" : "",
+                                    }}
+                                >
+                                    {item.label}
+                                </Link>
+                            );
+                        })}
                     </Group>
 
                     {/* Desktop Auth Button */}
