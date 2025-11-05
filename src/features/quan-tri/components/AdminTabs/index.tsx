@@ -1,9 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import { Card, Tabs, ThemeIcon } from "@mantine/core";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+
+import { Card, Loader, Tabs, ThemeIcon } from "@mantine/core";
 import { IconHammer, IconShield, IconUsers } from "@tabler/icons-react";
 
 import { navigationPaths } from "@/utils/navigationPaths";
@@ -36,8 +38,16 @@ export const adminNavItems = [
 
 const AdminTabs = () => {
     const pathname = usePathname();
+    const router = useRouter();
+
+    const [navigatingTab, setNavigatingTab] = useState<string | null>(null);
 
     const currentTab = getCurrentAdminPathname(pathname);
+
+    useEffect(() => {
+        // clear navigating state when route changes
+        setNavigatingTab(null);
+    }, [pathname]);
 
     return (
         <Card withBorder radius="md" p="md" visibleFrom="md">
@@ -57,30 +67,39 @@ const AdminTabs = () => {
 
                         const isActive = item.value === currentTab;
 
+                        const isNavigating = navigatingTab === item.value;
+
                         return (
                             <Tabs.Tab
                                 key={item.value}
                                 value={item.value}
-                                className="px-3 py-2 sm:px-6 sm:py-3"
+                                className={`px-3 sm:px-6 !py-1 !rounded-sm ${
+                                    isNavigating ? "opacity-60 pointer-events-none" : ""
+                                }`}
+                                onMouseEnter={() => router.prefetch(item.href)}
                             >
                                 <Link
                                     href={item.href}
                                     className="flex items-center gap-2 sm:gap-3 no-underline justify-center sm:justify-start"
+                                    onClick={() => setNavigatingTab(item.value)}
                                 >
                                     <ThemeIcon
                                         size="md"
                                         variant="light"
                                         color={item.color}
-                                        radius="xl"
+                                        className="!bg-transparent"
                                     >
-                                        <IconComponent
-                                            size={16}
-                                            className={`${isActive ? "text-white" : ""}`}
-                                        />
+                                        {isNavigating ? (
+                                            <Loader size={14} />
+                                        ) : (
+                                            <IconComponent
+                                                size={16}
+                                                className={`${isActive ? "text-white" : ""}`}
+                                            />
+                                        )}
                                     </ThemeIcon>
-                                    <span className="font-semibold text-sm sm:text-base">
-                                        {item.label}
-                                    </span>
+
+                                    <span className="font-semibold text-sm">{item.label}</span>
                                 </Link>
                             </Tabs.Tab>
                         );

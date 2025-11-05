@@ -1,6 +1,6 @@
-import { Button, Group } from "@mantine/core";
+import { Button, Group, Tooltip } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconDeviceFloppy, IconEdit, IconTrashFilled, IconX } from "@tabler/icons-react";
+import { IconDeviceFloppy, IconEdit, IconTrash, IconX } from "@tabler/icons-react";
 
 interface EditModeButtonsProps {
     isEditMode: boolean;
@@ -23,62 +23,60 @@ const EditModeButtons = ({
     onDelete,
     saveDisabled = false,
     editText = "Chỉnh sửa",
-    saveText = "Lưu",
-    cancelText = "Hủy",
-    deleteText = "Xóa khóa học",
 }: EditModeButtonsProps) => {
     const isMobile = useMediaQuery("(max-width: 640px)");
 
     return (
         <Group gap="sm">
             {isEditMode ? (
-                <>
-                    <Button
-                        size={isMobile ? "xs" : "md"}
-                        variant="filled"
-                        onClick={onSave}
-                        disabled={saveDisabled}
-                        className="!w-full"
-                    >
-                        <div className="flex items-center gap-x-2">
-                            <IconDeviceFloppy />
+                <div className="flex items-center gap-x-2">
+                    <Tooltip label="Lưu" withArrow>
+                        <Button
+                            size="xs"
+                            variant="filled"
+                            onClick={onSave}
+                            disabled={saveDisabled}
+                            className="!w-full"
+                        >
+                            <div className="flex items-center gap-x-2">
+                                <IconDeviceFloppy size={16} />
+                            </div>
+                        </Button>
+                    </Tooltip>
 
-                            {!isMobile && saveText}
-                        </div>
-                    </Button>
+                    <Tooltip label="Xóa khóa học" withArrow>
+                        <Button
+                            size="xs"
+                            variant="filled"
+                            color="red"
+                            onClick={onDelete}
+                            disabled={saveDisabled}
+                            className="!w-full"
+                        >
+                            <div className="flex items-center gap-x-2">
+                                <IconTrash size={16} />
+                            </div>
+                        </Button>
+                    </Tooltip>
 
-                    <Button
-                        size={isMobile ? "xs" : "md"}
-                        variant="filled"
-                        color="red"
-                        onClick={onDelete}
-                        disabled={saveDisabled}
-                    >
-                        <div className="flex items-center gap-x-2">
-                            <IconTrashFilled />
-
-                            {!isMobile && deleteText}
-                        </div>
-                    </Button>
-
-                    <Button
-                        size={isMobile ? "xs" : "md"}
-                        color="red"
-                        variant="outline"
-                        onClick={onCancel}
-                        className="!w-full"
-                    >
-                        <div className="flex items-center gap-x-2">
-                            <IconX />
-
-                            {!isMobile && cancelText}
-                        </div>
-                    </Button>
-                </>
+                    <Tooltip label="Huỷ bỏ" withArrow>
+                        <Button
+                            size="xs"
+                            color="red"
+                            variant="outline"
+                            onClick={onCancel}
+                            className="!w-full"
+                        >
+                            <div className="flex items-center gap-x-2">
+                                <IconX size={16} />
+                            </div>
+                        </Button>
+                    </Tooltip>
+                </div>
             ) : (
-                <Button size={isMobile ? "xs" : "md"} variant="filled" onClick={onEdit}>
+                <Button size="xs" variant="filled" onClick={onEdit}>
                     <div className="flex items-center gap-x-2">
-                        <IconEdit size={isMobile ? 16 : 20} />
+                        <IconEdit size={16} />
 
                         {!isMobile && editText}
                     </div>

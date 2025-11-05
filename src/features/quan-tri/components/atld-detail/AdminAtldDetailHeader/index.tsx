@@ -68,7 +68,7 @@ const AdminAtldDetailHeader = () => {
         <Card
             withBorder={!isMobile}
             shadow={!isMobile ? "md" : undefined}
-            radius="md"
+            radius="sm"
             p={isMobile ? "xs" : "md"}
             className={`!overflow-visible ${isMobile ? "!shadow-none" : ""}`}
         >

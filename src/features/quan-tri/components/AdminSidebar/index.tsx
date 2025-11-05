@@ -1,8 +1,8 @@
-import { FunctionComponent, PropsWithChildren } from "react";
+import { FunctionComponent, PropsWithChildren, useEffect, useState } from "react";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
-import { Card, Group, Stack, Text, Title } from "@mantine/core";
+import { Card, Group, Loader, Stack, Text, Title } from "@mantine/core";
 import { IconDatabase } from "@tabler/icons-react";
 
 import { CourseListItem, GetCourseListResponse } from "@/types/api";
@@ -20,6 +20,14 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
     children,
 }) => {
     const { atldId, hocNgheId } = useParams();
+    const router = useRouter();
+
+    const [navigatingId, setNavigatingId] = useState<string | null>(null);
+
+    useEffect(() => {
+        // clear navigating state when route params change
+        setNavigatingId(null);
+    }, [atldId, hocNgheId]);
 
     return (
         <div className="flex-shrink-0 w-1/4 hidden sm:block">
@@ -40,6 +48,8 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
                         {courseList?.map((course) => {
                             const isSelected = course.id === atldId || course.id === hocNgheId;
 
+                            const isNavigating = navigatingId === course.id;
+
                             return (
                                 <Card
                                     key={course.id}
@@ -47,19 +57,28 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
                                     shadow="md"
                                     radius="md"
                                     p="md"
-                                    onClick={() => onSelectCourse(course)}
+                                    onClick={() => {
+                                        setNavigatingId(course.id);
+                                        onSelectCourse(course);
+                                    }}
+                                    onMouseEnter={() =>
+                                        router.prefetch(`/quan-tri/atld/${course.id}`)
+                                    }
+                                    aria-busy={isNavigating}
                                     className={`cursor-pointer transition-all duration-200 ${
                                         isSelected
                                             ? "bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-300"
-                                            : "bg-gray-50 hover:bg-blue-50"
-                                    }`}
+                                            : "bg-gray-50 hover:!bg-blue-50"
+                                    } ${isNavigating ? "opacity-60" : ""}`}
                                 >
-                                    <Group justify="space-between">
+                                    <Group justify="space-between" wrap="nowrap">
                                         <Group gap="sm">
                                             <Text fw={500} size="sm">
                                                 {course.title}
                                             </Text>
                                         </Group>
+
+                                        {isNavigating && <Loader size="xs" />}
                                     </Group>
                                 </Card>
                             );

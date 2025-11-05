@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@mantine/core";
@@ -11,8 +12,14 @@ import { IconPlus } from "@tabler/icons-react";
 import { useCourseList } from "@/api";
 import Loader from "@/components/Loader";
 import AdminSidebar from "@/features/quan-tri/components/AdminSidebar";
-import ModalCreateNewCourse from "@/features/quan-tri/components/ModalCreateNewCourse";
 import { CourseListItem } from "@/types/api";
+
+const ModalCreateNewCourse = dynamic(
+    () => import("@/features/quan-tri/components/ModalCreateNewCourse"),
+    {
+        ssr: false,
+    }
+);
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -21,9 +28,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     const isMobile = useMediaQuery("(max-width: 640px)");
 
-    const [openedModalCreateNewCourse, setOpenedModalCreateNewCourse] = useState<boolean>(false);
-
     const { data: courseList } = useCourseList("atld");
+
+    // states
+
+    const [openedModalCreateNewCourse, setOpenedModalCreateNewCourse] = useState<boolean>(false);
 
     useEffect(() => {
         if (atldId || isMobile) return;
@@ -49,12 +58,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex gap-x-4 flex-1">
             <AdminSidebar
-                title="Các nhóm ATLĐ"
+                title="An toàn lao động"
                 courseList={courseList}
                 onSelectCourse={handleSelectCourse}
             >
                 <Button
-                    leftSection={<IconPlus />}
+                    leftSection={<IconPlus size={16} />}
+                    size="xs"
                     onClick={() => setOpenedModalCreateNewCourse(true)}
                 >
                     Thêm
