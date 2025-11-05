@@ -10,11 +10,11 @@ import Header from "@/features/quan-tri/components/Header";
 import { navigationPaths } from "@/utils/navigationPaths";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-    const { user } = useClerk();
+    const { user, loaded } = useClerk();
 
     const isAdmin = user?.unsafeMetadata.role === "admin";
 
-    if (!isAdmin) {
+    if (!isAdmin && loaded) {
         redirect(navigationPaths.LANDING_PAGE);
     }
 

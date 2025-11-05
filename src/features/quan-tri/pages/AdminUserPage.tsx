@@ -8,6 +8,7 @@ import { Card } from "@mantine/core";
 
 import { useStudentStats } from "@/api";
 import { useGetAllCourseLists } from "@/api/user/useGetAllCourseLists";
+import Loader from "@/components/Loader";
 import { CourseType } from "@/types/api";
 
 import UserFilter from "../components/AdminUser/UserFilter";
@@ -37,7 +38,7 @@ const AdminUserPage = () => {
     // Cursor của trang trước
     const cursor = getCursor(Number(page) || 1);
 
-    const { data: stats } = useStudentStats(
+    const { data: stats, isLoading } = useStudentStats(
         type as CourseType,
         courseId as string,
         Number(pageSize) ?? 10,
@@ -52,6 +53,14 @@ const AdminUserPage = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stats?.nextCursor, page]);
+
+    if (isLoading) {
+        return (
+            <div className="w-full h-full flex items-center justify-center">
+                <Loader />
+            </div>
+        );
+    }
 
     if (!courseList) return null;
 
@@ -82,7 +91,7 @@ const AdminUserPage = () => {
                 <Card withBorder className="w-full h-full flex flex-col gap-y-4 flex-1">
                     <UserFilter ref={tableRef as React.RefObject<HTMLDivElement>} />
 
-                    <UserTable ref={tableRef} />
+                    <UserTable ref={tableRef} isLoading={isLoading} />
                 </Card>
             </div>
         </AdminUserProvider>

@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { Checkbox, Image, Pagination, Table } from "@mantine/core";
 
+import Loader from "@/components/Loader";
 import { tableHeader } from "@/features/quan-tri/constants/userTable";
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
 import { StudentStats } from "@/types/api";
@@ -12,9 +13,10 @@ import ModalUserDetail from "./ModalUserDetail";
 
 type UserTableProps = {
     className?: string;
+    isLoading?: boolean;
 };
 
-const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref) => {
+const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoading }, ref) => {
     const router = useRouter();
 
     const searchParams = useSearchParams();
@@ -112,7 +114,13 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
                         </Table.Tr>
                     </Table.Thead>
 
-                    <Table.Tbody>{rows}</Table.Tbody>
+                    {isLoading ? (
+                        <div>
+                            <Loader />
+                        </div>
+                    ) : (
+                        <Table.Tbody>{rows}</Table.Tbody>
+                    )}
                 </Table>
             </div>
 

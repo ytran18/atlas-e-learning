@@ -66,6 +66,7 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
                 shouldCompleteToPassed: video.shouldCompleteToPassed || true,
                 thumbnailUrl: video?.thumbnailUrl || "",
                 isUsingLink: video?.isUsingLink || false,
+                url: video.url || "",
             });
 
             setNewVideoUrl(null);

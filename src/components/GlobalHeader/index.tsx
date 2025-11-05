@@ -57,6 +57,12 @@ const GlobalHeader = () => {
                                 return null;
                             }
 
+                            const isAdminActive = currentPath.includes("/quan-tri");
+
+                            const isActive =
+                                currentPath === item.href ||
+                                (item.href === navigationPaths.QUAN_TRI_ATLD && isAdminActive);
+
                             return (
                                 <Link
                                     key={item.href}
@@ -64,7 +70,7 @@ const GlobalHeader = () => {
                                     className="flex items-center h-[42px] sm:h-full w-full sm:w-auto pl-[var(--mantine-spacing-md)] pr-[var(--mantine-spacing-md)] no-underline text-[var(--mantine-color-black)] font-medium hover:bg-[var(--mantine-color-gray-0)]"
                                     style={{
                                         fontSize: "var(--mantine-font-size-sm)",
-                                        color: currentPath === item.href ? "#1D72FE" : "",
+                                        color: isActive ? "#1D72FE" : "",
                                     }}
                                 >
                                     {item.label}

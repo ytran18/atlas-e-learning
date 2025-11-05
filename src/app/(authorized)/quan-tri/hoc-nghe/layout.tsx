@@ -9,6 +9,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 
 import { useCourseList } from "@/api";
+import Loader from "@/components/Loader";
 import AdminSidebar from "@/features/quan-tri/components/AdminSidebar";
 import ModalCreateNewCourse from "@/features/quan-tri/components/ModalCreateNewCourse";
 import { CourseListItem } from "@/types/api";
@@ -38,7 +39,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         router.push(`/quan-tri/hoc-nghe/${course.id}`);
     };
 
-    if (!courseList) return <div>Loading...</div>;
+    if (!courseList)
+        return (
+            <div className="w-full">
+                <Loader className="flex items-center w-full justify-center py-8" />
+            </div>
+        );
 
     return (
         <div className="flex gap-x-4 flex-1">
