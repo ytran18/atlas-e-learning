@@ -4,11 +4,13 @@ import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { Checkbox, Image, Pagination, Table } from "@mantine/core";
+import { Empty } from "antd";
 
+import { useCourseDetail } from "@/api";
 import Loader from "@/components/Loader";
 import { tableHeader } from "@/features/quan-tri/constants/userTable";
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
-import { StudentStats } from "@/types/api";
+import { CourseType, StudentStats } from "@/types/api";
 
 const ModalUserDetail = dynamic(() => import("./ModalUserDetail"), {
     ssr: false,
@@ -24,19 +26,26 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
 
     const searchParams = useSearchParams();
 
+    const page = searchParams.get("page");
+
+    const type = searchParams.get("type");
+
+    const courseId = searchParams.get("courseId");
+
+    // get course detail
+    const { data: courseDetail } = useCourseDetail(type as CourseType, courseId as string);
+
     const [openedModalUserDetail, setOpenedModalUserDetail] = useState<boolean>(false);
 
     const [userDetail, setUserDetail] = useState<StudentStats | null>(null);
 
     const { tableData, totalPages, totalDocs } = useAdminUserContext();
 
-    const page = searchParams.get("page");
-
     const currentPage = Number(page) || 1;
 
     const isShowPagination = totalDocs > 10;
 
-    if (!tableData) return <div>No data</div>;
+    if (!tableData || !courseDetail) return <Empty description="Không có dữ liệu" />;
 
     const handlePageChange = (newPage: number) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -141,6 +150,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
                 opened={openedModalUserDetail}
                 onClose={() => setOpenedModalUserDetail(false)}
                 user={userDetail}
+                courseDetail={courseDetail}
             />
         </div>
     );

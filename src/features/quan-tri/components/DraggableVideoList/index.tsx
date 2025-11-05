@@ -4,8 +4,8 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card, Image, Text, ThemeIcon, Tooltip } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconEdit, IconGripVertical, IconTrash } from "@tabler/icons-react";
+import { Empty } from "antd";
 
-import Empty from "@/components/Empty";
 import { Video } from "@/types/api";
 
 import ModalEditVideo from "./ModalEditVideo";
@@ -82,7 +82,7 @@ const DraggableVideoList = ({
     if (noData) {
         return (
             <div className="flex flex-col gap-y-3 w-full mt-3">
-                <Empty title="Không có video" />
+                <Empty description="Không có video" />
             </div>
         );
     }
