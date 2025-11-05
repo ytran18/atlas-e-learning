@@ -66,6 +66,7 @@ const AdminAtldDetailHeader = () => {
 
     return (
         <Card
+            id="admin-atld-detail-header"
             withBorder={!isMobile}
             shadow={!isMobile ? "md" : undefined}
             radius="sm"

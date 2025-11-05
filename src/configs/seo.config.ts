@@ -202,7 +202,7 @@ export function generateCourseStructuredData(course: {
     return {
         "@context": "https://schema.org",
         "@type": "Course",
-        name: course.title,
+        name: course?.title,
         description: course.description,
         provider: {
             "@type": "Organization",

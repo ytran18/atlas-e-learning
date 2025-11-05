@@ -3,7 +3,7 @@ import { FunctionComponent, PropsWithChildren, useEffect, useState } from "react
 import { useParams, useRouter } from "next/navigation";
 
 import { Card, Group, Loader, Stack, Text, Title } from "@mantine/core";
-import { IconDatabase } from "@tabler/icons-react";
+import { Empty } from "antd";
 
 import { CourseListItem, GetCourseListResponse } from "@/types/api";
 
@@ -31,7 +31,13 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
 
     return (
         <div className="flex-shrink-0 w-1/4 hidden sm:block">
-            <Card withBorder shadow="md" radius="md" p="md" className="bg-white h-full">
+            <Card
+                withBorder
+                shadow="md"
+                radius="md"
+                p="md"
+                className="bg-white !h-[calc(100vh-272px)] !overflow-y-auto"
+            >
                 <div className="w-full flex justify-between items-center mb-4">
                     <Title order={3}>{title}</Title>
 
@@ -40,8 +46,7 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
 
                 {courseList.length === 0 ? (
                     <div className="flex flex-col gap-y-2 items-center">
-                        <IconDatabase size={32} />
-                        <Text>Chưa có khóa học nào</Text>
+                        <Empty description="Chưa có khóa học nào" />
                     </div>
                 ) : (
                     <Stack gap="sm">

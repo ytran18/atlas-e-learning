@@ -21,11 +21,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         const courseData = await getCoursePreviewServer(atldId);
 
         return generateSeoMetadata({
-            title: courseData.title,
+            title: courseData?.title,
             description:
                 courseData.description ||
-                `Khóa học ${courseData.title} - An Toàn Lao Động chuyên nghiệp`,
-            keywords: ["khóa học ATLD", courseData.title, "an toàn lao động"],
+                `Khóa học ${courseData?.title} - An Toàn Lao Động chuyên nghiệp`,
+            keywords: ["khóa học ATLD", courseData?.title, "an toàn lao động"],
             url: `/atld/${atldId}`,
         });
     } catch {
@@ -55,7 +55,7 @@ export default async function Page({ params }: PageProps) {
                 <StructuredData
                     data={generateCourseStructuredData({
                         id: atldId,
-                        title: initialData.title,
+                        title: initialData?.title,
                         description: initialData.description || `Khóa học ${initialData.title}`,
                         url: `/atld/${atldId}`,
                     })}

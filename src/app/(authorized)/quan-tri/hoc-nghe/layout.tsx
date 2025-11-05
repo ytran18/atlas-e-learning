@@ -47,14 +47,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         );
 
     return (
-        <div className="flex gap-x-4 flex-1">
+        <div className="flex gap-x-4">
             <AdminSidebar
                 title="Các nhóm nghề"
                 courseList={courseList}
                 onSelectCourse={handleSelectCourse}
             >
                 <Button
-                    leftSection={<IconPlus />}
+                    leftSection={<IconPlus size={16} />}
+                    size="xs"
                     onClick={() => setOpenedModalCreateNewCourse(true)}
                 >
                     Thêm

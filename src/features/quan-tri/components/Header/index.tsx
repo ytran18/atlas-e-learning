@@ -34,7 +34,11 @@ const Header = () => {
 
     return (
         <>
-            <Card withBorder radius="md" className="!p-3 md:!p-4">
+            <Card
+                withBorder
+                radius="md"
+                className="!p-3 md:!p-4 !h-[86px] !max-h-[86px] !min-h-[86px]"
+            >
                 <Group justify="space-between" align="center">
                     <div className="flex-1 flex gap-x-4 gap-y-1 items-center justify-between sm:flex-col sm:items-start">
                         <div className="text-lg md:text-2xl font-bold truncate w-full">

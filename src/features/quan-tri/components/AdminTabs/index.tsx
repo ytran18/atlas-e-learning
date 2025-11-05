@@ -50,7 +50,13 @@ const AdminTabs = () => {
     }, [pathname]);
 
     return (
-        <Card withBorder radius="md" p="md" visibleFrom="md">
+        <Card
+            withBorder
+            radius="md"
+            p="md"
+            visibleFrom="md"
+            className="h-[70px] max-h-[70px] min-h-[70px]"
+        >
             <Tabs
                 value={currentTab}
                 variant="pills"

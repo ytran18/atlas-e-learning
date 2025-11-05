@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import { Button, ScrollArea } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
+import { Empty } from "antd";
 
-import Empty from "@/components/Empty";
 import { useAtldAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
 import { useCourseFormContext } from "@/features/quan-tri/contexts/CourseFormContext";
 import { ExamQuestion } from "@/types/api";
@@ -68,7 +68,7 @@ const ExamTab = () => {
                     </div>
                 )}
 
-                <Empty title="Chưa thêm câu hỏi" />
+                <Empty description="Chưa thêm câu hỏi" />
 
                 <ModalQuestion
                     opened={isQuestionModalOpen}

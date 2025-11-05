@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { Card } from "@mantine/core";
+import { Empty } from "antd";
 
 import { useStudentStats } from "@/api";
 import { useGetAllCourseLists } from "@/api/user/useGetAllCourseLists";
@@ -38,7 +39,11 @@ const AdminUserPage = () => {
     // Cursor của trang trước
     const cursor = getCursor(Number(page) || 1);
 
-    const { data: stats, isLoading } = useStudentStats(
+    const {
+        data: stats,
+        isLoading,
+        isFetching,
+    } = useStudentStats(
         type as CourseType,
         courseId as string,
         Number(pageSize) ?? 10,
@@ -54,7 +59,7 @@ const AdminUserPage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stats?.nextCursor, page]);
 
-    if (isLoading) {
+    if (isLoading || isFetching) {
         return (
             <div className="w-full h-full flex items-center justify-center">
                 <Loader />
@@ -71,8 +76,8 @@ const AdminUserPage = () => {
                     <Card withBorder className="w-full h-full flex flex-col gap-y-4 flex-1">
                         <UserFilter />
 
-                        <div className="flex items-center justify-center w-full h-full min-h-[250px] text-lg text-gray-700 font-semibold">
-                            Vui lòng chọn khóa học để xem dữ liệu
+                        <div className="flex justify-center w-full h-full min-h-[250px] text-lg text-gray-700 font-semibold">
+                            <Empty description="Vui lòng chọn khóa học để xem dữ liệu" />
                         </div>
                     </Card>
                 </div>

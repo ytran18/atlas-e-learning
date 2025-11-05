@@ -1,5 +1,6 @@
 import { forwardRef, useState } from "react";
 
+import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { Checkbox, Image, Pagination, Table } from "@mantine/core";
@@ -9,7 +10,9 @@ import { tableHeader } from "@/features/quan-tri/constants/userTable";
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
 import { StudentStats } from "@/types/api";
 
-import ModalUserDetail from "./ModalUserDetail";
+const ModalUserDetail = dynamic(() => import("./ModalUserDetail"), {
+    ssr: false,
+});
 
 type UserTableProps = {
     className?: string;
@@ -83,7 +86,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
                     <Image
                         src={element.startImageUrl}
                         alt={element.fullname}
-                        className="max-w-[100px] max-h-[100px]"
+                        className="max-w-[100px] max-h-[50px] object-cover"
                     />
                 </Table.Td>
 
@@ -91,7 +94,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
                     <Image
                         src={element.finishImageUrl}
                         alt={element.fullname}
-                        className="max-w-[100px] max-h-[100px]"
+                        className="max-w-[100px] max-h-[50px] object-cover"
                     />
                 </Table.Td>
 

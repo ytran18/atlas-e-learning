@@ -56,7 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         );
 
     return (
-        <div className="flex gap-x-4 flex-1">
+        <div className="flex gap-x-4">
             <AdminSidebar
                 title="An toàn lao động"
                 courseList={courseList}

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { Card, Group, Tabs, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconBook, IconCertificate, IconFileText, ReactNode } from "@tabler/icons-react";
@@ -38,13 +40,28 @@ const TabsContent = ({ slots }: TabsContentProps) => {
 
     const { isEditMode } = useAtldAdminDetailContext();
 
+    const [tabHeight, setTabHeight] = useState<number>(0);
+
+    useEffect(() => {
+        const itemHeader = document.getElementById("admin-hoc-nghe-detail-header");
+
+        if (itemHeader) {
+            setTabHeight(itemHeader.clientHeight);
+        }
+    }, [isEditMode]);
+
     return (
         <Tabs
             defaultValue={AdminHocNgheDetailTabs.THEORY}
+            styles={{
+                root: {
+                    height: `calc(100% - ${tabHeight}px)`,
+                },
+            }}
             classNames={{
-                root: "h-full !flex !flex-col w-full",
+                root: "w-full",
                 list: "flex-shrink-0 border-b border-gray-200 bg-white mb-3",
-                panel: `max-h-[calc(100vh-${isEditMode ? "410px" : "360px"})] sm:max-h-[calc(100vh-600px)]`,
+                panel: "h-full",
                 tab: "flex-1 text-center !px-2 text-sm font-medium",
             }}
         >

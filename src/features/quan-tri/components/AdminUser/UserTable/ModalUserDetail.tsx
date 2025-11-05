@@ -1,7 +1,8 @@
 import { FunctionComponent } from "react";
 
-import { Card, Image, Modal, Text } from "@mantine/core";
+import { Card, Modal, Text } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
+import { Image } from "antd";
 
 import { DEFAULT_IMAGE_URL } from "@/constants";
 import { StudentStats } from "@/types/api";
@@ -22,7 +23,14 @@ const ModalUserDetail: FunctionComponent<ModalUserDetailProps> = ({ opened, onCl
     const isPracticeCompleted = user.currentSection === "exam";
 
     return (
-        <Modal opened={opened} onClose={onClose} title={user.fullname} centered size="lg">
+        <Modal
+            opened={opened}
+            onClose={onClose}
+            title={user.fullname}
+            closeOnEscape={false}
+            centered
+            size="lg"
+        >
             <div className="w-full flex flex-col gap-y-4">
                 <div className="w-full flex items-center justify-between gap-x-2">
                     <Card withBorder className="w-full !py-1">
@@ -53,8 +61,8 @@ const ModalUserDetail: FunctionComponent<ModalUserDetailProps> = ({ opened, onCl
                         <Image
                             src={user.startImageUrl}
                             alt={user.fullname}
-                            className="w-full h-full object-cover"
-                            fallbackSrc={DEFAULT_IMAGE_URL}
+                            className="w-full max-h-[165px] object-cover"
+                            fallback={DEFAULT_IMAGE_URL}
                         />
                     </div>
 
@@ -66,8 +74,8 @@ const ModalUserDetail: FunctionComponent<ModalUserDetailProps> = ({ opened, onCl
                         <Image
                             src={user.finishImageUrl}
                             alt={user.fullname}
-                            className="w-full h-full object-cover"
-                            fallbackSrc={DEFAULT_IMAGE_URL}
+                            className="w-full max-h-[165px] object-cover"
+                            fallback={DEFAULT_IMAGE_URL}
                         />
                     </div>
                 </div>
@@ -80,8 +88,14 @@ const ModalUserDetail: FunctionComponent<ModalUserDetailProps> = ({ opened, onCl
 
                         <div>
                             <Text size="sm" fw={600} c={user.examResult?.passed ? "green" : "red"}>
-                                {user.examResult?.score} / {user.examResult?.totalQuestions} (
-                                {user.examResult?.passed ? "Đạt" : "Không đạt"})
+                                {!isCompleted ? (
+                                    <>Chưa làm bài kiểm tra</>
+                                ) : (
+                                    <>
+                                        {user.examResult?.score} / {user.examResult?.totalQuestions}{" "}
+                                        ({user.examResult?.passed ? "Đạt" : "Không đạt"})
+                                    </>
+                                )}
                             </Text>
                         </div>
                     </div>

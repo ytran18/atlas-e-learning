@@ -427,7 +427,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                     {/* Video Title and Description */}
                     <div className="space-y-2">
                         <h3 className="text-lg lg:text-xl font-semibold text-gray-900">
-                            {currentVideo?.title || learnDetail.theory.videos[0].title}
+                            {currentVideo?.title || learnDetail.theory.videos?.[0]?.title}
                         </h3>
                         {currentVideo?.description && (
                             <p className="text-sm lg:text-base text-gray-600">

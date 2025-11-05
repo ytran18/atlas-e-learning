@@ -66,6 +66,7 @@ const AdminHocNgheDetailHeader = () => {
 
     return (
         <Card
+            id="admin-hoc-nghe-detail-header"
             withBorder={!isMobile}
             shadow={!isMobile ? "md" : undefined}
             radius="md"
