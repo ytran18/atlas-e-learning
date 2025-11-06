@@ -27,38 +27,6 @@ interface UpdateCourseVariables extends UpdateCourseRequest {
     groupId: string;
 }
 
-/**
- * Hook để cập nhật khóa học
- *
- * @param type - Loại khóa học: "atld" hoặc "hoc-nghe"
- * @param options - React Query mutation options
- * @returns Mutation result với mutate function
- *
- * @example
- * const { mutate, isPending } = useUpdateCourse("atld", {
- *   onSuccess: () => {
- *     console.log("Course updated");
- *     toast.success("Cập nhật thành công");
- *   },
- * });
- *
- * // Cập nhật title và description
- * mutate({
- *   groupId: "group_001",
- *   title: "New Title",
- *   description: "Updated description",
- * });
- *
- * // Cập nhật theory section
- * mutate({
- *   groupId: "group_001",
- *   theory: {
- *     title: "Updated Theory",
- *     description: "...",
- *     videos: [...],
- *   },
- * });
- */
 export function useUpdateCourse(
     type: CourseType,
     options?: Omit<

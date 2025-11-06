@@ -19,23 +19,6 @@ export const courseProgressKeys = {
         [...courseProgressKeys.progresses(), type, groupId] as const,
 };
 
-/**
- * Hook lấy tiến trình học của user
- *
- * @param type - Loại khóa học: "atld" hoặc "hoc-nghe"
- * @param groupId - ID của khóa học
- * @param options - React Query options để customize behavior
- * @returns Query result với data tiến trình học
- *
- * @example
- * const { data, isLoading } = useCourseProgress("atld", "group_001");
- *
- * // Với refetch interval để update realtime
- * const { data } = useCourseProgress("atld", groupId, {
- *   refetchInterval: 30000, // Refetch mỗi 30 giây
- *   enabled: !!groupId && isLearning,
- * });
- */
 export function useCourseProgress(
     type: CourseType,
     groupId: string,

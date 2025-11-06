@@ -17,30 +17,6 @@ const courseProgressKeys = {
         ["courseProgress", "progress", type, groupId] as const,
 };
 
-/**
- * Hook để bắt đầu học khóa học
- *
- * @param type - Loại khóa học: "atld" hoặc "hoc-nghe"
- * @param options - React Query mutation options
- * @returns Mutation result với mutate function
- *
- * @example
- * const { mutate, isPending } = useStartCourse("atld", {
- *   onSuccess: (data) => {
- *     console.log("Course started:", data);
- *     router.push(`/atld/${data.groupId}/learn`);
- *   },
- *   onError: (error) => {
- *     console.error("Failed to start:", error);
- *   },
- * });
- *
- * // Sử dụng
- * mutate({
- *   groupId: "group_001",
- *   portraitUrl: "https://...",
- * });
- */
 export function useStartCourse(
     type: CourseType,
     options?: Omit<

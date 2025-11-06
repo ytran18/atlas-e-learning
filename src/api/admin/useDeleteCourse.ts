@@ -27,35 +27,6 @@ interface DeleteCourseVariables {
     groupId: string;
 }
 
-/**
- * Hook để xóa khóa học
- *
- * @param type - Loại khóa học: "atld" hoặc "hoc-nghe"
- * @param options - React Query mutation options
- * @returns Mutation result với mutate function
- *
- * @example
- * const { mutate, isPending } = useDeleteCourse("atld", {
- *   onSuccess: (data) => {
- *     console.log("Deleted course:", data.deleted);
- *     toast.success("Xóa khóa học thành công");
- *     router.push("/admin/courses");
- *   },
- *   onError: (error) => {
- *     toast.error("Không thể xóa khóa học");
- *   },
- * });
- *
- * // Xóa khóa học
- * mutate({ groupId: "group_001" });
- *
- * // Với confirmation
- * const handleDelete = () => {
- *   if (confirm("Bạn có chắc muốn xóa khóa học này?")) {
- *     mutate({ groupId: courseId });
- *   }
- * };
- */
 export function useDeleteCourse(
     type: CourseType,
     options?: Omit<

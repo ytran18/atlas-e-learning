@@ -19,22 +19,6 @@ export const coursePreviewKeys = {
         [...coursePreviewKeys.previews(), type, groupId] as const,
 };
 
-/**
- * Hook lấy chi tiết preview khóa học
- *
- * @param type - Loại khóa học: "atld" hoặc "hoc-nghe"
- * @param groupId - ID của khóa học
- * @param options - React Query options để customize behavior
- * @returns Query result với data chi tiết khóa học
- *
- * @example
- * const { data, isLoading } = useCoursePreview("atld", "group_001");
- *
- * // Chỉ fetch khi có groupId
- * const { data } = useCoursePreview("atld", groupId, {
- *   enabled: !!groupId,
- * });
- */
 export function useCoursePreview(
     type: CourseType,
     groupId: string,

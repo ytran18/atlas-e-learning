@@ -20,44 +20,6 @@ interface UploadCaptureVariables {
     captureType: CaptureType;
 }
 
-/**
- * Hook để upload ảnh chụp trong quá trình học
- *
- * @param type - Loại khóa học: "atld" hoặc "hoc-nghe"
- * @param options - React Query mutation options
- * @returns Mutation result với mutate function và upload progress
- *
- * @example
- * const { mutate, isPending, isSuccess } = useUploadCapture("atld", {
- *   onSuccess: (data) => {
- *     console.log("Uploaded to:", data.imageUrl);
- *   },
- *   onError: (error) => {
- *     console.error("Upload failed:", error);
- *   },
- * });
- *
- * // Upload ảnh bắt đầu
- * mutate({
- *   file: imageFile,
- *   groupId: "group_001",
- *   captureType: "start",
- * });
- *
- * // Upload ảnh trong quá trình học
- * mutate({
- *   file: imageFile,
- *   groupId: "group_001",
- *   captureType: "learning",
- * });
- *
- * // Upload ảnh kết thúc
- * mutate({
- *   file: imageFile,
- *   groupId: "group_001",
- *   captureType: "finish",
- * });
- */
 export function useUploadCapture(
     type: CourseType,
     options?: Omit<

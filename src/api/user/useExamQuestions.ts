@@ -18,28 +18,6 @@ export const examQuestionsKeys = {
         [...examQuestionsKeys.lists(), type, groupId] as const,
 };
 
-/**
- * Hook lấy câu hỏi thi cho user
- *
- * @param type - Loại khóa học: "atld" hoặc "hoc-nghe"
- * @param groupId - ID của khóa học
- * @param options - React Query options
- * @returns Query result với data câu hỏi thi
- *
- * @example
- * const { data, isLoading } = useExamQuestions("atld", "group_001");
- *
- * // Chỉ fetch khi user vào phần thi
- * const { data } = useExamQuestions("atld", groupId, {
- *   enabled: currentSection === "exam" && !!groupId,
- * });
- *
- * // Access data
- * if (data) {
- *   console.log(data.exam.title);
- *   console.log(data.exam.questions); // Không có answer field
- * }
- */
 export function useExamQuestions(
     type: CourseType,
     groupId: string,

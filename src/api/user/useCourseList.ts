@@ -19,22 +19,6 @@ export const courseListKeys = {
     list: (type: CourseType | "all") => [...courseListKeys.lists(), type] as const,
 };
 
-/**
- * Hook lấy danh sách khóa học
- *
- * @param type - Loại khóa học: "atld" hoặc "hoc-nghe"
- * @param options - React Query options để customize behavior
- * @returns Query result với data là mảng các khóa học
- *
- * @example
- * const { data, isLoading, error } = useCourseList("atld");
- *
- * // Với custom options
- * const { data } = useCourseList("atld", {
- *   enabled: false, // Không tự động fetch
- *   refetchInterval: 5000, // Refetch mỗi 5 giây
- * });
- */
 export function useCourseList(
     type: CourseType,
     options?: Omit<

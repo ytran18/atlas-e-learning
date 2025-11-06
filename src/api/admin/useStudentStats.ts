@@ -24,19 +24,6 @@ export const studentStatsKeys = {
     ) => [...studentStatsKeys.stats(), type, groupId, pageSize, cursor, search] as const,
 };
 
-/**
- * Hook lấy thống kê học viên cho một trang (không infinite)
- *
- * @param type - Loại khóa học: "atld" hoặc "hoc-nghe"
- * @param groupId - ID của khóa học
- * @param pageSize - Số lượng học viên mỗi trang (default: 20)
- * @param cursor - Cursor cho trang hiện tại (nếu có)
- * @param options - React Query options
- * @returns Query result với data theo dạng GetStatsResponse
- *
- * @example
- * const { data, isLoading } = useStudentStats("atld", "group_001", 20);
- */
 export function useStudentStats(
     type: CourseType,
     groupId: string,

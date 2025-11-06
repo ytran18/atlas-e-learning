@@ -19,29 +19,6 @@ export const courseDetailKeys = {
         [...courseDetailKeys.details(), type, groupId] as const,
 };
 
-/**
- * Hook lấy chi tiết đầy đủ khóa học (admin only)
- *
- * @param type - Loại khóa học: "atld" hoặc "hoc-nghe"
- * @param groupId - ID của khóa học
- * @param options - React Query options
- * @returns Query result với data chi tiết đầy đủ
- *
- * @example
- * const { data, isLoading } = useCourseDetail("atld", "group_001");
- *
- * // Chỉ fetch khi ở trang edit
- * const { data } = useCourseDetail("atld", groupId, {
- *   enabled: isEditMode && !!groupId,
- * });
- *
- * // Access data
- * if (data) {
- *   console.log(data.theory);
- *   console.log(data.practice);
- *   console.log(data.exam.questions); // Bao gồm cả answers
- * }
- */
 export function useCourseDetail(
     type: CourseType,
     groupId: string,
