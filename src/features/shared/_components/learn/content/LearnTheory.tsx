@@ -214,6 +214,8 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
 
         let targetTime = plannedTargetRef.current.get(videoKey);
 
+        console.log("Target time:", targetTime);
+
         if (targetTime == null) {
             const dur = videoEl.duration;
 
@@ -389,8 +391,16 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                 navigateToVideo("practice", 0);
 
                 router.replace(`?section=practice&video=0`);
-            } else {
+            } else if (learnDetail?.exam?.questions?.length > 0) {
                 navigateToExam();
+            } else {
+                updateProgress({
+                    groupId: learnDetail.id,
+                    section: "theory",
+                    isCompleted: true,
+                    videoIndex,
+                    currentTime: 0,
+                });
             }
         }
     };
@@ -402,7 +412,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
             radius="md"
             padding="lg"
             h="100%"
-            className={`bg-gradient-to-br ${theme.gradient} !p-0 sm:!p-4`}
+            className={`bg-linear-to-br ${theme.gradient} p-0! sm:p-4!`}
         >
             <div className="flex flex-col gap-4 lg:gap-6 h-full">
                 {/* Video Player Container */}
@@ -423,7 +433,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                 </div>
 
                 {/* Video Info and Navigation */}
-                <div className="flex-shrink-0 space-y-4 px-2 sm:px-0">
+                <div className="shrink-0 space-y-4 px-2 sm:px-0">
                     {/* Video Title and Description */}
                     <div className="space-y-2">
                         <h3 className="text-lg lg:text-xl font-semibold text-gray-900">
@@ -437,7 +447,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                     </div>
 
                     {/* Progress Indicator */}
-                    <div className="flex items-center justify-between text-sm text-gray-500 flex-shrink-0 px-2 sm:px-0 mb-3">
+                    <div className="flex items-center justify-between text-sm text-gray-500 shrink-0 px-2 sm:px-0 mb-3">
                         <span>
                             Video {videoIndex + 1} / {learnDetail.theory.videos.length}
                         </span>
@@ -446,7 +456,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
 
                     {/* Navigation Button */}
                     {isShowNextButton && (
-                        <div className="w-full flex justify-end flex-shrink-0 p-2 sm:p-0">
+                        <div className="w-full flex justify-end shrink-0 p-2 sm:p-0">
                             <Button
                                 disabled={!isFinishVideo || isUpdatingProgress}
                                 loading={isUpdatingProgress}

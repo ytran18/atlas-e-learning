@@ -6,9 +6,10 @@ import { useParams, useRouter } from "next/navigation";
 
 import { useCourseDetail, useCourseProgress } from "@/api";
 import { LearnProvider, useLearnContext } from "@/contexts/LearnContext";
+import { DesktopLayout } from "@/features/shared";
 import { HOC_NGHE_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
-import { CourseLoading, DesktopLayout, MobileLayout } from "../_components/learn";
+import { CourseLoading, MobileLayout } from "../_components/learn";
 
 // Component to handle URL hash navigation
 const HashNavigationHandler = () => {
@@ -77,15 +78,13 @@ const LearnPage = () => {
         <div className="h-[calc(100vh-70px)] w-full overflow-hidden">
             <LearnProvider progress={progressData} learnDetail={courseDetail}>
                 <HashNavigationHandler />
-
                 <MobileLayout
                     title={courseDetail.title}
                     isSidebarOpen={isSidebarOpen}
                     onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
                     onCloseSidebar={() => setIsSidebarOpen(false)}
                 />
-
-                <DesktopLayout />
+                <DesktopLayout courseType="hoc-nghe" />;
             </LearnProvider>
         </div>
     );

@@ -8,7 +8,7 @@ interface DesktopLayoutProps {
 const DesktopLayout = ({ courseType }: DesktopLayoutProps) => {
     return (
         <div className="hidden lg:flex h-full w-full p-4 gap-4 overflow-hidden">
-            <div className="w-80 flex-shrink-0 h-full overflow-y-auto">
+            <div className="w-80 shrink-0 h-full overflow-y-auto">
                 <LearnSidebar courseType={courseType} />
             </div>
 
