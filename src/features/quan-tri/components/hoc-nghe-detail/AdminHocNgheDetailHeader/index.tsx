@@ -71,7 +71,7 @@ const AdminHocNgheDetailHeader = () => {
             shadow={!isMobile ? "md" : undefined}
             radius="md"
             p={isMobile ? "xs" : "md"}
-            className={`!overflow-visible ${isMobile ? "!shadow-none" : ""}`}
+            className={`overflow-visible! ${isMobile ? "shadow-none!" : ""}`}
         >
             <Group justify="space-between" align="center">
                 <div className="flex-1 flex flex-col gap-y-3">

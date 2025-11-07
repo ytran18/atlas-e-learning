@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useClerk } from "@clerk/nextjs";
-import { Box, Burger, Button, Drawer, Group, Stack, Text } from "@mantine/core";
+import { Avatar, Box, Burger, Button, Drawer, Group, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconLogout } from "@tabler/icons-react";
 
@@ -17,6 +17,8 @@ const GlobalHeader = () => {
     const router = useRouter();
 
     const { signOut, user, isSignedIn } = useClerk();
+
+    const userData = user?.unsafeMetadata;
 
     const isAdmin = user?.unsafeMetadata?.role === "admin" ? true : false;
 
@@ -37,8 +39,8 @@ const GlobalHeader = () => {
     };
 
     return (
-        <Box className="sticky top-0 z-50 supports-[backdrop-filter]:bg-white">
-            <header className="h-[60px] pl-[var(--mantine-spacing-md)] pr-[var(--mantine-spacing-md)] border-b border-[var(--mantine-color-gray-3)]">
+        <Box className="sticky top-0 z-50 supports-backdrop-filter:bg-white">
+            <header className="h-[60px] pl-(--mantine-spacing-md) pr-(--mantine-spacing-md) border-b border-(--mantine-color-gray-3)">
                 <Group justify="space-between" h="100%">
                     <Image
                         src="/images/atld-logo.webp"
@@ -67,7 +69,7 @@ const GlobalHeader = () => {
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className="flex items-center h-[42px] sm:h-full w-full sm:w-auto pl-[var(--mantine-spacing-md)] pr-[var(--mantine-spacing-md)] no-underline text-[var(--mantine-color-black)] font-medium hover:bg-[var(--mantine-color-gray-0)]"
+                                    className="flex items-center h-[42px] sm:h-full w-full sm:w-auto pl-(--mantine-spacing-md) pr-(--mantine-spacing-md) no-underline text-(--mantine-color-black) font-medium hover:bg-(--mantine-color-gray-0)"
                                     style={{
                                         fontSize: "var(--mantine-font-size-sm)",
                                         color: isActive ? "#1D72FE" : "",
@@ -99,12 +101,29 @@ const GlobalHeader = () => {
             <Drawer
                 opened={opened}
                 onClose={close}
+                withCloseButton={false}
                 position="right"
                 size="280px"
                 title={
-                    <Text fw={600} size="lg">
-                        An toàn lao động
-                    </Text>
+                    userData ? (
+                        <div className="flex items-center gap-x-3">
+                            <Avatar src={user?.imageUrl || ""} radius="xl" size="sm" />
+
+                            <Box style={{ flex: 1 }}>
+                                <Text size="sm" fw={500}>
+                                    {userData?.fullName as string}
+                                </Text>
+
+                                <Text c="dimmed" size="xs">
+                                    {userData?.cccd as string}
+                                </Text>
+                            </Box>
+                        </div>
+                    ) : (
+                        <Text fw={600} size="lg">
+                            An toàn lao động
+                        </Text>
+                    )
                 }
                 hiddenFrom="sm"
             >
@@ -112,7 +131,7 @@ const GlobalHeader = () => {
                     {!isSignedIn && (
                         <Group hiddenFrom="xs">
                             <AuthButton
-                                className="!flex !flex-col !w-full"
+                                className="flex! flex-col! w-full!"
                                 signInButtonClassName="!w-full"
                                 signUpButtonClassName="!w-full"
                                 onLogin={close}
@@ -131,7 +150,7 @@ const GlobalHeader = () => {
                                 key={item.href}
                                 href={item.href}
                                 onClick={close}
-                                className="block p-3 rounded-md no-underline text-[var(--mantine-color-black)] font-medium hover:bg-[var(--mantine-color-gray-0)] transition-colors"
+                                className="block p-3 rounded-md no-underline text-(--mantine-color-black) font-medium hover:bg-(--mantine-color-gray-0) transition-colors"
                             >
                                 {item.label}
                             </Link>

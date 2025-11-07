@@ -71,7 +71,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                         {userData?.fullName as string}
                     </Text>
 
-                    <Text c="dimmed" size="xs" hiddenFrom="sm">
+                    <Text c="dimmed" size="xs">
                         {userData?.cccd as string}
                     </Text>
                 </Box>
@@ -79,12 +79,14 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                 <Button
                     visibleFrom="sm"
                     variant="default"
-                    size="sm"
+                    size="xs"
                     onClick={() => signOut(() => router.push("/"))}
                 >
                     <div className="flex items-center gap-x-2">
                         <IconLogout className="text-gray-700" size={16} />
-                        <Text visibleFrom="sm">Đăng xuất</Text>
+                        <Text size="xs" visibleFrom="sm">
+                            Đăng xuất
+                        </Text>
                     </div>
                 </Button>
             </Group>

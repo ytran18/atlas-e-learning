@@ -46,7 +46,7 @@ const TabsContent = ({ slots }: TabsContentProps) => {
         const itemHeader = document.getElementById("admin-hoc-nghe-detail-header");
 
         if (itemHeader) {
-            setTabHeight(itemHeader.clientHeight);
+            setTabHeight(itemHeader.clientHeight + 64); // 64 is padding/margin adjustment
         }
     }, [isEditMode]);
 
@@ -73,9 +73,9 @@ const TabsContent = ({ slots }: TabsContentProps) => {
                             shadow="sm"
                             radius="md"
                             p="md"
-                            className={`${isMobile ? "!p-2" : ""}`}
+                            className={`${isMobile ? "p-2!" : ""}`}
                         >
-                            <Group gap="sm" className={`${isMobile ? "!justify-center" : ""}`}>
+                            <Group gap="sm" className={`${isMobile ? "justify-center!" : ""}`}>
                                 {!isMobile && tab.icon}
 
                                 <Text size="sm" fw={500}>

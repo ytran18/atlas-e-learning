@@ -73,9 +73,9 @@ const TabsContent = ({ slots }: TabsContentProps) => {
                             shadow="sm"
                             radius="md"
                             p="sm"
-                            className={`${isMobile ? "!p-2" : ""}`}
+                            className={`${isMobile ? "p-2!" : ""}`}
                         >
-                            <Group gap="sm" className={`${isMobile ? "!justify-center" : ""}`}>
+                            <Group gap="sm" className={`${isMobile ? "justify-center!" : ""}`}>
                                 {!isMobile && tab.icon}
 
                                 <Text size="sm" fw={500}>
