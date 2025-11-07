@@ -24,6 +24,11 @@ export const AtldPreviewContainer = ({
 }: AtldPreviewContainerProps) => {
     const totlaLessons = course.theory.videos.length + course.practice.videos.length;
 
+    const isValidCourse =
+        course?.practice?.videos?.length > 0 ||
+        course?.theory?.videos?.length > 0 ||
+        course?.totalQuestionOfExam > 0;
+
     return (
         <div className="h-[calc(100vh-70px)] bg-white">
             {/* Hero Section */}
@@ -33,6 +38,7 @@ export const AtldPreviewContainer = ({
                 description={course.description}
                 isLoadingJoiabled={isLoadingJoiabled}
                 isCompleted={isCompleted}
+                isValidCourse={isValidCourse}
             >
                 <CourseStats totalLessons={totlaLessons} totalQuestions={10} />
             </CourseHeroSection>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import { Button, Text } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { IconArrowLeft } from "@tabler/icons-react";
 
 import { HOC_NGHE_SLUG, navigationPaths } from "@/utils/navigationPaths";
@@ -16,6 +17,7 @@ interface CourseHeroSectionProps {
     isLoadingJoiabled: boolean;
     children?: ReactNode;
     isCompleted?: boolean;
+    isValidCourse?: boolean;
 }
 
 export const CourseHeroSection = ({
@@ -26,6 +28,7 @@ export const CourseHeroSection = ({
     isLoadingJoiabled,
     children,
     isCompleted,
+    isValidCourse,
 }: CourseHeroSectionProps) => {
     const { hocNgheId } = useParams();
 
@@ -40,7 +43,7 @@ export const CourseHeroSection = ({
     };
 
     return (
-        <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-green-50 border-b border-gray-200">
+        <div className="bg-linear-to-br from-green-50 via-emerald-50 to-green-50 border-b border-gray-200">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl py-6 sm:py-8">
                 {/* Back Button */}
                 <div className="mb-6">
@@ -78,10 +81,29 @@ export const CourseHeroSection = ({
                     {/* CTA Button */}
                     <div className="flex flex-col gap-y-2">
                         {isCompleted && (
-                            <Text className="!text-green-600">Bạn đã hoàn thành khóa học này</Text>
+                            <Text className="text-green-600!">Bạn đã hoàn thành khóa học này</Text>
                         )}
 
-                        <Link href={getLink()} onClick={() => setIsNavigating(true)}>
+                        <Link
+                            href={getLink()}
+                            onClick={(e) => {
+                                if (!isValidCourse) {
+                                    e?.preventDefault();
+                                    e?.stopPropagation();
+
+                                    notifications.show({
+                                        position: "top-center",
+                                        message: "Khóa học chưa có nội dung",
+                                        color: "yellow",
+                                        withBorder: true,
+                                    });
+
+                                    return;
+                                }
+
+                                setIsNavigating(true);
+                            }}
+                        >
                             <Button
                                 size="sm"
                                 className="bg-gray-900 hover:bg-gray-800"
