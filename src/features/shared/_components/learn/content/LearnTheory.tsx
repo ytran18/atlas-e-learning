@@ -7,6 +7,10 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { courseProgressKeys, useUpdateProgress } from "@/api";
 import { useLearnContext } from "@/contexts/LearnContext";
+import { canvasToBlob } from "@/features/shared/utils/canvas-to-blob";
+import { getRealVideoEl } from "@/features/shared/utils/get-real-video-element";
+import { hash32 } from "@/features/shared/utils/hash-32";
+import { mulberry32 } from "@/features/shared/utils/mulberry-32";
 import VideoPlayer from "@/libs/player/VideoPlayer";
 import { updateCourseProgress, uploadLearningCapture } from "@/services/api.client";
 import type { CaptureType } from "@/types/api";
@@ -99,28 +103,6 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
         fallbackTriggeredRef.current = false;
     }, [learnDetail?.id]);
 
-    // Simple string hash -> uint32
-    const hash32 = (s: string) => {
-        let h = 2166136261 >>> 0;
-        for (let i = 0; i < s.length; i++) {
-            h ^= s.charCodeAt(i);
-            h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
-        }
-        return h >>> 0;
-    };
-
-    // Mulberry32 PRNG
-    const mulberry32 = (a: number) => () => {
-        let t = (a += 0x6d2b79f5);
-        t = Math.imul(t ^ (t >>> 15), t | 1);
-        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-
-    // Convert canvas to blob (Promise)
-    const canvasToBlob = (canvas: HTMLCanvasElement, type = "image/png") =>
-        new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type));
-
     // Update isFinishVideo state when current video changes
     useEffect(() => {
         setIsFinishVideo(isCurrentVideoCompleted);
@@ -196,7 +178,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
             return;
         }
 
-        const videoEl = (videoRef.current as HTMLVideoElement | null) ?? null;
+        const videoEl = getRealVideoEl(videoRef);
 
         if (!videoEl || (videoEl.readyState ?? 0) < 2 || (videoEl.duration ?? 0) <= 0) {
             return;
@@ -287,12 +269,19 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                 } catch {}
 
                 ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+
                 ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+
                 ctx.fillRect(10, 10, 380, 84);
+
                 ctx.fillStyle = "white";
+
                 ctx.font = "14px Arial";
+
                 ctx.fillText(`Course: ${String(courseType).toUpperCase()}`, 20, 30);
+
                 ctx.fillText(`Section: theory - Video ${videoIndex + 1}`, 20, 50);
+
                 ctx.fillText(`Time: ${Math.floor(videoEl.currentTime || 0)}s`, 20, 70);
 
                 const blob = await canvasToBlob(canvas, "image/png");
@@ -338,10 +327,12 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
     // moment currentTime crosses the planned target.
     useEffect(() => {
         const v = videoRef.current;
+
         if (!v) return;
 
         // Initialize last-seen time for this video to avoid false positives
         const videoKey = `theory-${videoIndex}`;
+
         lastSeenTimeRef.current.set(videoKey, v.currentTime ?? 0);
 
         const handler = () => {
@@ -379,15 +370,16 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
 
             setIsFinishVideo(false);
         } else {
-            // All theory videos completed, move to practice section
-            updateProgress({
-                groupId: learnDetail.id,
-                section: learnDetail?.practice?.videos?.length > 0 ? "practice" : "exam",
-                videoIndex: 0,
-                currentTime: 0,
-            });
-            // Update local state immediately for better UX
             if (learnDetail?.practice?.videos?.length > 0) {
+                // All theory videos completed, move to practice section
+                updateProgress({
+                    groupId: learnDetail.id,
+                    section: learnDetail?.practice?.videos?.length > 0 ? "practice" : "exam",
+                    videoIndex: 0,
+                    currentTime: 0,
+                });
+
+                // Update local state immediately for better UX
                 navigateToVideo("practice", 0);
 
                 router.replace(`?section=practice&video=0`);
