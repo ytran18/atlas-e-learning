@@ -10,19 +10,20 @@ interface AtldCourseListContainerProps {
     initialData?: GetCourseListResponse;
 }
 
-const AtldCourseListContainer = ({ initialData }: AtldCourseListContainerProps) => {
+const AtldCourseListContainer = ({}: AtldCourseListContainerProps) => {
     const { data, isLoading } = useCourseList("atld", {
         // initialData,
     });
 
-    const { categorizedCourses, isProgressLoading } = useCourseCategorization({
+    const { categorizedCourses } = useCourseCategorization({
         data,
         type: "atld",
     });
 
     console.log({ atldData: data });
 
-    if (!data || isLoading || isProgressLoading) {
+    // Don't block initial render on progress loading; render immediately and update when progress arrives
+    if (!data || isLoading) {
         return <AtldLoadingState />;
     }
 

@@ -15,14 +15,14 @@ const HocNgheCourseListContainer = ({}: HocNgheCourseListContainerProps) => {
         // initialData,
     });
 
-    const { categorizedCourses, isProgressLoading } = useCourseCategorization({
+    const { categorizedCourses } = useCourseCategorization({
         data,
         type: "hoc-nghe",
     });
 
     console.log({ hocNgheData: data });
 
-    if (!data || isLoading || isProgressLoading) {
+    if (!data || isLoading) {
         return <HocNgheLoadingState />;
     }
 
