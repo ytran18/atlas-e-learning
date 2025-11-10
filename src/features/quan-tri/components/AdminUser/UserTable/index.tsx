@@ -59,9 +59,11 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
         const isCompleted = element.isCompleted;
 
         const isTheoryCompleted =
-            element.currentSection === "practice" || element.currentSection === "exam";
+            element.currentSection === "practice" ||
+            element.currentSection === "exam" ||
+            isCompleted;
 
-        const isPracticeCompleted = element.currentSection === "exam";
+        const isPracticeCompleted = element.currentSection === "exam" || isCompleted;
 
         const handleRowClick = () => {
             setUserDetail(element);

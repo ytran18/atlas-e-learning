@@ -397,6 +397,16 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
         }
     };
 
+    const getButtonText = () => {
+        if (learnDetail.practice.videos.length > 0) {
+            return "Chuyển sang thực hành";
+        } else if (learnDetail.exam.questions.length > 0) {
+            return "Chuyển sang bài kiểm tra";
+        } else {
+            return "Hoàn thành khóa học";
+        }
+    };
+
     return (
         <Card
             withBorder
@@ -458,7 +468,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                             >
                                 {videoIndex + 1 < learnDetail.theory.videos.length
                                     ? "Video tiếp theo"
-                                    : "Chuyển sang thực hành"}
+                                    : getButtonText()}
                             </Button>
                         </div>
                     )}

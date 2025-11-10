@@ -373,6 +373,16 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
         }
     };
 
+    const getButtonText = () => {
+        if (learnDetail.practice.videos.length > 0) {
+            return "Tiếp theo";
+        } else if (learnDetail.exam.questions.length > 0) {
+            return "Chuyển sang bài kiểm tra";
+        } else {
+            return "Hoàn thành khóa học";
+        }
+    };
+
     return (
         <Card
             withBorder
@@ -422,7 +432,7 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
                             className="px-6 lg:px-8 py-3 w-full sm:w-auto"
                             onClick={handleNextVideo}
                         >
-                            Tiếp theo
+                            {getButtonText()}
                         </Button>
                     </div>
                 )}
