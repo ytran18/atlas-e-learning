@@ -12,8 +12,7 @@ import {
     MediaTimeRange,
     MediaVolumeRange,
 } from "media-chrome/react";
-
-// import Player from "react-player";
+import Player from "react-player";
 
 interface VideoPlayerProps {
     src: string;
@@ -174,7 +173,7 @@ const VideoPlayer = ({
                     aspectRatio: "16/9",
                 }}
             >
-                <video
+                <Player
                     ref={videoRef}
                     slot="media"
                     src={isUsingLink || !isHls ? src : undefined}
