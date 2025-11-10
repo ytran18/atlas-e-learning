@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { useParams, useRouter } from "next/navigation";
+import { redirect, useParams, useRouter } from "next/navigation";
 
 import { useCourseDetail, useCourseProgress } from "@/api";
 import { LearnProvider, useLearnContext } from "@/contexts/LearnContext";
@@ -53,8 +53,13 @@ const LearnPage = () => {
     // get course progress
     const { data: progressData, isLoading: isProgressLoading } = useCourseProgress(
         "atld",
-        atldId as string
+        atldId as string,
+        () => {
+            redirect(navigationPaths.LANDING_PAGE);
+        }
     );
+
+    console.log({ progressData });
 
     useEffect(() => {
         if (progressData) {

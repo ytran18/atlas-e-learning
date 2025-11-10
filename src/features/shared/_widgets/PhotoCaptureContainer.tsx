@@ -1,11 +1,12 @@
 "use client";
 
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { redirect, useParams, useRouter, useSearchParams } from "next/navigation";
 
 import { useUser } from "@clerk/nextjs";
 
 import { useStartCourse } from "@/api";
 import { useUploadCapture } from "@/api/user/useUploadCapture";
+import { navigationPaths } from "@/utils/navigationPaths";
 
 import { ActionButtons } from "../_components/verify/ActionButtons";
 import { CameraPreview } from "../_components/verify/CameraPreview";
@@ -138,14 +139,18 @@ export const PhotoCaptureContainer = ({
 
     const gradientColors = getGradientColors();
 
+    if (!courseName) {
+        redirect(navigationPaths.LANDING_PAGE);
+    }
+
     return (
         <div className="bg-white rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-2xl p-3 sm:p-6 relative overflow-hidden">
             {/* Decorative Elements */}
             <div
-                className={`absolute top-0 right-0 w-48 h-48 bg-gradient-to-br ${gradientColors.topRight} rounded-full opacity-5 -mr-24 -mt-24`}
+                className={`absolute top-0 right-0 w-48 h-48 bg-linear-to-br ${gradientColors.topRight} rounded-full opacity-5 -mr-24 -mt-24`}
             />
             <div
-                className={`absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr ${gradientColors.bottomLeft} rounded-full opacity-5 -ml-16 -mb-16`}
+                className={`absolute bottom-0 left-0 w-32 h-32 bg-linear-to-tr ${gradientColors.bottomLeft} rounded-full opacity-5 -ml-16 -mb-16`}
             />
 
             <div className="relative z-10">
@@ -160,7 +165,7 @@ export const PhotoCaptureContainer = ({
 
                 {/* Camera/Photo Preview */}
                 <div className="relative mb-3 sm:mb-6 group">
-                    <div className="relative aspect-[3/4] sm:aspect-video bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl">
+                    <div className="relative aspect-3/4 sm:aspect-video bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl">
                         {!capturedPhoto ? (
                             <CameraPreview
                                 videoRef={videoRef}

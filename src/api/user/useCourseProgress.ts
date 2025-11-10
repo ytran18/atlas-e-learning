@@ -22,6 +22,7 @@ export const courseProgressKeys = {
 export function useCourseProgress(
     type: CourseType,
     groupId: string,
+    onError?: () => void,
     options?: Omit<
         UseQueryOptions<GetProgressResponse, Error, GetProgressResponse>,
         "queryKey" | "queryFn"
@@ -36,6 +37,9 @@ export function useCourseProgress(
 
             // Không retry nếu là 404 error
             if (error?.message?.includes("404") || error?.message?.includes("Progress not found")) {
+                if (typeof onError === "function") {
+                    onError?.();
+                }
                 return false;
             }
             // Retry tối đa 3 lần cho các lỗi khác
