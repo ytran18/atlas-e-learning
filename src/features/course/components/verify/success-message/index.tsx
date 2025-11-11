@@ -2,9 +2,9 @@ import { IconShieldCheck } from "@tabler/icons-react";
 
 export const SuccessMessage = () => {
     return (
-        <div className="mb-3 sm:mb-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-green-200">
+        <div className="mb-3 sm:mb-6 bg-linear-to-r from-green-50 to-emerald-50 rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-green-200">
             <div className="flex items-center gap-2 sm:gap-3">
-                <div className="bg-green-500 rounded-lg sm:rounded-xl p-1.5 sm:p-2.5 flex-shrink-0">
+                <div className="bg-green-500 rounded-lg sm:rounded-xl p-1.5 sm:p-2.5 shrink-0">
                     <IconShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
 

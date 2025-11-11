@@ -24,7 +24,7 @@ export const ActionButtons = ({ onRetake, onConfirm, isUploading }: ActionButton
                 onClick={onConfirm}
                 disabled={isUploading}
                 size="lg"
-                className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50"
+                className="flex-1 bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50"
                 radius="lg"
             >
                 {isUploading ? (

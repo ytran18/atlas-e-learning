@@ -12,7 +12,7 @@ export const CaptureButton = ({ onClick, disabled }: CaptureButtonProps) => {
             onClick={onClick}
             disabled={disabled}
             size="lg"
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             radius="lg"
         >
             <IconCamera className="mr-2 h-5 w-5" />

@@ -1,9 +1,0 @@
-export { ActionButtons } from "./ActionButtons";
-export { CameraPreview } from "./CameraPreview";
-export { CameraReadyIndicator } from "./CameraReadyIndicator";
-export { CaptureButton } from "./CaptureButton";
-export { ErrorMessage } from "./ErrorMessage";
-export { InstructionsCard } from "./InstructionsCard";
-export { PhotoPreview } from "./PhotoPreview";
-export { PrivacyNotice } from "./PrivacyNotice";
-export { SuccessMessage } from "./SuccessMessage";

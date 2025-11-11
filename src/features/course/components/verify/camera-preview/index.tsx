@@ -2,7 +2,7 @@ import { RefObject } from "react";
 
 import { IconLoader } from "@tabler/icons-react";
 
-import { COURSE_THEMES, CourseType } from "../../types";
+import { CourseType } from "@/features/course/types";
 
 interface CameraPreviewProps {
     videoRef: RefObject<HTMLVideoElement | null>;
@@ -11,8 +11,6 @@ interface CameraPreviewProps {
 }
 
 export const CameraPreview = ({ videoRef, isCameraReady, courseType }: CameraPreviewProps) => {
-    const theme = COURSE_THEMES[courseType];
-
     const getGradientColors = () => {
         switch (courseType) {
             case "atld":
