@@ -10,7 +10,7 @@ interface CourseContentCardProps {
     children: ReactNode;
 }
 
-export const CourseContentCard = ({
+const CourseContentCard = ({
     icon,
     title,
     description,
@@ -21,7 +21,7 @@ export const CourseContentCard = ({
         <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
             <div className="flex items-start gap-4 mb-4">
                 {/* Step Number */}
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                     <Button variant="light">{step}</Button>
                 </div>
 
@@ -40,3 +40,5 @@ export const CourseContentCard = ({
         </div>
     );
 };
+
+export default CourseContentCard;

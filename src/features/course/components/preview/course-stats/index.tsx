@@ -6,12 +6,12 @@ interface CourseStatsProps {
     totalQuestions: number;
 }
 
-export const CourseStats = ({ totalLessons, totalQuestions }: CourseStatsProps) => {
+const CourseStats = ({ totalLessons, totalQuestions }: CourseStatsProps) => {
     return (
         <div className="flex flex-wrap gap-10 mb-6">
             <div className="flex items-center gap-2">
                 <Button variant="light" size="sm">
-                    <IconVideo className="size-5 text-green-600" strokeWidth={1.5} />
+                    <IconVideo className="size-5 text-blue-600" strokeWidth={1.5} />
                 </Button>
                 <div>
                     <div className="text-xs text-gray-600">Bài học</div>
@@ -20,9 +20,10 @@ export const CourseStats = ({ totalLessons, totalQuestions }: CourseStatsProps) 
                     </span>
                 </div>
             </div>
+
             <div className="flex items-center gap-2">
                 <Button variant="light" size="sm">
-                    <IconFile className="size-5 text-green-600" strokeWidth={1.5} />
+                    <IconFile className="size-5 text-blue-600" strokeWidth={1.5} />
                 </Button>
                 <div>
                     <div className="text-xs text-gray-600">Kiểm tra</div>
@@ -34,3 +35,5 @@ export const CourseStats = ({ totalLessons, totalQuestions }: CourseStatsProps) 
         </div>
     );
 };
+
+export default CourseStats;

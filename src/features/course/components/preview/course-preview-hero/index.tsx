@@ -7,9 +7,9 @@ import { Button, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconArrowLeft } from "@tabler/icons-react";
 
-import { HOC_NGHE_SLUG, navigationPaths } from "@/utils/navigationPaths";
+import { ATLD_SLUG, HOC_NGHE_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
-interface CourseHeroSectionProps {
+interface CoursePreviewHeroProps {
     title: string;
     description: string;
     badge?: string;
@@ -18,36 +18,50 @@ interface CourseHeroSectionProps {
     children?: ReactNode;
     isCompleted?: boolean;
     isValidCourse?: boolean;
+    type: "atld" | "hoc-nghe";
 }
 
-export const CourseHeroSection = ({
+const CoursePreviewHero = ({
     title,
     description,
-    badge = "Học Nghề",
+    badge = "An toàn Lao động",
     isJoined,
     isLoadingJoiabled,
     children,
     isCompleted,
     isValidCourse,
-}: CourseHeroSectionProps) => {
-    const { hocNgheId } = useParams();
+    type,
+}: CoursePreviewHeroProps) => {
+    const { atldId, hocNgheId } = useParams();
 
     const [isNavigating, setIsNavigating] = useState<boolean>(false);
 
     const getLink = () => {
         if (isJoined) {
-            return `${navigationPaths.HOC_NGHE_LEARN.replace(`[${HOC_NGHE_SLUG}]`, hocNgheId as string)}?name=${title}`;
+            const atld_pathname = `${navigationPaths.ATLD_LEARN.replace(`[${ATLD_SLUG}]`, atldId as string)}?name=${title}`;
+
+            const hoc_nghe_pathname = `${navigationPaths.HOC_NGHE_LEARN.replace(`[${HOC_NGHE_SLUG}]`, hocNgheId as string)}?name=${title}`;
+
+            const pathname = type === "atld" ? atld_pathname : hoc_nghe_pathname;
+
+            return pathname;
         }
 
-        return `${navigationPaths.HOC_NGHE_VERIFY.replace(`[${HOC_NGHE_SLUG}]`, hocNgheId as string)}?name=${title}`;
+        const atld_pathname = `${navigationPaths.ATLD_VERIFY.replace(`[${ATLD_SLUG}]`, atldId as string)}?name=${title}`;
+
+        const hoc_nghe_pathname = `${navigationPaths.HOC_NGHE_VERIFY.replace(`[${HOC_NGHE_SLUG}]`, hocNgheId as string)}?name=${title}`;
+
+        const pathname = type === "atld" ? atld_pathname : hoc_nghe_pathname;
+
+        return pathname;
     };
 
     return (
-        <div className="bg-linear-to-br from-green-50 via-emerald-50 to-green-50 border-b border-gray-200">
+        <div className="bg-linear-to-br from-blue-50 via-indigo-50 to-blue-50 border-b border-gray-200">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl py-6 sm:py-8">
                 {/* Back Button */}
                 <div className="mb-6">
-                    <Link href={navigationPaths.HOC_NGHE}>
+                    <Link href={type === "atld" ? navigationPaths.ATLD : navigationPaths.HOC_NGHE}>
                         <Button
                             variant="subtle"
                             leftSection={<IconArrowLeft size={18} />}
@@ -63,7 +77,7 @@ export const CourseHeroSection = ({
                 <div className="max-w-4xl">
                     {/* Badge */}
                     <div className="mb-4">
-                        <span className="inline-block px-3 py-1.5 bg-green-100 text-green-700 text-xs font-medium rounded">
+                        <span className="inline-block px-3 py-1.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
                             {badge}
                         </span>
                     </div>
@@ -103,6 +117,7 @@ export const CourseHeroSection = ({
 
                                 setIsNavigating(true);
                             }}
+                            className="w-fit!"
                         >
                             <Button
                                 size="sm"
@@ -124,3 +139,5 @@ export const CourseHeroSection = ({
         </div>
     );
 };
+
+export default CoursePreviewHero;

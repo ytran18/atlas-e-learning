@@ -6,7 +6,7 @@ import {
     generateCourseStructuredData,
     generateMetadata as generateSeoMetadata,
 } from "@/configs/seo.config";
-import AtldPreview from "@/features/atld/pages/AtldPreview";
+import AtldPreviewPage from "@/features/course/pages/atld/atld-preview";
 import { getCoursePreviewServer } from "@/services/api.server";
 import { GetCoursePreviewResponse } from "@/types/api";
 
@@ -61,7 +61,7 @@ export default async function Page({ params }: PageProps) {
                     })}
                 />
             )}
-            <AtldPreview initialData={initialData} />
+            <AtldPreviewPage initialData={initialData} />
         </>
     );
 }

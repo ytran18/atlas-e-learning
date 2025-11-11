@@ -21,7 +21,7 @@ export const LessonList = ({ lessons }: LessonListProps) => {
                     className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
                 >
                     <IconPlayerPlay
-                        className="h-5 w-5 text-gray-400 group-hover:text-gray-600 flex-shrink-0"
+                        className="h-5 w-5 text-gray-400 group-hover:text-gray-600 shrink-0"
                         strokeWidth={1.5}
                     />
                     <span className="text-sm text-gray-700 flex-1 min-w-[150px]">
