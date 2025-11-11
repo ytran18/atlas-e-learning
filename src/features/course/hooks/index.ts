@@ -1,0 +1,1 @@
+export { useCameraCapture } from "./useCameraCapture";
