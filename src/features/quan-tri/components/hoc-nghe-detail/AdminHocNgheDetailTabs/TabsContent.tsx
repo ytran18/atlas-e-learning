@@ -46,7 +46,7 @@ const TabsContent = ({ slots }: TabsContentProps) => {
         const itemHeader = document.getElementById("admin-hoc-nghe-detail-header");
 
         if (itemHeader) {
-            setTabHeight(itemHeader.clientHeight + 64); // 64 is padding/margin adjustment
+            setTabHeight(itemHeader.clientHeight + 16);
         }
     }, [isEditMode]);
 
@@ -61,8 +61,8 @@ const TabsContent = ({ slots }: TabsContentProps) => {
             classNames={{
                 root: "w-full",
                 list: "flex-shrink-0 border-b border-gray-200 bg-white mb-3",
-                panel: "h-full",
-                tab: "flex-1 text-center !px-2 text-sm font-medium",
+                panel: "h-[calc(100%-80px)]",
+                tab: "text-center !px-2 text-sm font-medium",
             }}
         >
             <Tabs.List>

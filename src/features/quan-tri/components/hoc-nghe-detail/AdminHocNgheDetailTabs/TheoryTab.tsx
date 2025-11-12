@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button, ScrollArea, Text } from "@mantine/core";
+import { Button, Text } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { Controller } from "react-hook-form";
 
@@ -31,7 +31,7 @@ const TheoryTab = () => {
     const [isAddVideoModalOpen, setIsAddVideoModalOpen] = useState(false);
 
     return (
-        <ScrollArea className="h-full">
+        <div className="h-full overflow-y-auto">
             <div className="flex flex-col w-full gap-y-6 px-4 sm:px-0">
                 <div className="w-full flex justify-between items-start gap-x-6">
                     <div className="flex flex-col gap-y-3 flex-1">
@@ -83,7 +83,7 @@ const TheoryTab = () => {
                             leftSection={<IconPlus size={20} />}
                             variant="outline"
                             onClick={() => setIsAddVideoModalOpen(true)}
-                            className="mt-2 !w-fit"
+                            className="mt-2 w-fit!"
                             disabled={isLoading}
                         >
                             Thêm video
@@ -99,7 +99,7 @@ const TheoryTab = () => {
                     title="Thêm video mới"
                 />
             </div>
-        </ScrollArea>
+        </div>
     );
 };
 

@@ -80,7 +80,7 @@ const PracticeTab = () => {
                         leftSection={<IconPlus size={20} />}
                         variant="outline"
                         onClick={() => setIsAddVideoModalOpen(true)}
-                        className="mt-2 !w-fit"
+                        className="mt-2 w-fit!"
                         disabled={isLoading}
                     >
                         Thêm video
