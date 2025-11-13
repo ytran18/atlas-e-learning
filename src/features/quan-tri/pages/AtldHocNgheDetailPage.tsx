@@ -35,7 +35,7 @@ const AtldHocNgheDetailPage = () => {
             withBorder
             shadow="md"
             radius="md"
-            className={`h-[calc(100vh-272px)] flex-1 gap-y-4 ${isMobile ? "p-0!" : ""}`}
+            className={`h-[calc(100vh-152px)] sm:h-[calc(100vh-272px)] flex-1 gap-y-4 ${isMobile ? "p-0!" : ""}`}
         >
             <AdminDetailProvider courseDetail={courseDetail}>
                 <CourseFormProvider courseDetail={courseDetail} courseType="hoc-nghe">

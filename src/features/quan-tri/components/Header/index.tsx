@@ -37,7 +37,7 @@ const Header = () => {
             <Card
                 withBorder
                 radius="md"
-                className="!p-3 md:!p-4 !h-[86px] !max-h-[86px] !min-h-[86px]"
+                className="p-3! md:p-4! h-[64px]! max-h-[64px]! min-h-[64px]! sm:h-[86px]! sm:max-h-[86px]! sm:min-h-[86px]!"
             >
                 <Group justify="space-between" align="center">
                     <div className="flex-1 flex gap-x-4 gap-y-1 items-center justify-between sm:flex-col sm:items-start">
@@ -58,7 +58,7 @@ const Header = () => {
                         </div>
 
                         <div>
-                            <Text visibleFrom="sm" className="!text-xs !opacity-70">
+                            <Text visibleFrom="sm" className="text-xs! opacity-70!">
                                 Quản lý khóa học, video và người dùng
                             </Text>
 
@@ -90,7 +90,7 @@ const Header = () => {
                             key={item.href}
                             href={item.href}
                             onClick={close}
-                            className="block p-3 rounded-md no-underline text-[var(--mantine-color-black)] font-medium hover:bg-[var(--mantine-color-gray-0)] transition-colors"
+                            className="block p-3 rounded-md no-underline text-(--mantine-color-black) font-medium hover:bg-(--mantine-color-gray-0) transition-colors"
                         >
                             {item.label}
                         </Link>

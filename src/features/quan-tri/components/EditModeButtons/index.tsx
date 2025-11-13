@@ -29,14 +29,14 @@ const EditModeButtons = ({
     return (
         <Group gap="sm">
             {isEditMode ? (
-                <div className="flex items-center gap-x-2">
+                <div className="flex flex-col sm:flex-row items-center gap-x-2 gap-y-2">
                     <Tooltip label="Lưu" withArrow>
                         <Button
                             size="xs"
                             variant="filled"
                             onClick={onSave}
                             disabled={saveDisabled}
-                            className="!w-full"
+                            className="w-full!"
                         >
                             <div className="flex items-center gap-x-2">
                                 <IconDeviceFloppy size={16} />
@@ -51,7 +51,7 @@ const EditModeButtons = ({
                             color="red"
                             onClick={onDelete}
                             disabled={saveDisabled}
-                            className="!w-full"
+                            className="w-full!"
                         >
                             <div className="flex items-center gap-x-2">
                                 <IconTrash size={16} />
@@ -65,7 +65,7 @@ const EditModeButtons = ({
                             color="red"
                             variant="outline"
                             onClick={onCancel}
-                            className="!w-full"
+                            className="w-full!"
                         >
                             <div className="flex items-center gap-x-2">
                                 <IconX size={16} />

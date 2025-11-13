@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
-
 import { Card, Group, Tabs, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconBook, IconCertificate, IconFileText, ReactNode } from "@tabler/icons-react";
 
 import { AdminHocNgheDetailTabs } from "@/features/quan-tri/constants/tabs";
-import { useAtldAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
 
 const adminHocNgheDetailTabs = [
     {
@@ -38,28 +35,11 @@ type TabsContentProps = {
 const TabsContent = ({ slots }: TabsContentProps) => {
     const isMobile = useMediaQuery("(max-width: 640px)");
 
-    const { isEditMode } = useAtldAdminDetailContext();
-
-    const [tabHeight, setTabHeight] = useState<number>(0);
-
-    useEffect(() => {
-        const itemHeader = document.getElementById("admin-hoc-nghe-detail-header");
-
-        if (itemHeader) {
-            setTabHeight(itemHeader.clientHeight + 16);
-        }
-    }, [isEditMode]);
-
     return (
         <Tabs
             defaultValue={AdminHocNgheDetailTabs.THEORY}
-            styles={{
-                root: {
-                    height: `calc(100% - ${tabHeight}px)`,
-                },
-            }}
             classNames={{
-                root: "w-full",
+                root: "w-full h-full",
                 list: "flex-shrink-0 border-b border-gray-200 bg-white mb-3",
                 panel: "h-[calc(100%-80px)]",
                 tab: "text-center !px-2 text-sm font-medium",
@@ -72,7 +52,7 @@ const TabsContent = ({ slots }: TabsContentProps) => {
                             withBorder
                             shadow="sm"
                             radius="md"
-                            p="md"
+                            p="sm"
                             className={`${isMobile ? "p-2!" : ""}`}
                         >
                             <Group gap="sm" className={`${isMobile ? "justify-center!" : ""}`}>

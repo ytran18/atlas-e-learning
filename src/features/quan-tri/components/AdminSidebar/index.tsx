@@ -30,13 +30,13 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
     }, [atldId, hocNgheId]);
 
     return (
-        <div className="flex-shrink-0 w-1/4 hidden sm:block">
+        <div className="shrink-0 w-1/4 hidden sm:block">
             <Card
                 withBorder
                 shadow="md"
                 radius="md"
                 p="md"
-                className="bg-white !h-[calc(100vh-272px)] !overflow-y-auto"
+                className="bg-white h-[calc(100vh-272px)]! overflow-y-auto!"
             >
                 <div className="w-full flex justify-between items-center mb-4">
                     <Title order={3}>{title}</Title>
@@ -72,8 +72,8 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
                                     aria-busy={isNavigating}
                                     className={`cursor-pointer transition-all duration-200 ${
                                         isSelected
-                                            ? "bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-300"
-                                            : "bg-gray-50 hover:!bg-blue-50"
+                                            ? "bg-linear-to-r from-blue-50 to-blue-100 border-2 border-blue-300"
+                                            : "bg-gray-50 hover:bg-blue-50!"
                                     } ${isNavigating ? "opacity-60" : ""}`}
                                 >
                                     <Group justify="space-between" wrap="nowrap">

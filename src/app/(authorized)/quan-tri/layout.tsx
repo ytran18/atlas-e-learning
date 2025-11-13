@@ -22,7 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="h-[calc(100vh-60px)]">
             <Container
                 size="xl"
-                className="px-4 sm:px-6 lg:px-8 py-2 md:py-4 !max-w-none h-full flex flex-col gap-y-3"
+                className="px-4 sm:px-6 lg:px-8 py-2 md:py-4 max-w-none! h-full flex flex-col gap-y-3"
             >
                 <Header />
 
