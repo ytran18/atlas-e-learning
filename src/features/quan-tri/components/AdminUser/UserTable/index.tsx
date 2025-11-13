@@ -45,7 +45,9 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
 
     const isShowPagination = totalDocs > 10;
 
-    if (!tableData || !courseDetail) return <Empty description="Không có dữ liệu" />;
+    const isTableDataEmpty = tableData.length === 0;
+
+    if (isTableDataEmpty) return <Empty description="Không có dữ liệu" />;
 
     const handlePageChange = (newPage: number) => {
         const params = new URLSearchParams(searchParams.toString());

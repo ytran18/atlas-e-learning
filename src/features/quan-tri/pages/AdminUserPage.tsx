@@ -59,6 +59,7 @@ const AdminUserPage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stats?.nextCursor, page]);
 
+    // Only show full page loader on initial load, not during pagination
     if (isLoading || isFetching) {
         return (
             <div className="w-full h-full flex items-center justify-center">

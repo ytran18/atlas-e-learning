@@ -11,7 +11,7 @@ type ModalUserDetailProps = {
     opened: boolean;
     onClose: () => void;
     user: StudentStats | null;
-    courseDetail: CourseDetail;
+    courseDetail?: CourseDetail;
 };
 
 export enum UserDetailTabs {
@@ -27,15 +27,16 @@ const ModalUserDetail: FunctionComponent<ModalUserDetailProps> = ({
 }) => {
     const [tab, setTab] = useState<UserDetailTabs>(UserDetailTabs.INFO);
 
-    if (!user) return null;
+    if (!user || !courseDetail) return null;
 
-    const isCompleted = user.isCompleted;
+    const isCompleted = user?.isCompleted;
 
-    const isTheoryCompleted = user.currentSection === "practice" || user.currentSection === "exam";
+    const isTheoryCompleted =
+        user?.currentSection === "practice" || user?.currentSection === "exam";
 
-    const isPracticeCompleted = user.currentSection === "exam";
+    const isPracticeCompleted = user?.currentSection === "exam";
 
-    const examQuesions = courseDetail.exam.questions;
+    const examQuesions = courseDetail?.exam?.questions ?? [];
 
     const userAnswers = user.examResult?.answers ?? [];
 
@@ -48,7 +49,7 @@ const ModalUserDetail: FunctionComponent<ModalUserDetailProps> = ({
         <Modal
             opened={opened}
             onClose={handleClose}
-            title={user.fullname}
+            title={user?.fullname}
             closeOnEscape={false}
             centered
             size="lg"

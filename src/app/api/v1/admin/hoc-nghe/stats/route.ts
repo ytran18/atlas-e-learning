@@ -28,13 +28,16 @@ export async function GET(request: NextRequest) {
 
         const search = queryParams.search;
 
+        // Only include count for first page (when no cursor) to improve performance
+        const includeCount = !cursor;
+
         // Validate required params
         if (!groupId) {
             throw new Error("VALIDATION: groupId is required");
         }
 
         // Get stats from Firestore
-        const stats = await getGroupStats(groupId, pageSize, cursor, search);
+        const stats = await getGroupStats(groupId, pageSize, cursor, search, includeCount);
 
         // Map to response format
         const response: GetStatsResponse = {
@@ -45,7 +48,16 @@ export async function GET(request: NextRequest) {
             totalPages: stats.totalPages,
         };
 
-        return successResponse(response);
+        const apiResponse = successResponse(response);
+
+        // Add caching headers for better performance
+        // Cache for 30 seconds for paginated results
+        apiResponse.headers.set(
+            "Cache-Control",
+            cursor ? "private, max-age=30" : "private, max-age=60"
+        );
+
+        return apiResponse;
     } catch (error) {
         return handleApiError(error);
     }

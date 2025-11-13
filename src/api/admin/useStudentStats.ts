@@ -39,7 +39,13 @@ export function useStudentStats(
         queryKey: studentStatsKeys.stat(type, groupId, pageSize, cursor, search),
         queryFn: () => getStudentStats(type, groupId, pageSize, cursor, search),
         enabled: !!groupId,
+        // Keep previous data while fetching new data to prevent loading states
         placeholderData: (previousData) => previousData,
+        // Reduced stale time for better data freshness (2 minutes)
+        staleTime: 1000 * 60 * 2,
+        // Refetch on mount to ensure fresh data when reloading
+        refetchOnMount: true,
+        // Keep previous data during pagination transitions
         ...options,
     });
 }

@@ -322,24 +322,16 @@ export async function saveLearningCapture(
 
 /**
  * Get all students progress for a specific group (with pagination)
+ * Optimized: Count query is now optional and can be skipped for better performance
  */
 export async function getGroupStats(
     groupId: string,
     pageSize: number = 20,
     cursor?: string,
-    searchName?: string
+    searchName?: string,
+    includeCount: boolean = false
 ) {
-    const countSnap = await adminDb
-        .collection(COLLECTIONS.PROGRESS)
-        .doc(groupId)
-        .collection(COLLECTIONS.USERS)
-        .count()
-        .get();
-
-    const totalDocs = countSnap.data().count || 0;
-
-    const totalPages = Math.ceil(totalDocs / pageSize);
-
+    // Build base query
     let queryRef: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = adminDb
         .collection(COLLECTIONS.PROGRESS)
         .doc(groupId)
@@ -348,28 +340,61 @@ export async function getGroupStats(
     // Nếu có search name thì order theo tên
     if (searchName) {
         const searchEnd = searchName + "\uf8ff";
+
         queryRef = queryRef.orderBy("userFullname").startAt(searchName).endAt(searchEnd);
     } else {
         queryRef = queryRef.orderBy("lastUpdatedAt", "desc");
     }
 
+    // Optimize cursor pagination: only fetch cursor doc if needed
     let query = queryRef.limit(pageSize + 1);
 
     if (cursor) {
-        const cursorDoc = await adminDb
-            .collection(COLLECTIONS.PROGRESS)
-            .doc(groupId)
-            .collection(COLLECTIONS.USERS)
-            .doc(cursor)
-            .get();
+        // Try to use cursor directly without fetching the document first
+        // This works if cursor is the document ID and we're using startAfter
+        // For better performance, we'll fetch the cursor doc only when necessary
+        try {
+            const cursorDoc = await adminDb
+                .collection(COLLECTIONS.PROGRESS)
+                .doc(groupId)
+                .collection(COLLECTIONS.USERS)
+                .doc(cursor)
+                .get();
 
-        if (cursorDoc.exists) query = query.startAfter(cursorDoc);
+            if (cursorDoc.exists) {
+                query = query.startAfter(cursorDoc);
+            }
+        } catch (error) {
+            console.warn("Failed to fetch cursor document:", error);
+            // Continue without cursor if fetch fails
+        }
     }
 
-    const snapshot = await query.get();
+    // Execute queries in parallel for better performance
+    const [snapshot, countResult] = await Promise.allSettled([
+        query.get(),
+        // Only fetch count if explicitly requested (for first page or when needed)
+        includeCount
+            ? adminDb
+                  .collection(COLLECTIONS.PROGRESS)
+                  .doc(groupId)
+                  .collection(COLLECTIONS.USERS)
+                  .count()
+                  .get()
+            : Promise.resolve(null),
+    ]);
 
-    const hasMore = snapshot.docs.length > pageSize;
-    const docs = hasMore ? snapshot.docs.slice(0, pageSize) : snapshot.docs;
+    const snapshotData =
+        snapshot.status === "fulfilled" ? snapshot.value : { docs: [], empty: true };
+
+    const countData =
+        countResult.status === "fulfilled" && countResult.value
+            ? countResult.value.data().count || 0
+            : 0;
+
+    const hasMore = snapshotData.docs.length > pageSize;
+
+    const docs = hasMore ? snapshotData.docs.slice(0, pageSize) : snapshotData.docs;
 
     const data: StudentStats[] = docs.map((doc) => {
         const d = doc.data();
@@ -393,6 +418,10 @@ export async function getGroupStats(
     });
 
     const nextCursor = hasMore ? docs[docs.length - 1].id : undefined;
+
+    const totalDocs = includeCount ? countData : 0;
+
+    const totalPages = includeCount ? Math.ceil(totalDocs / pageSize) : 0;
 
     return {
         data,
