@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
 import { generateMetadata, pageSeoConfigs } from "@/configs/seo.config";
-import LearnPage from "@/features/hoc-nghe/pages/LearnPage";
+import HocNgheLearnPage from "@/features/course/pages/hoc-nghe/hoc-nghe-learn";
 
 export const metadata: Metadata = generateMetadata(pageSeoConfigs.learn);
 
 export default function Page() {
-    return <LearnPage />;
+    return <HocNgheLearnPage />;
 }

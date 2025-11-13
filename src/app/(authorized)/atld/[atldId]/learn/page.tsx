@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
 import { generateMetadata, pageSeoConfigs } from "@/configs/seo.config";
-import LearnPage from "@/features/atld/pages/LearnPage";
+import AtldLearnPage from "@/features/course/pages/atld/atld-learn";
 
 export const metadata: Metadata = generateMetadata(pageSeoConfigs.learn);
 
 export default function Page() {
-    return <LearnPage />;
+    return <AtldLearnPage />;
 }
