@@ -123,7 +123,7 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
     }
 
     return (
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-2xl p-3 sm:p-6 relative overflow-hidden">
+        <div className="bg-white flex-1 rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-2xl p-3 sm:p-6 relative overflow-hidden">
             {/* Decorative Elements */}
             <div
                 className={`absolute top-0 right-0 w-48 h-48 bg-linear-to-br ${gradientColors.topRight} rounded-full opacity-5 -mr-24 -mt-24`}
@@ -133,7 +133,7 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
                 className={`absolute bottom-0 left-0 w-32 h-32 bg-linear-to-tr ${gradientColors.bottomLeft} rounded-full opacity-5 -ml-16 -mb-16`}
             />
 
-            <div className="relative z-10">
+            <div className="relative z-10 h-full min-h-0 flex flex-col">
                 {/* Instructions Section - Hidden on mobile */}
                 {!capturedPhoto && <InstructionsCard />}
 
@@ -144,8 +144,8 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
                 {displayError && <ErrorMessage message={displayError} />}
 
                 {/* Camera/Photo Preview */}
-                <div className="relative mb-3 sm:mb-6 group">
-                    <div className="relative aspect-3/4 sm:aspect-video bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl">
+                <div className="relative mb-3 sm:mb-6 group flex-1 min-h-0">
+                    <div className="relative h-full sm:aspect-video bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl">
                         {!capturedPhoto ? (
                             <CameraPreview
                                 videoRef={videoRef}
