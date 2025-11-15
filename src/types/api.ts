@@ -69,6 +69,7 @@ export interface ExamSection {
 // ============================================================================
 
 export interface CourseListItem {
+    sortNo?: number;
     id: string;
     type?: CourseType;
     title: string;

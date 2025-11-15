@@ -94,19 +94,12 @@ const ListQuestions: FunctionComponent<ListQuestionsProps> = ({ questions, isFin
                                     <Radio.Group value={field.value} onChange={field.onChange}>
                                         <div className="flex flex-col gap-y-2">
                                             {question.options.map((option) => {
-                                                const isCorrectAnswer =
-                                                    option.id === question.answer;
+                                                // const isCorrectAnswer =
+                                                //     option.id === question.answer;
 
                                                 return (
                                                     <div
-                                                        className={`
-                                                                            flex items-center gap-x-2
-                                                                            ${
-                                                                                isCorrectAnswer
-                                                                                    ? "text-green-500"
-                                                                                    : ""
-                                                                            }
-                                                                        `}
+                                                        className={`flex items-center gap-x-2`}
                                                         key={option.id}
                                                     >
                                                         <Radio value={option.id} />

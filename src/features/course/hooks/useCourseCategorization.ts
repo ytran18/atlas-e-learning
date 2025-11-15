@@ -33,6 +33,7 @@ export function useCourseCategorization({ data, type }: UseCourseCategorizationP
     const categorizedCourses = useMemo((): CategorizedCourses => {
         if (!data) return { inProgress: [], notStarted: [], incomplete: [], completed: [] };
 
+        // Map courses attaching progress + status
         const courses: CategorizedCourse[] = data.map((course) => {
             const progress = progressData?.[course.id];
 
@@ -52,6 +53,16 @@ export function useCourseCategorization({ data, type }: UseCourseCategorizationP
                 status,
                 progress,
             };
+        });
+
+        // Sort by sortNo (ascending). Items without sortNo go to the end.
+        courses.sort((a, b) => {
+            const aHas = typeof a.sortNo === "number";
+            const bHas = typeof b.sortNo === "number";
+            if (aHas && bHas) return (a.sortNo as number) - (b.sortNo as number);
+            if (aHas) return -1; // a comes before b
+            if (bHas) return 1; // b comes before a
+            return 0; // both missing
         });
 
         return {
