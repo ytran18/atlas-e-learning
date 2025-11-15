@@ -18,32 +18,53 @@ const parseDDMMYYYYToDate = (value: string): Date | null => {
     return date;
 };
 
-export const signUpSchema = z.object({
-    fullName: z
-        .string()
-        .min(1, "Vui lòng nhập họ và tên")
-        .min(3, "Họ và tên phải có ít nhất 3 ký tự")
-        .regex(/^[\p{L}\s]+$/u, "Họ và tên chỉ được chứa chữ cái"),
-    birthDate: z
-        .preprocess(
-            (val) => {
-                if (val instanceof Date) return val;
-                if (typeof val === "string") {
-                    const parsed = parseDDMMYYYYToDate(val);
-                    return parsed ?? null;
-                }
-                return null;
-            },
-            z.union([z.date(), z.null()])
-        )
-        .refine((date) => date !== null, {
-            message: "Vui lòng nhập ngày sinh (định dạng dd/mm/yyyy)",
-        }),
-    cccd: z
-        .string()
-        .min(1, "Vui lòng nhập CCCD hoặc Hộ chiếu")
-        .regex(/^\d{12}$/u, "CCCD phải là 12 số"),
-    companyName: z.string().optional(),
-});
+export const signUpSchema = z
+    .object({
+        fullName: z
+            .string()
+            .min(1, "Vui lòng nhập họ và tên")
+            .min(3, "Họ và tên phải có ít nhất 3 ký tự")
+            .regex(/^[\p{L}\s]+$/u, "Họ và tên chỉ được chứa chữ cái"),
+        birthDate: z
+            .preprocess(
+                (val) => {
+                    if (val instanceof Date) return val;
+                    if (typeof val === "string") {
+                        const parsed = parseDDMMYYYYToDate(val);
+                        return parsed ?? null;
+                    }
+                    return null;
+                },
+                z.union([z.date(), z.null()])
+            )
+            .refine((date) => date !== null, {
+                message: "Vui lòng nhập ngày sinh (định dạng dd/mm/yyyy)",
+            }),
+        isVietnamese: z.boolean(),
+        cccd: z.string().min(1, "Vui lòng nhập CCCD hoặc Hộ chiếu"),
+        companyName: z.string().optional(),
+        jobTitle: z.string(),
+    })
+    .superRefine((data, ctx) => {
+        if (data.isVietnamese) {
+            // CCCD validation: 12 digits
+            if (!/^\d{12}$/u.test(data.cccd)) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "CCCD phải là 12 số",
+                    path: ["cccd"],
+                });
+            }
+        } else {
+            // Passport validation: alphanumeric, 6-9 characters
+            if (!/^[A-Z0-9]{6,9}$/u.test(data.cccd.toUpperCase())) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Số hộ chiếu phải từ 6-9 ký tự chữ và số",
+                    path: ["cccd"],
+                });
+            }
+        }
+    });
 
 export type SignUpFormData = z.infer<typeof signUpSchema>;

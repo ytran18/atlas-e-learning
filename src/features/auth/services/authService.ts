@@ -13,6 +13,7 @@ export interface CreateUserPayload {
     companyName?: string;
     photoUrl?: string;
     role: Role;
+    jobTitle?: string;
 }
 
 export interface CreateUserResponse {

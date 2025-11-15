@@ -11,13 +11,14 @@ interface SignUpRequestBody {
     companyName?: string;
     photoUrl?: string;
     role: Role;
+    jobTitle?: string;
 }
 
 export async function POST(request: NextRequest) {
     try {
         const body: SignUpRequestBody = await request.json();
 
-        const { userId, fullName, birthDate, cccd, companyName, photoUrl, role } = body;
+        const { userId, fullName, birthDate, cccd, companyName, photoUrl, role, jobTitle } = body;
 
         // Validate required fields
         if (!userId || !fullName || !birthDate || !cccd || !role) {
@@ -52,6 +53,7 @@ export async function POST(request: NextRequest) {
                 companyName: companyName || "",
                 photoUrl: photoUrl || "",
                 role,
+                jobTitle: jobTitle || "",
                 createdAt: admin.firestore.FieldValue.serverTimestamp(),
                 updatedAt: admin.firestore.FieldValue.serverTimestamp(),
             });

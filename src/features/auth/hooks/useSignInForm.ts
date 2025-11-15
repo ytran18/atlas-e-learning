@@ -58,23 +58,54 @@ export const useSignInForm = () => {
             const dd = String(d.getDate()).padStart(2, "0");
             const birthDateString = `${yyyy}-${mm}-${dd}`;
 
-            // Use birthDate + CCCD as password for better security
-            const password = `${birthDateString}_${data.cccd}`;
+            // Normalize identifier: uppercase for passport, keep as is for CCCD
+            const identifier = /^\d{12}$/u.test(data.cccd) ? data.cccd : data.cccd.toUpperCase();
+            const password = `${birthDateString}_${identifier}`;
 
-            // Sign in with CCCD as username and birthDate+CCCD as password
-            const result = await signIn.create({
-                identifier: `CC${data.cccd}`,
-                password: password,
-            });
+            // Determine if it's CCCD (12 digits) or Passport (6-9 alphanumeric)
+            const isCCCD = /^\d{12}$/u.test(data.cccd);
+            const usernamePrefix = isCCCD ? "CC" : "PP";
 
-            if (result.status === "complete") {
-                await setActive({ session: result.createdSessionId });
+            // Try signing in with the appropriate prefix first
+            let result;
 
-                router.push(navigationPaths.ATLD);
+            try {
+                result = await signIn.create({
+                    identifier: `${usernamePrefix}${identifier}`,
+                    password: password,
+                });
+
+                if (result.status === "complete") {
+                    await setActive({ session: result.createdSessionId });
+                    router.push(navigationPaths.ATLD);
+                    return;
+                }
+            } catch {
+                // Will try alternative prefix below
             }
+
+            // If failed, try with the alternative prefix (for backward compatibility)
+            try {
+                const altPrefix = isCCCD ? "PP" : "CC";
+                result = await signIn.create({
+                    identifier: `${altPrefix}${identifier}`,
+                    password: password,
+                });
+
+                if (result.status === "complete") {
+                    await setActive({ session: result.createdSessionId });
+                    router.push(navigationPaths.ATLD);
+                    return;
+                }
+            } catch {
+                // Ignore alternative attempt error, use original error
+            }
+
+            // If both attempts failed, show error
+            setError("CCCD/Hộ chiếu hoặc ngày sinh không đúng. Vui lòng thử lại hoặc đăng ký mới.");
         } catch (err: unknown) {
             console.error("Sign in error:", err);
-            setError("CCCD hoặc ngày sinh không đúng. Vui lòng thử lại hoặc đăng ký mới.");
+            setError("CCCD/Hộ chiếu hoặc ngày sinh không đúng. Vui lòng thử lại hoặc đăng ký mới.");
         } finally {
             setIsLoading(false);
         }
