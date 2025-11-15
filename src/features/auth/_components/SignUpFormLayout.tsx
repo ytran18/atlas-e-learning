@@ -32,7 +32,7 @@ const SignUpFormLayout = ({
     error,
 }: SignUpFormLayoutProps) => {
     return (
-        <div className="h-[calc(100vh-70px)] w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-50 px-4 py-8">
+        <div className="h-[calc(100vh-70px)] w-full flex items-center justify-center bg-linear-to-br from-blue-50 to-gray-50 px-4 py-8">
             <div className="w-full max-w-md">
                 {/* Logo/Header */}
                 <div className="text-center mb-8">
@@ -42,7 +42,7 @@ const SignUpFormLayout = ({
                 </div>
 
                 {/* Form Card */}
-                <Card withBorder radius="lg" p="xl">
+                <Card withBorder shadow="md" radius="md" p="xl">
                     <form onSubmit={onSubmit} className="space-y-5">
                         {children}
 
@@ -52,7 +52,7 @@ const SignUpFormLayout = ({
                             </div>
                         )}
 
-                        <Button type="submit" disabled={isLoading} className="!w-full ">
+                        <Button type="submit" disabled={isLoading} className="w-full!">
                             {isLoading ? "Đang xử lý..." : submitButtonText}
                         </Button>
                     </form>

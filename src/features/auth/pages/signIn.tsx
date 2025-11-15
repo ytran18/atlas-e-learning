@@ -35,7 +35,7 @@ const SignInPage = () => {
                 label="CCCD hoặc Hộ chiếu"
                 name="cccd"
                 type="text"
-                placeholder="Nhập 12 số CCCD"
+                placeholder="Nhập CCCD hoặc Hộ chiếu"
                 required
                 register={register}
                 error={errors.cccd?.message}
