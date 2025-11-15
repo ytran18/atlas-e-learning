@@ -165,7 +165,7 @@ export const PhotoCaptureContainer = ({
 
                 {/* Camera/Photo Preview */}
                 <div className="relative mb-3 sm:mb-6 group flex-1 min-h-0">
-                    <div className="relative h-full sm:aspect-video bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl">
+                    <div className="relative h-full w-full sm:aspect-video bg-linear-to-br from-gray-900 to-gray-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl">
                         {!capturedPhoto ? (
                             <CameraPreview
                                 videoRef={videoRef}
