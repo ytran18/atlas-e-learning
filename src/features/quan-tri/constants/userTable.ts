@@ -4,6 +4,10 @@ export const tableHeader = [
         key: "fullname",
     },
     {
+        label: "ID Card",
+        key: "userIdCard",
+    },
+    {
         label: "Ngày sinh",
         key: "birthDate",
     },

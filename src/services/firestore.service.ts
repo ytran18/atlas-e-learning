@@ -416,6 +416,7 @@ export async function getGroupStats(
             currentVideoIndex: d.currentVideoIndex || 0,
             birthDate: d.userBirthDate || "",
             examResult: d.examResult || {},
+            userIdCard: d.cccd || "",
         };
     });
 

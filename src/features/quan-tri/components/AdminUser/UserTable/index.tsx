@@ -39,11 +39,11 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
 
     const [userDetail, setUserDetail] = useState<StudentStats | null>(null);
 
-    const { tableData, totalPages, totalDocs } = useAdminUserContext();
+    const { tableData, totalPages: totalPagesContext } = useAdminUserContext();
+
+    const totalPages = Number(searchParams.get("totalPages")) || totalPagesContext;
 
     const currentPage = Number(page) || 1;
-
-    const isShowPagination = totalDocs > 10;
 
     const isTableDataEmpty = tableData.length === 0;
 
@@ -76,6 +76,8 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
         return (
             <Table.Tr key={element.userId} onClick={handleRowClick}>
                 <Table.Td>{element.fullname}</Table.Td>
+
+                <Table.Td>{element.userIdCard}</Table.Td>
 
                 <Table.Td>{element.birthDate}</Table.Td>
 
@@ -120,7 +122,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
 
     return (
         <div className={`flex flex-col gap-y-2 flex-1 ${className}`} ref={ref}>
-            <div className="flex-1 max-h-[calc(100vh-270px)] sm:max-h-[calc(100vh-470px)] overflow-y-auto">
+            <div className="flex-1 max-h-[calc(100vh-268px)] md:max-h-[calc(100vh-306px)] lg:max-h-[calc(100vh-380px)] overflow-y-auto">
                 <Table highlightOnHover withTableBorder withColumnBorders stickyHeader>
                     <Table.Thead>
                         <Table.Tr>
@@ -140,15 +142,9 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
                 </Table>
             </div>
 
-            {isShowPagination && (
-                <div className="w-full flex justify-end">
-                    <Pagination
-                        total={totalPages}
-                        value={currentPage}
-                        onChange={handlePageChange}
-                    />
-                </div>
-            )}
+            <div className="w-full flex justify-end">
+                <Pagination total={totalPages} value={currentPage} onChange={handlePageChange} />
+            </div>
 
             <ModalUserDetail
                 opened={openedModalUserDetail}
