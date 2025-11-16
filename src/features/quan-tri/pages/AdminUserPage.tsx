@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Card } from "@mantine/core";
 import { Empty } from "antd";
@@ -19,6 +19,8 @@ import { useCursorPagination } from "../hooks/useCursorPagination";
 
 const AdminUserPage = () => {
     const searchParams = useSearchParams();
+
+    const router = useRouter();
 
     const courseId = searchParams.get("courseId");
 
@@ -58,6 +60,17 @@ const AdminUserPage = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stats?.nextCursor, page]);
+
+    // save total pages to search params
+    useEffect(() => {
+        if (stats?.totalPages) {
+            const params = new URLSearchParams(searchParams.toString());
+
+            params.set("totalPages", stats.totalPages.toString());
+
+            router.push(`?${params.toString()}`);
+        }
+    }, [stats?.totalPages, searchParams, router]);
 
     // Only show full page loader on initial load, not during pagination
     if (isLoading || isFetching) {

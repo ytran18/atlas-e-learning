@@ -217,6 +217,7 @@ export interface StudentStats {
         completedAt: number;
         answers?: ExamAnswer[];
     };
+    userIdCard: string;
 }
 
 export interface GetStatsResponse {

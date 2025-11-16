@@ -114,7 +114,7 @@ const UserFilter: FunctionComponent<UserFilterProps> = ({ ref }) => {
                 onChange={(event) => setValue(event.currentTarget.value)}
                 rightSectionPointerEvents="all"
                 mt="md"
-                className="!mt-0 flex-1"
+                className="mt-0! flex-1"
                 rightSection={<InputRightSection />}
             />
 
