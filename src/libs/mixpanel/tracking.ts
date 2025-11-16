@@ -426,13 +426,30 @@ export function useMixpanelUserIdentification() {
 
     useEffect(() => {
         if (isLoaded && user?.id) {
-            try {
+            // Identify immediately (will be queued if Mixpanel not ready)
+            identifyMixpanel(user.id);
+
+            // Retry mechanism: check periodically if Mixpanel becomes ready
+            // This handles edge cases where Mixpanel takes longer to initialize
+            let retryCount = 0;
+            const maxRetries = 10; // Try for up to 5 seconds (10 * 500ms)
+            const retryInterval = 500; // Check every 500ms
+
+            const retryTimer = setInterval(() => {
+                retryCount++;
+
+                // Try to identify again (will succeed if Mixpanel is now ready)
                 identifyMixpanel(user.id);
-            } catch (error) {
-                if (process.env.NODE_ENV === "development") {
-                    console.warn("[Mixpanel] User identification failed:", error);
+
+                // Stop retrying after max attempts or if successful
+                if (retryCount >= maxRetries) {
+                    clearInterval(retryTimer);
                 }
-            }
+            }, retryInterval);
+
+            return () => {
+                clearInterval(retryTimer);
+            };
         }
     }, [user?.id, isLoaded]);
 }
