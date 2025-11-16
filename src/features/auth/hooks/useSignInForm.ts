@@ -8,6 +8,7 @@ import { useSignIn } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { trackAuthError, trackUserSignedIn } from "@/libs/mixpanel";
 import { navigationPaths } from "@/utils/navigationPaths";
 
 import { SignInFormData, signInSchema } from "../validations/signInSchema";
@@ -77,6 +78,13 @@ export const useSignInForm = () => {
 
                 if (result.status === "complete") {
                     await setActive({ session: result.createdSessionId });
+
+                    // Track successful sign-in
+                    trackUserSignedIn({
+                        user_id: result.id || "",
+                        signin_method: isCCCD ? "cccd" : "passport",
+                    });
+
                     router.push(navigationPaths.ATLD);
                     return;
                 }
@@ -94,6 +102,13 @@ export const useSignInForm = () => {
 
                 if (result.status === "complete") {
                     await setActive({ session: result.createdSessionId });
+
+                    // Track successful sign-in (alternative prefix worked)
+                    trackUserSignedIn({
+                        user_id: result.id || "",
+                        signin_method: !isCCCD ? "cccd" : "passport",
+                    });
+
                     router.push(navigationPaths.ATLD);
                     return;
                 }
@@ -102,10 +117,28 @@ export const useSignInForm = () => {
             }
 
             // If both attempts failed, show error
-            setError("CCCD/Hộ chiếu hoặc ngày sinh không đúng. Vui lòng thử lại hoặc đăng ký mới.");
+            const errorMessage =
+                "CCCD/Hộ chiếu hoặc ngày sinh không đúng. Vui lòng thử lại hoặc đăng ký mới.";
+            setError(errorMessage);
+
+            // Track sign-in error
+            trackAuthError({
+                error_type: "signin_failed",
+                error_message: errorMessage,
+                user_input: identifier ? `${identifier.substring(0, 3)}***` : undefined,
+            });
         } catch (err: unknown) {
             console.error("Sign in error:", err);
-            setError("CCCD/Hộ chiếu hoặc ngày sinh không đúng. Vui lòng thử lại hoặc đăng ký mới.");
+            const errorMessage =
+                "CCCD/Hộ chiếu hoặc ngày sinh không đúng. Vui lòng thử lại hoặc đăng ký mới.";
+            setError(errorMessage);
+
+            // Track sign-in error
+            trackAuthError({
+                error_type: "signin_failed",
+                error_message: errorMessage,
+                user_input: data.cccd ? `${data.cccd.substring(0, 3)}***` : undefined,
+            });
         } finally {
             setIsLoading(false);
         }

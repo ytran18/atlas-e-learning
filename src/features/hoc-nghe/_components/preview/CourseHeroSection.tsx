@@ -7,6 +7,7 @@ import { Button, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconArrowLeft } from "@tabler/icons-react";
 
+import { trackCoursePreviewStartClicked } from "@/libs/mixpanel";
 import { HOC_NGHE_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 interface CourseHeroSectionProps {
@@ -99,6 +100,15 @@ export const CourseHeroSection = ({
                                     });
 
                                     return;
+                                }
+
+                                // Track course preview start clicked
+                                if (!isJoined && hocNgheId) {
+                                    trackCoursePreviewStartClicked({
+                                        course_type: "hoc-nghe",
+                                        course_id: hocNgheId as string,
+                                        course_name: title,
+                                    });
                                 }
 
                                 setIsNavigating(true);

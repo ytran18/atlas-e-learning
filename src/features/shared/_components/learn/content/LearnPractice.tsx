@@ -11,6 +11,12 @@ import { canvasToBlob } from "@/features/shared/utils/canvas-to-blob";
 import { getRealVideoEl } from "@/features/shared/utils/get-real-video-element";
 import { hash32 } from "@/features/shared/utils/hash-32";
 import { mulberry32 } from "@/features/shared/utils/mulberry-32";
+import {
+    trackLearningCaptureTaken,
+    trackSectionNavigated,
+    trackVideoCompleted,
+    trackVideoNavigated,
+} from "@/libs/mixpanel";
 import VideoPlayer from "@/libs/player/VideoPlayer";
 import { updateCourseProgress, uploadLearningCapture } from "@/services/api.client";
 import type { CaptureType } from "@/types/api";
@@ -68,6 +74,8 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
 
     const videoRef = useRef<HTMLVideoElement | null>(null);
 
+    const watchStartTimeRef = useRef<number>(0);
+
     useEffect(() => {
         if (!learnDetail?.id) return;
 
@@ -120,6 +128,25 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
 
     const handleVideoEndedInternal = () => {
         setIsFinishVideo(true);
+
+        const videoEl = getRealVideoEl(videoRef);
+        const videoDuration = videoEl?.duration || 0;
+        const watchDuration = watchStartTimeRef.current
+            ? (Date.now() - watchStartTimeRef.current) / 1000
+            : 0;
+        const completionPercentage = videoDuration > 0 ? 100 : 0;
+
+        // Track video completed
+        trackVideoCompleted({
+            course_type: courseType,
+            course_id: learnDetail.id,
+            section: "practice",
+            video_index: videoIndex,
+            video_title: currentVideo?.title,
+            watch_duration: watchDuration,
+            video_duration: videoDuration,
+            completion_percentage: completionPercentage,
+        });
 
         // Check if this video is already completed to avoid duplicate API calls
         const isVideoAlreadyCompleted = progress.completedVideos.some(
@@ -295,6 +322,16 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
                     queryKey: courseProgressKeys.progress(courseType, learnDetail.id),
                 });
 
+                // Track learning capture taken
+                trackLearningCaptureTaken({
+                    course_type: courseType,
+                    course_id: learnDetail.id,
+                    capture_type: "learning",
+                    section: "practice",
+                    video_index: videoIndex,
+                    current_time: videoEl.currentTime || 0,
+                });
+
                 lastCaptureTimeRef.current = Date.now();
             } catch (err) {
                 console.error("Learning proof capture failed:", err);
@@ -335,6 +372,17 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
         const totalVideos = learnDetail.practice.videos.length;
 
         if (nextVideoIndex < totalVideos) {
+            // Track video navigated
+            trackVideoNavigated({
+                course_type: courseType,
+                course_id: learnDetail.id,
+                from_section: "practice",
+                from_video_index: videoIndex,
+                to_section: "practice",
+                to_video_index: nextVideoIndex,
+                navigation_method: "next",
+            });
+
             // Move to next video in practice section
             updateProgress({
                 groupId: learnDetail.id,
@@ -350,6 +398,14 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
             setIsFinishVideo(false);
         } else {
             if (learnDetail?.exam?.questions?.length > 0) {
+                // Track section navigated (practice -> exam)
+                trackSectionNavigated({
+                    course_type: courseType,
+                    course_id: learnDetail.id,
+                    from_section: "practice",
+                    to_section: "theory", // Exam is treated as theory section in navigation
+                });
+
                 // All practice videos completed, move to exam section
                 updateProgress({
                     groupId: learnDetail.id,

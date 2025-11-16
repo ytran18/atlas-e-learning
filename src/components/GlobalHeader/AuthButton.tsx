@@ -8,6 +8,7 @@ import { useClerk, useUser } from "@clerk/nextjs";
 import { Avatar, Box, Button, Group, Loader, Text } from "@mantine/core";
 import { IconLogout } from "@tabler/icons-react";
 
+import { trackUserSignedOut } from "@/libs/mixpanel";
 import { navigationPaths } from "@/utils/navigationPaths";
 
 type AuthButtonProps = {
@@ -80,7 +81,14 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                     visibleFrom="sm"
                     variant="default"
                     size="xs"
-                    onClick={() => signOut(() => router.push("/"))}
+                    onClick={() => {
+                        // Track sign-out
+                        trackUserSignedOut({
+                            user_id: user.id,
+                        });
+
+                        signOut(() => router.push("/"));
+                    }}
                 >
                     <div className="flex items-center gap-x-2">
                         <IconLogout className="text-gray-700" size={16} />
