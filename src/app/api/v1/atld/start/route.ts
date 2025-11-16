@@ -32,10 +32,18 @@ export async function POST(request: NextRequest) {
             "userFullname",
             "userBirthDate",
             "userCompanyName",
+            "userIdCard",
         ]);
 
-        const { groupId, portraitUrl, courseName, userFullname, userBirthDate, userCompanyName } =
-            body;
+        const {
+            groupId,
+            portraitUrl,
+            courseName,
+            userFullname,
+            userBirthDate,
+            userCompanyName,
+            userIdCard,
+        } = body;
 
         // Create initial progress
         const progress = await createUserProgress(
@@ -45,7 +53,8 @@ export async function POST(request: NextRequest) {
             courseName,
             userFullname,
             userBirthDate,
-            userCompanyName
+            userCompanyName,
+            userIdCard
         );
 
         // Map to response format

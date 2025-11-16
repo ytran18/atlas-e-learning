@@ -12,7 +12,7 @@ const adminHocNgheDetailTabs = [
     },
     {
         value: AdminHocNgheDetailTabs.PRACTICE,
-        label: "Thực hành",
+        label: "Ôn tập thực hành",
         icon: <IconCertificate size={20} className="text-green-600" />,
     },
     {

@@ -109,6 +109,7 @@ export const PhotoCaptureContainer = ({
                 userFullname: user?.unsafeMetadata?.fullName as string,
                 userBirthDate: user?.unsafeMetadata?.birthDate as string,
                 userCompanyName: user?.unsafeMetadata?.companyName as string,
+                userIdCard: user?.unsafeMetadata?.cccd as string,
             });
         } catch (err) {
             console.error("Error preparing photo upload:", err);
