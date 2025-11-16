@@ -144,7 +144,8 @@ export async function createUserProgress(
     courseName: string,
     userFullname: string,
     userBirthDate: string,
-    userCompanyName: string
+    userCompanyName: string,
+    userIdCard: string
 ): Promise<CourseProgress> {
     const now = Date.now();
 
@@ -174,6 +175,7 @@ export async function createUserProgress(
         userFullname,
         userBirthDate,
         userCompanyName,
+        userIdCard,
     };
 
     // Ghi tuần tự để chắc chắn parent đã tồn tại
