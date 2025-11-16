@@ -8,6 +8,7 @@ import { useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { trackAuthError, trackUserSignedUp } from "@/libs/mixpanel";
 import { navigationPaths } from "@/utils/navigationPaths";
 
 import { Role, authService } from "../services";
@@ -110,6 +111,15 @@ export const useSignUpForm = () => {
                     console.error("Error creating user in Firestore:", firestoreError);
                 }
 
+                // Track successful sign-up
+                trackUserSignedUp({
+                    user_id: result.createdUserId!,
+                    full_name: data.fullName,
+                    is_vietnamese: data.isVietnamese,
+                    has_company: !!data.companyName,
+                    signup_method: data.isVietnamese ? "cccd" : "passport",
+                });
+
                 router.push(navigationPaths.LANDING_PAGE);
             } else if (result.status === "missing_requirements") {
                 setError("Thiếu thông tin bắt buộc. Vui lòng thử lại.");
@@ -138,25 +148,36 @@ export const useSignUpForm = () => {
                 }
             }
         } catch (err: unknown) {
+            let errorMessage = "";
+            // let errorCode = "";
+
             if (err && typeof err === "object" && "errors" in err) {
                 const errors = err.errors as Array<{ message: string; code?: string }>;
 
                 if (errors?.[0]?.code === "form_identifier_exists") {
-                    setError(
-                        data.isVietnamese
-                            ? "CCCD này đã được đăng ký. Vui lòng đăng nhập."
-                            : "Hộ chiếu này đã được đăng ký. Vui lòng đăng nhập."
-                    );
+                    errorMessage = data.isVietnamese
+                        ? "CCCD này đã được đăng ký. Vui lòng đăng nhập."
+                        : "Hộ chiếu này đã được đăng ký. Vui lòng đăng nhập.";
+                    // errorCode = "form_identifier_exists";
                 } else {
-                    setError(errors[0]?.message || "Đăng ký thất bại. Vui lòng thử lại.");
+                    errorMessage = errors[0]?.message || "Đăng ký thất bại. Vui lòng thử lại.";
+                    // errorCode = errors[0]?.code || "unknown";
                 }
             } else {
-                setError(
-                    data.isVietnamese
-                        ? "CCCD này đã được đăng ký. Vui lòng đăng nhập."
-                        : "Hộ chiếu này đã được đăng ký. Vui lòng đăng nhập."
-                );
+                errorMessage = data.isVietnamese
+                    ? "CCCD này đã được đăng ký. Vui lòng đăng nhập."
+                    : "Hộ chiếu này đã được đăng ký. Vui lòng đăng nhập.";
+                // errorCode = "unknown";
             }
+
+            setError(errorMessage);
+
+            // Track sign-up error
+            trackAuthError({
+                error_type: "signup_failed",
+                error_message: errorMessage,
+                user_input: data.cccd ? `${data.cccd.substring(0, 3)}***` : undefined,
+            });
         } finally {
             setIsLoading(false);
         }

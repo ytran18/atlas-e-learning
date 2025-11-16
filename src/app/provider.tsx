@@ -19,6 +19,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createQueryClient } from "@/configs/reactQuery.config";
 import { makeGrowthBook } from "@/libs/growthbook/make-growthbook";
 import { initMixpanel } from "@/libs/mixpanel/mixpanel-client";
+import { useMixpanelUserIdentification } from "@/libs/mixpanel/tracking";
 
 // Custom localization để thay đổi text
 const customViVN = {
@@ -29,7 +30,8 @@ const customViVN = {
     formButtonPrimary: "Tiếp tục",
 };
 
-export default function Provider({
+// Inner component to use hooks (must be inside ClerkProvider)
+function ProviderContent({
     children,
     growthBookPayload,
 }: {
@@ -40,6 +42,9 @@ export default function Provider({
     const [queryClient] = useState(() => createQueryClient());
 
     const gb = useMemo(() => makeGrowthBook(growthBookPayload), [growthBookPayload]);
+
+    // Identify user in Mixpanel when authenticated
+    useMixpanelUserIdentification();
 
     useEffect(() => {
         initMixpanel();
@@ -52,6 +57,32 @@ export default function Provider({
     }, []);
 
     return (
+        <QueryClientProvider client={queryClient}>
+            <AntdRegistry>
+                <MantineProvider>
+                    <ModalsProvider>
+                        <Notifications />
+
+                        {children}
+                    </ModalsProvider>
+                </MantineProvider>
+            </AntdRegistry>
+            {/* React Query Devtools - chỉ hiện trong development */}
+            <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+    );
+}
+
+export default function Provider({
+    children,
+    growthBookPayload,
+}: {
+    children: React.ReactNode;
+    growthBookPayload: GrowthBookPayload;
+}) {
+    const gb = useMemo(() => makeGrowthBook(growthBookPayload), [growthBookPayload]);
+
+    return (
         <GrowthBookProvider growthbook={gb}>
             <ClerkProvider
                 localization={customViVN}
@@ -59,19 +90,7 @@ export default function Provider({
                 signInUrl="/sign-in"
                 signUpUrl="/sign-up"
             >
-                <QueryClientProvider client={queryClient}>
-                    <AntdRegistry>
-                        <MantineProvider>
-                            <ModalsProvider>
-                                <Notifications />
-
-                                {children}
-                            </ModalsProvider>
-                        </MantineProvider>
-                    </AntdRegistry>
-                    {/* React Query Devtools - chỉ hiện trong development */}
-                    <ReactQueryDevtools initialIsOpen={false} />
-                </QueryClientProvider>
+                <ProviderContent growthBookPayload={growthBookPayload}>{children}</ProviderContent>
             </ClerkProvider>
         </GrowthBookProvider>
     );
