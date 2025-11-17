@@ -27,11 +27,16 @@ const UserFilter: FunctionComponent = () => {
 
     const isMobile = useMediaQuery("(max-width: 640px)");
 
-    const [value, setValue] = useState<string>("");
+    const [value, setValue] = useState<string>(search || "");
 
-    const [debouncedValue] = useDebouncedValue(value, 200);
+    const [debouncedValue] = useDebouncedValue(value, 500);
 
     const [isExporting, setIsExporting] = useState(false);
+
+    // Sync value with search param from URL (e.g., when navigating back)
+    useEffect(() => {
+        setValue(search || "");
+    }, [search]);
 
     const handleSelectCourse = (value: string, option: any) => {
         if (!option?.type) return;
@@ -125,7 +130,7 @@ const UserFilter: FunctionComponent = () => {
     return (
         <div className="w-full flex items-center gap-x-2">
             <Input
-                placeholder="Tìm kiếm theo tên"
+                placeholder="Tìm kiếm theo tên, ID card hoặc tên công ty"
                 value={value}
                 onChange={(event) => setValue(event.currentTarget.value)}
                 rightSectionPointerEvents="all"
