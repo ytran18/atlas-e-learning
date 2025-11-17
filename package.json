@@ -52,13 +52,16 @@
         "react-hook-form": "^7.64.0",
         "react-player": "^3.3.3",
         "socket.io-client": "^4.8.1",
-        "zod": "^4.1.11"
+        "zod": "^4.1.11",
+        "@tailwindcss/postcss": "^4",
+        "postcss": "^8.5.6",
+        "postcss-preset-mantine": "^1.18.0",
+        "postcss-simple-vars": "^7.0.1"
     },
     "devDependencies": {
         "@commitlint/cli": "^20.1.0",
         "@commitlint/config-conventional": "^20.0.0",
         "@eslint/eslintrc": "^3",
-        "@tailwindcss/postcss": "^4",
         "@trivago/prettier-plugin-sort-imports": "^5.2.2",
         "@types/node": "^20.19.24",
         "@types/react": "^19",
@@ -71,9 +74,6 @@
         "husky": "^9.1.7",
         "knip": "^5.66.4",
         "lint-staged": "^16.2.3",
-        "postcss": "^8.5.6",
-        "postcss-preset-mantine": "^1.18.0",
-        "postcss-simple-vars": "^7.0.1",
         "prettier": "^3.6.2",
         "tailwindcss": "^4",
         "typescript": "^5.9.3"
