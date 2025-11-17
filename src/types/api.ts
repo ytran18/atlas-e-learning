@@ -108,6 +108,7 @@ export interface StartCourseRequest {
     userBirthDate: string;
     userCompanyName: string;
     userIdCard: string;
+    cccd: string;
 }
 
 export interface StartCourseResponse {

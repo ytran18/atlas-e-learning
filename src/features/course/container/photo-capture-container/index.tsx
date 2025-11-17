@@ -88,6 +88,7 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
                 userFullname: user?.unsafeMetadata?.fullName as string,
                 userBirthDate: user?.unsafeMetadata?.birthDate as string,
                 userCompanyName: user?.unsafeMetadata?.companyName as string,
+                cccd: user?.unsafeMetadata?.cccd as string,
                 userIdCard: user?.unsafeMetadata?.cccd as string,
             });
         } catch (err) {
