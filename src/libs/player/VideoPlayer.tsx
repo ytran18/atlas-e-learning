@@ -6,7 +6,7 @@ import Hls from "hls.js";
 import {
     MediaControlBar,
     MediaController,
-    MediaFullscreenButton,
+    // MediaFullscreenButton,
     MediaPlayButton,
     MediaTimeDisplay,
     MediaTimeRange,
@@ -48,22 +48,6 @@ const VideoPlayer = ({
 
     const [, setIsLoadingVideo] = useState<boolean>(false);
 
-    // Convert R2 URLs to proxy URLs for same-origin requests
-    const getProxyUrl = (originalUrl: string): string => {
-        // Check if it's an R2 URL that needs proxying
-        if (!originalUrl?.includes(process.env.NEXT_PUBLIC_R2_PUBLIC_URL!)) {
-            return originalUrl; // Not an R2 URL, return as is
-        }
-
-        // Extract path from R2 URL
-        // https://pub-xxx.r2.dev/videos/abc123.m3u8 -> videos/abc123.m3u8
-        const url = new URL(originalUrl);
-        const path = url.pathname.substring(1); // Remove leading slash
-
-        // Return proxy URL
-        return `/api/video/${path}`;
-    };
-
     const handleReady = () => {
         clearTimeout(isLoadingTimeoutRef.current as NodeJS.Timeout);
 
@@ -91,7 +75,7 @@ const VideoPlayer = ({
         if (!videoElement || !isHls || isUsingLink) return;
 
         // Convert R2 URL to proxy URL for same-origin requests
-        const proxySrc = getProxyUrl(src);
+        const proxySrc = src;
 
         // Prevent crash if `canPlayType` is not a function
         const canNativePlayHls =
