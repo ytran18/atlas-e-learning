@@ -14,7 +14,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     const isAdmin = user?.unsafeMetadata.role === "admin";
 
-    if (!isAdmin && loaded) {
+    const isStaff = user?.unsafeMetadata.role === "staff";
+
+    if (!isAdmin && !isStaff && loaded) {
         redirect(navigationPaths.LANDING_PAGE);
     }
 

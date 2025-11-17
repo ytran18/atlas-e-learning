@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 
 import dynamic from "next/dynamic";
-import { useParams, useRouter } from "next/navigation";
+import { redirect, useParams, useRouter } from "next/navigation";
 
+import { useClerk } from "@clerk/nextjs";
 import { Button } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
@@ -13,6 +14,7 @@ import { useCourseList } from "@/api";
 import Loader from "@/components/Loader";
 import AdminSidebar from "@/features/quan-tri/components/AdminSidebar";
 import { CourseListItem } from "@/types/api";
+import { navigationPaths } from "@/utils/navigationPaths";
 
 const ModalCreateNewCourse = dynamic(
     () => import("@/features/quan-tri/components/ModalCreateNewCourse"),
@@ -27,6 +29,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const { atldId } = useParams();
 
     const isMobile = useMediaQuery("(max-width: 640px)");
+
+    const { user } = useClerk();
+
+    const isStaff = user?.unsafeMetadata.role === "staff";
 
     const { data: courseList } = useCourseList("atld");
 
@@ -47,6 +53,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         router.push(`/quan-tri/atld/${course.id}`);
     };
+
+    if (isStaff) {
+        redirect(navigationPaths.QUAN_TRI_USER);
+    }
 
     if (!courseList)
         return (
