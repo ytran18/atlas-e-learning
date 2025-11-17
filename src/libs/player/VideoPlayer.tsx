@@ -209,7 +209,7 @@ const VideoPlayer = ({
                                 <div className="flex items-center gap-x-4">
                                     <MediaVolumeRange className="bg-transparent" />
 
-                                    <MediaFullscreenButton className="bg-transparent" />
+                                    {/* <MediaFullscreenButton className="bg-transparent" /> */}
                                 </div>
                             </div>
 
