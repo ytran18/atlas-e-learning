@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
+import { useClerk } from "@clerk/nextjs";
 import { Card, Loader, Tabs, ThemeIcon } from "@mantine/core";
 import { IconHammer, IconShield, IconUsers } from "@tabler/icons-react";
 
@@ -38,11 +39,16 @@ export const adminNavItems = [
 
 const AdminTabs = () => {
     const pathname = usePathname();
+
+    const { user } = useClerk();
+
     const router = useRouter();
 
     const [navigatingTab, setNavigatingTab] = useState<string | null>(null);
 
-    const currentTab = getCurrentAdminPathname(pathname);
+    const isAdmin = user?.unsafeMetadata?.role === "admin" ? true : false;
+
+    const currentTab = getCurrentAdminPathname(pathname, !isAdmin);
 
     useEffect(() => {
         // clear navigating state when route changes
@@ -74,6 +80,10 @@ const AdminTabs = () => {
                         const isActive = item.value === currentTab;
 
                         const isNavigating = navigatingTab === item.value;
+
+                        if ((item.value === "atld" || item.value === "hoc-nghe") && !isAdmin) {
+                            return null;
+                        }
 
                         return (
                             <Tabs.Tab

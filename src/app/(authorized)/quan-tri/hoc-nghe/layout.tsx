@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-import { useParams, useRouter } from "next/navigation";
+import { redirect, useParams, useRouter } from "next/navigation";
 
+import { useClerk } from "@clerk/nextjs";
 import { Button } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
@@ -13,6 +14,7 @@ import Loader from "@/components/Loader";
 import AdminSidebar from "@/features/quan-tri/components/AdminSidebar";
 import ModalCreateNewCourse from "@/features/quan-tri/components/ModalCreateNewCourse";
 import { CourseListItem } from "@/types/api";
+import { navigationPaths } from "@/utils/navigationPaths";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -20,6 +22,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const { hocNgheId } = useParams();
 
     const isMobile = useMediaQuery("(max-width: 640px)");
+
+    const { user } = useClerk();
+
+    const isStaff = user?.unsafeMetadata.role === "staff";
 
     const [openedModalCreateNewCourse, setOpenedModalCreateNewCourse] = useState<boolean>(false);
 
@@ -38,6 +44,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         router.push(`/quan-tri/hoc-nghe/${course.id}`);
     };
+
+    if (isStaff) {
+        redirect(navigationPaths.QUAN_TRI_USER);
+    }
 
     if (!courseList)
         return (

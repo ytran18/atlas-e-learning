@@ -20,7 +20,10 @@ const GlobalHeader = () => {
 
     const userData = user?.unsafeMetadata;
 
-    const isAdmin = user?.unsafeMetadata?.role === "admin" ? true : false;
+    const isAdmin =
+        user?.unsafeMetadata?.role === "admin" || user?.unsafeMetadata?.role === "staff"
+            ? true
+            : false;
 
     const currentPath = usePathname();
 
