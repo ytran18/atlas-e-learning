@@ -325,6 +325,7 @@ export async function saveLearningCapture(
 /**
  * Get all students progress for a specific group (with pagination)
  * Optimized: Count query is now optional and can be skipped for better performance
+ * Supports searching by: userFullname, userIdCard (cccd), and userCompanyName
  */
 export async function getGroupStats(
     groupId: string,
@@ -339,17 +340,32 @@ export async function getGroupStats(
         .doc(groupId)
         .collection(COLLECTIONS.USERS);
 
-    // Nếu có search name thì order theo tên
-    if (searchName) {
-        const searchEnd = searchName + "\uf8ff";
+    // Determine search strategy based on search term
+    const isNumericSearch = searchName && /^\d+$/.test(searchName.trim());
+    const searchTerm = searchName?.trim().toLowerCase() || "";
 
-        queryRef = queryRef.orderBy("userFullname").startAt(searchName).endAt(searchEnd);
+    if (searchName) {
+        if (isNumericSearch) {
+            // For numeric search (ID card), order by lastUpdatedAt and filter by ID card in memory
+            // This avoids potential index issues with cccd/userIdCard fields
+            queryRef = queryRef.orderBy("lastUpdatedAt", "desc");
+        } else {
+            // For text search, order by userFullname (supports name and company name filtering)
+            const searchEnd = searchName + "\uf8ff";
+            queryRef = queryRef.orderBy("userFullname").startAt(searchName).endAt(searchEnd);
+        }
     } else {
         queryRef = queryRef.orderBy("lastUpdatedAt", "desc");
     }
 
+    // When searching, fetch more results to filter by multiple fields
+    // This allows us to search across name, ID card, and company name
+    // Optimized: Use pageSize * 2 instead of * 3 to reduce read operations
+    // while still providing enough results for filtering
+    const fetchLimit = searchName ? Math.max(pageSize * 2, 50) : pageSize + 1;
+
     // Optimize cursor pagination: only fetch cursor doc if needed
-    let query = queryRef.limit(pageSize + 1);
+    let query = queryRef.limit(fetchLimit);
 
     if (cursor) {
         // Try to use cursor directly without fetching the document first
@@ -394,33 +410,57 @@ export async function getGroupStats(
             ? countResult.value.data().count || 0
             : 0;
 
-    const hasMore = snapshotData.docs.length > pageSize;
-
-    const docs = hasMore ? snapshotData.docs.slice(0, pageSize) : snapshotData.docs;
-
-    const data: StudentStats[] = docs.map((doc) => {
+    // Map all documents first
+    const allDocs = snapshotData.docs.map((doc) => {
         const d = doc.data();
 
         return {
-            userId: doc.id,
-            fullname: d.userFullname || "",
-            companyName: d.userCompanyName || "",
-            isCompleted: d.isCompleted || false,
-            startedAt: d.startedAt || 0,
-            lastUpdatedAt: d.lastUpdatedAt || 0,
-            startImageUrl: d.startImageUrl,
-            finishImageUrl: d.finishImageUrl,
-            completedVideos: d.completedVideos || [],
-            courseName: d.courseName || "",
-            currentSection: d.currentSection || "",
-            currentVideoIndex: d.currentVideoIndex || 0,
-            birthDate: d.userBirthDate || "",
-            examResult: d.examResult || {},
-            userIdCard: d.cccd || "",
+            doc,
+            data: {
+                userId: doc.id,
+                fullname: d.userFullname || "",
+                companyName: d.userCompanyName || "",
+                isCompleted: d.isCompleted || false,
+                startedAt: d.startedAt || 0,
+                lastUpdatedAt: d.lastUpdatedAt || 0,
+                startImageUrl: d.startImageUrl,
+                finishImageUrl: d.finishImageUrl,
+                completedVideos: d.completedVideos || [],
+                courseName: d.courseName || "",
+                currentSection: d.currentSection || "",
+                currentVideoIndex: d.currentVideoIndex || 0,
+                birthDate: d.userBirthDate || "",
+                examResult: d.examResult || {},
+                userIdCard: String(d.cccd ?? d.userIdCard ?? ""),
+            },
         };
     });
 
-    const nextCursor = hasMore ? docs[docs.length - 1].id : undefined;
+    // Filter results if searching (to support searching by name, ID card, and company name)
+    let filteredDocs = allDocs;
+    if (searchName) {
+        if (isNumericSearch) {
+            // For numeric search, filter by ID card (cccd or userIdCard)
+            filteredDocs = allDocs.filter((item) => {
+                return item.data.userIdCard.includes(searchName.trim());
+            });
+        } else {
+            // For text search, filter by name or company name
+            filteredDocs = allDocs.filter((item) => {
+                const fullnameMatch = item.data.fullname.toLowerCase().includes(searchTerm);
+                const companyMatch = item.data.companyName.toLowerCase().includes(searchTerm);
+                return fullnameMatch || companyMatch;
+            });
+        }
+    }
+
+    // Apply pagination to filtered results
+    const hasMore = filteredDocs.length > pageSize;
+    const paginatedDocs = hasMore ? filteredDocs.slice(0, pageSize) : filteredDocs;
+
+    const data: StudentStats[] = paginatedDocs.map((item) => item.data);
+
+    const nextCursor = hasMore ? paginatedDocs[paginatedDocs.length - 1].doc.id : undefined;
 
     const totalDocs = includeCount ? countData : 0;
 
