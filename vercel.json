@@ -3,5 +3,10 @@
     "devCommand": "npm run dev",
     "installCommand": "npm ci",
     "framework": "nextjs",
-    "outputDirectory": ".next"
+    "outputDirectory": ".next",
+    "build": {
+        "env": {
+            "NEXT_PRIVATE_TURBOPACK": "0"
+        }
+    }
 }
