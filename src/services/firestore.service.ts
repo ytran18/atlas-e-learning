@@ -145,7 +145,8 @@ export async function createUserProgress(
     userFullname: string,
     userBirthDate: string,
     userCompanyName: string,
-    userIdCard: string
+    userIdCard: string,
+    cccd: string
 ): Promise<CourseProgress> {
     const now = Date.now();
 
@@ -176,6 +177,7 @@ export async function createUserProgress(
         userBirthDate,
         userCompanyName,
         userIdCard,
+        cccd,
     };
 
     // Ghi tuần tự để chắc chắn parent đã tồn tại
@@ -432,6 +434,7 @@ export async function getGroupStats(
                 birthDate: d.userBirthDate || "",
                 examResult: d.examResult || {},
                 userIdCard: String(d.cccd ?? d.userIdCard ?? ""),
+                cccd: String(d.cccd ?? ""),
             },
         };
     });
