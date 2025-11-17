@@ -108,7 +108,7 @@ const AdminUserPage = () => {
         >
             <div className="flex-1 flex w-full">
                 <Card withBorder className="w-full h-full flex flex-col gap-y-4 flex-1">
-                    <UserFilter ref={tableRef as React.RefObject<HTMLDivElement>} />
+                    <UserFilter />
 
                     <UserTable ref={tableRef} isLoading={isLoading} />
                 </Card>
