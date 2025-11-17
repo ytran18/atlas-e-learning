@@ -32,7 +32,7 @@ export function PageSEO({
     const fullDescription =
         description || "Hệ thống đào tạo trực tuyến chuyên nghiệp về An Toàn Lao Động";
     const fullUrl = url ? `${baseUrl}${url}` : baseUrl;
-    const fullImage = image ? `${baseUrl}${image}` : `${baseUrl}/images/banner.jpg`;
+    const fullImage = image ? `${baseUrl}${image}` : `${baseUrl}/images/atld-logo.webp`;
 
     useEffect(() => {
         // Update document title
