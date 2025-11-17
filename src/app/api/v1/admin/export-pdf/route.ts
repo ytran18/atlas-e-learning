@@ -7,7 +7,8 @@
  */
 import { NextRequest } from "next/server";
 
-import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer-core";
 
 import { getGroupStats } from "@/services/firestore.service";
 import { CourseType, StudentStats } from "@/types/api";
@@ -244,11 +245,27 @@ export async function POST(request: NextRequest) {
         // Generate HTML
         const html = generatePDFHTML(allData, courseName);
 
-        // Launch Puppeteer
-        browser = await puppeteer.launch({
-            headless: true,
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        });
+        // Detect serverless environment (Vercel sets VERCEL env variable)
+        const isServerless = !!process.env.VERCEL;
+
+        // Launch Puppeteer with appropriate configuration
+        if (isServerless) {
+            // Use bundled Chromium for serverless environments
+            browser = await puppeteer.launch({
+                args: chromium.args,
+                defaultViewport: { width: 1920, height: 1080 },
+                executablePath: await chromium.executablePath(),
+                headless: true,
+            });
+        } else {
+            // Use system Chrome/Chromium for local development
+            browser = await puppeteer.launch({
+                args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                defaultViewport: { width: 1920, height: 1080 },
+                channel: "chrome", // Use system Chrome
+                headless: true,
+            });
+        }
 
         const page = await browser.newPage();
         await page.setContent(html, { waitUntil: "networkidle0" });
