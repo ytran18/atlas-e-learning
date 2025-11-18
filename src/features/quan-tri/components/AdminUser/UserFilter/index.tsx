@@ -5,9 +5,12 @@ import { FunctionComponent, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button, Select } from "@mantine/core";
+import { DatePickerInput, DatesRangeValue } from "@mantine/dates";
 import { useDebouncedValue, useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconPdf } from "@tabler/icons-react";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
 import { SearchBox, useInstantSearch } from "react-instantsearch-hooks-web";
 
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
@@ -26,6 +29,9 @@ const UserFilter: FunctionComponent = () => {
 
     const search = searchParams.get("search");
 
+    const startDateParam = searchParams.get("startDate");
+    const endDateParam = searchParams.get("endDate");
+
     const { courseList } = useAdminUserContext();
 
     const { results } = useInstantSearch();
@@ -38,12 +44,25 @@ const UserFilter: FunctionComponent = () => {
 
     const [isExporting, setIsExporting] = useState(false);
 
+    const [dateRange, setDateRange] = useState<DatesRangeValue>([
+        startDateParam ? new Date(parseInt(startDateParam, 10)) : null,
+        endDateParam ? new Date(parseInt(endDateParam, 10)) : null,
+    ]);
+
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Sync value with search param from URL (e.g., when navigating back)
     useEffect(() => {
         setValue(search || "");
     }, [search]);
+
+    // Sync date range with URL params
+    useEffect(() => {
+        setDateRange([
+            startDateParam ? new Date(parseInt(startDateParam, 10)) : null,
+            endDateParam ? new Date(parseInt(endDateParam, 10)) : null,
+        ] as DatesRangeValue);
+    }, [startDateParam, endDateParam]);
 
     const handleSelectCourse = (value: string, option: any) => {
         if (!option?.type) return;
@@ -155,8 +174,38 @@ const UserFilter: FunctionComponent = () => {
         router.push(`?${params.toString()}`);
     }, [debouncedValue, router, searchParams]);
 
+    // Handle date range change
+    const handleDateRangeChange = (value: DatesRangeValue) => {
+        setDateRange(value);
+
+        const params = new URLSearchParams(searchParams.toString());
+
+        const startDate = value[0];
+        const endDate = value[1];
+
+        if (startDate && endDate) {
+            // Convert to Date if string
+            const startDateObj = typeof startDate === "string" ? new Date(startDate) : startDate;
+            const endDateObj = typeof endDate === "string" ? new Date(endDate) : endDate;
+
+            // Convert to milliseconds (Algolia uses milliseconds for numeric filters)
+            const startTimestamp = startDateObj.getTime();
+            // Set end date to end of day
+            const endOfDay = dayjs(endDateObj).endOf("day").toDate();
+            const endTimestampEndOfDay = endOfDay.getTime();
+
+            params.set("startDate", startTimestamp.toString());
+            params.set("endDate", endTimestampEndOfDay.toString());
+        } else {
+            params.delete("startDate");
+            params.delete("endDate");
+        }
+
+        router.push(`?${params.toString()}`);
+    };
+
     return (
-        <div className="w-full flex items-center gap-x-2">
+        <div className="w-full flex flex-col sm:flex-row items-center gap-y-2 sm:gap-x-2 flex-wrap">
             <SearchBox
                 className="user-filter-search-box"
                 placeholder="Tìm kiếm theo tên..."
@@ -167,7 +216,7 @@ const UserFilter: FunctionComponent = () => {
                 <Select
                     searchable
                     defaultValue={courseId}
-                    w={"400px"}
+                    w={"200px"}
                     placeholder="Chọn khóa học"
                     nothingFoundMessage="Chưa có khóa học nào!"
                     data={courseList.map((item) => ({
@@ -178,6 +227,20 @@ const UserFilter: FunctionComponent = () => {
                     onChange={(value, option: any) => handleSelectCourse(value as string, option)}
                 />
             )}
+
+            <DatePickerInput
+                type="range"
+                placeholder="Từ ngày - Đến ngày"
+                value={dateRange}
+                onChange={handleDateRangeChange}
+                clearable
+                w={isMobile ? "100%" : "220px"}
+                locale="vi"
+                valueFormat="DD/MM/YYYY"
+                popoverProps={{
+                    position: "bottom",
+                }}
+            />
 
             <Button onClick={handleExportPDF} loading={isExporting} disabled={isExporting}>
                 <div className="flex items-center gap-x-2">

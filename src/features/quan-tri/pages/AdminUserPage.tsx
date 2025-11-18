@@ -42,6 +42,22 @@ const AdminUserPage = () => {
         return 20;
     }, [searchParams]);
 
+    // Build numeric filters for date range
+    const numericFilters = useMemo(() => {
+        const startDate = searchParams.get("startDate");
+        const endDate = searchParams.get("endDate");
+        const filters: string[] = [];
+
+        if (startDate) {
+            filters.push(`lastUpdatedAt >= ${startDate}`);
+        }
+        if (endDate) {
+            filters.push(`lastUpdatedAt <= ${endDate}`);
+        }
+
+        return filters.length > 0 ? filters : undefined;
+    }, [searchParams]);
+
     if (!courseList) return null;
 
     if (!courseId) {
@@ -49,6 +65,7 @@ const AdminUserPage = () => {
             <InstantSearch searchClient={searchClient} indexName={indexName}>
                 <Configure
                     filters={courseId ? `groupId:"${courseId}"` : ""}
+                    numericFilters={numericFilters}
                     attributesToRetrieve={[
                         "userFullname",
                         "cccd",
@@ -85,6 +102,8 @@ const AdminUserPage = () => {
         <InstantSearch searchClient={searchClient} indexName={indexName}>
             <Configure
                 filters={`groupId:"${courseId}"`}
+                numericFilters={numericFilters}
+                facets={["groupId"]}
                 attributesToRetrieve={[
                     "userFullname",
                     "cccd",
@@ -93,6 +112,7 @@ const AdminUserPage = () => {
                     "userIdCard",
                     "currentSection",
                     "isCompleted",
+                    "lastUpdatedAt",
                 ]}
                 attributesToHighlight={["userFullname"]}
                 hitsPerPage={hitsPerPage}

@@ -1,5 +1,5 @@
 .user-filter-search-box {
-    width: 100%;
+    flex: 1;
 }
 
 .ais-SearchBox-form {
@@ -32,4 +32,11 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
+}
+
+@media (max-width: 640px) {
+    .user-filter-search-box {
+        flex: none;
+        width: 100%;
+    }
 }
