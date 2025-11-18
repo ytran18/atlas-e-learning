@@ -14,6 +14,9 @@ import { getGroupStats } from "@/services/firestore.service";
 import { CourseType, StudentStats } from "@/types/api";
 import { getQueryParams, handleApiError, requireAuth } from "@/utils/api.utils";
 
+// Set max duration to 10 minutes (600 seconds) for Vercel
+export const maxDuration = 600;
+
 const generatePDFHTML = (data: StudentStats[], courseName: string): string => {
     const formatCheckbox = (checked: boolean) => {
         return checked
@@ -268,9 +271,14 @@ export async function POST(request: NextRequest) {
         }
 
         const page = await browser.newPage();
-        await page.setContent(html, { waitUntil: "networkidle0" });
 
-        // Generate PDF
+        // Set timeout to 10 minutes (600,000ms) for page operations
+        page.setDefaultNavigationTimeout(600000);
+        page.setDefaultTimeout(600000);
+
+        await page.setContent(html, { waitUntil: "networkidle0", timeout: 600000 });
+
+        // Generate PDF with timeout
         const pdf = await page.pdf({
             format: "A4",
             landscape: true,
@@ -281,6 +289,7 @@ export async function POST(request: NextRequest) {
                 left: "15mm",
             },
             printBackground: true,
+            timeout: 600000,
         });
 
         await browser.close();
