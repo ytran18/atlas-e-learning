@@ -3,7 +3,7 @@ import axios from "axios";
 // Create axios instance with default config
 const axiosInstance = axios.create({
     baseURL: "/api",
-    timeout: 30000, // 30 seconds
+    timeout: 600000, // 10 minutes
     headers: {
         "Content-Type": "application/json",
     },
