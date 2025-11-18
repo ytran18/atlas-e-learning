@@ -2,8 +2,8 @@
  * POST /api/v1/admin/export-pdf
  *
  * Export student statistics as PDF (admin only)
- * Query params: type, courseId, search (optional)
- * Returns: PDF file
+ * Query params: type, courseId, search (optional), page (optional), pageSize (optional)
+ * Returns: PDF file for the specified page
  */
 import { NextRequest } from "next/server";
 
@@ -18,7 +18,13 @@ import { getQueryParams, handleApiError, requireAuth } from "@/utils/api.utils";
 // Note: Hobby plan max is 300s. For 10 minutes, upgrade to Pro plan (max 900s)
 export const maxDuration = 300;
 
-const generatePDFHTML = (data: StudentStats[], courseName: string): string => {
+const generatePDFHTML = (
+    data: StudentStats[],
+    courseName: string,
+    currentPage: number,
+    totalPages: number,
+    totalDocs: number
+): string => {
     const formatCheckbox = (checked: boolean) => {
         return checked
             ? '<span style="color: #1f2937; font-size: 16px; font-weight: 500;">✓</span>'
@@ -166,7 +172,8 @@ const generatePDFHTML = (data: StudentStats[], courseName: string): string => {
         <h1>Báo cáo học viên</h1>
         <div class="meta">
             <span><strong>Khóa học:</strong> ${courseName}</span>
-            <span><strong>Tổng số học viên:</strong> ${data.length}</span>
+            <span><strong>Tổng số học viên:</strong> ${totalDocs}</span>
+            <span><strong>Trang:</strong> ${currentPage} / ${totalPages}</span>
             <span><strong>Ngày xuất:</strong> ${new Date().toLocaleDateString("vi-VN", {
                 year: "numeric",
                 month: "long",
@@ -219,35 +226,54 @@ export async function POST(request: NextRequest) {
         const type = queryParams.type as CourseType;
         const courseId = queryParams.courseId;
         const search = queryParams.search;
+        const pageNumber = parseInt(queryParams.page || "1", 10);
+        const pageSize = parseInt(queryParams.pageSize || "50", 10);
 
         // Validate required params
         if (!type || !courseId) {
             throw new Error("VALIDATION: type and courseId are required");
         }
 
-        // Fetch all student stats (no pagination for PDF export)
-        // We'll fetch in batches to get all data
-        let allData: StudentStats[] = [];
+        // Fetch only the current page data
+        // For page 1, we can fetch directly. For other pages, we need to navigate there.
+        // To optimize, we'll use a larger pageSize for PDF export to get more data per page
+        const pdfPageSize = Math.max(pageSize, 50); // Use at least 50 items per page for PDF
+        const targetPage = Math.max(1, pageNumber);
         let cursor: string | undefined;
-        let hasMore = true;
-        const batchSize = 100;
+        let currentPage = 1;
 
-        while (hasMore) {
-            const stats = await getGroupStats(courseId, batchSize, cursor, search, false);
-            allData = [...allData, ...stats.data];
-            cursor = stats.nextCursor;
-            hasMore = stats.hasMore;
+        // Only navigate if we're not on page 1
+        if (targetPage > 1) {
+            // For pages > 1, we need to navigate there by fetching previous pages
+            // This is acceptable since we're only exporting one page at a time
+            while (currentPage < targetPage) {
+                const tempStats = await getGroupStats(courseId, pdfPageSize, cursor, search, false);
+                if (!tempStats.hasMore || !tempStats.nextCursor) {
+                    throw new Error(`VALIDATION: Page ${targetPage} does not exist`);
+                }
+                cursor = tempStats.nextCursor;
+                currentPage++;
+            }
         }
 
-        if (allData.length === 0) {
+        // Fetch the target page data with count for first page only
+        const includeCount = targetPage === 1;
+        const stats = await getGroupStats(courseId, pdfPageSize, cursor, search, includeCount);
+
+        if (stats.data.length === 0) {
             throw new Error("VALIDATION: No data to export");
         }
 
         // Get course name from first student or use default
-        const courseName = allData[0]?.courseName || "Khóa học";
+        const courseName = stats.data[0]?.courseName || "Khóa học";
 
-        // Generate HTML
-        const html = generatePDFHTML(allData, courseName);
+        // Calculate total pages if we have totalDocs
+        const totalPages =
+            stats.totalPages || Math.ceil((stats.totalDocs || stats.data.length) / pageSize);
+        const totalDocs = stats.totalDocs || stats.data.length;
+
+        // Generate HTML for current page only
+        const html = generatePDFHTML(stats.data, courseName, targetPage, totalPages, totalDocs);
 
         // Detect serverless environment (Vercel sets VERCEL env variable)
         const isServerless = !!process.env.VERCEL;
@@ -300,7 +326,7 @@ export async function POST(request: NextRequest) {
         return new Response(Buffer.from(pdf), {
             headers: {
                 "Content-Type": "application/pdf",
-                "Content-Disposition": `attachment; filename="bao-cao-hoc-vien-${courseId}-${Date.now()}.pdf"`,
+                "Content-Disposition": `attachment; filename="bao-cao-hoc-vien-${courseId}-trang-${targetPage}-${Date.now()}.pdf"`,
             },
         });
     } catch (error) {
