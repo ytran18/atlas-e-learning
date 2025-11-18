@@ -128,10 +128,63 @@ export async function getUserProgress(
         return null;
     }
 
+    const data = doc.data() as Omit<CourseProgress, "groupId">;
+
+    // Ensure completedVideos is always an array
     return {
         groupId: doc.id,
-        ...(doc.data() as Omit<CourseProgress, "groupId">),
+        ...data,
+        completedVideos: data.completedVideos || [],
     };
+}
+
+/**
+ * Batch get user progress for multiple groups
+ * More efficient than calling getUserProgress multiple times
+ * Path: users/{userId}/progress/{groupId}
+ */
+export async function getUserProgresses(
+    userId: string,
+    groupIds: string[]
+): Promise<Record<string, CourseProgress>> {
+    if (groupIds.length === 0) {
+        return {};
+    }
+
+    // Firestore batch read using Promise.all for parallel reads
+    const progressPromises = groupIds.map(async (groupId) => {
+        const doc = await adminDb
+            .collection(COLLECTIONS.USERS)
+            .doc(userId)
+            .collection(COLLECTIONS.PROGRESS)
+            .doc(groupId)
+            .get();
+
+        if (!doc.exists) {
+            return null;
+        }
+
+        const data = doc.data() as Omit<CourseProgress, "groupId">;
+
+        // Ensure completedVideos is always an array
+        return {
+            groupId: doc.id,
+            ...data,
+            completedVideos: data.completedVideos || [],
+        } as CourseProgress;
+    });
+
+    const results = await Promise.all(progressPromises);
+
+    // Convert array to object for easier lookup
+    const progressMap: Record<string, CourseProgress> = {};
+    groupIds.forEach((groupId, index) => {
+        if (results[index]) {
+            progressMap[groupId] = results[index]!;
+        }
+    });
+
+    return progressMap;
 }
 
 /**

@@ -127,6 +127,27 @@ export async function getCourseProgress(
 }
 
 /**
+ * Batch get user progress for multiple courses
+ * More efficient than calling getCourseProgress multiple times
+ */
+export async function getAllCourseProgresses(
+    type: CourseType,
+    groupIds: string[]
+): Promise<Record<string, GetProgressResponse>> {
+    if (groupIds.length === 0) {
+        return {};
+    }
+
+    const endpoint =
+        type === "atld" ? "/api/v1/atld/progress/batch" : "/api/v1/hoc-nghe/progress/batch";
+    const response = await apiFetch<{ progress: Record<string, GetProgressResponse> }>(endpoint, {
+        method: "POST",
+        body: JSON.stringify({ groupIds }),
+    });
+    return response.data.progress;
+}
+
+/**
  * Update user progress
  */
 export async function updateCourseProgress(

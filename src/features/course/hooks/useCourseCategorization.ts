@@ -41,7 +41,7 @@ export function useCourseCategorization({ data, type }: UseCourseCategorizationP
             if (progress) {
                 if (progress.isCompleted) {
                     status = "completed";
-                } else if (progress.completedVideos.length > 0) {
+                } else if (progress.completedVideos && progress.completedVideos.length > 0) {
                     status = "in-progress";
                 } else {
                     status = "incomplete";
