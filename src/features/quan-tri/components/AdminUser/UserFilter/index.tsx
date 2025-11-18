@@ -23,6 +23,10 @@ const UserFilter: FunctionComponent = () => {
 
     const search = searchParams.get("search");
 
+    const page = searchParams.get("page") || "1";
+
+    const pageSize = searchParams.get("pageSize") || "50";
+
     const { courseList } = useAdminUserContext();
 
     const isMobile = useMediaQuery("(max-width: 640px)");
@@ -62,6 +66,8 @@ const UserFilter: FunctionComponent = () => {
             const params = new URLSearchParams({
                 type,
                 courseId,
+                page,
+                pageSize,
             });
 
             if (search) {
