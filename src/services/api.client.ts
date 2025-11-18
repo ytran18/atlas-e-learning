@@ -347,3 +347,25 @@ export async function getUserDetail(
     const response = await apiFetch<StudentStats>(endpoint);
     return response.data;
 }
+
+/**
+ * Get student stats by user IDs for PDF export (admin only)
+ * This is a lightweight endpoint that only fetches data
+ */
+export async function getStudentStatsByUserIds(
+    type: CourseType,
+    courseId: string,
+    objectIDs: string[]
+): Promise<StudentStats[]> {
+    const params = new URLSearchParams({
+        type,
+        courseId,
+    });
+
+    const response = await apiFetch<StudentStats[]>(`/api/v1/admin/export-pdf-data?${params}`, {
+        method: "POST",
+        body: JSON.stringify({ objectIDs }),
+    });
+
+    return response.data;
+}
