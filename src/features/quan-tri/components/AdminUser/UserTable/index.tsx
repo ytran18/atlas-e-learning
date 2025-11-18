@@ -1,85 +1,91 @@
 import { forwardRef, useState } from "react";
 
 import dynamic from "next/dynamic";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
-import { Checkbox, Image, Pagination, Table } from "@mantine/core";
+import { Checkbox, Modal, Table } from "@mantine/core";
 import { Empty } from "antd";
+import { useInstantSearch } from "react-instantsearch-hooks-web";
 
-import { useCourseDetail } from "@/api";
+import { useCourseDetail, useGetUserDetail } from "@/api";
 import Loader from "@/components/Loader";
 import { tableHeader } from "@/features/quan-tri/constants/userTable";
-import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
-import { CourseType, StudentStats } from "@/types/api";
+import { CourseType } from "@/types/api";
 
 const ModalUserDetail = dynamic(() => import("./ModalUserDetail"), {
     ssr: false,
 });
 
+const CustomPagination = dynamic(() => import("./CustomPagination"), {
+    ssr: false,
+});
+
 type UserTableProps = {
     className?: string;
-    isLoading?: boolean;
 };
 
-const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoading }, ref) => {
-    const router = useRouter();
-
+const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref) => {
     const searchParams = useSearchParams();
-
-    const page = searchParams.get("page");
 
     const type = searchParams.get("type");
 
     const courseId = searchParams.get("courseId");
+
+    const { results } = useInstantSearch();
+
+    // Check if Algolia is still loading (results might be null initially)
+    const isLoading = !results;
 
     // get course detail
     const { data: courseDetail } = useCourseDetail(type as CourseType, courseId as string);
 
     const [openedModalUserDetail, setOpenedModalUserDetail] = useState<boolean>(false);
 
-    const [userDetail, setUserDetail] = useState<StudentStats | null>(null);
+    const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
-    const { tableData, totalPages: totalPagesContext } = useAdminUserContext();
+    // Fetch user detail when a row is clicked
+    const { data: userDetail, isLoading: isLoadingUserDetail } = useGetUserDetail(
+        type as CourseType,
+        courseId as string,
+        selectedUserId as string,
+        {
+            enabled: !!selectedUserId && !!courseId && !!type,
+        }
+    );
 
-    const totalPages = Number(searchParams.get("totalPages")) || totalPagesContext;
-
-    const currentPage = Number(page) || 1;
-
-    const isTableDataEmpty = tableData.length === 0;
+    const isTableDataEmpty = results?.hits?.length === 0;
 
     if (isTableDataEmpty) return <Empty description="Không có dữ liệu" />;
 
-    const handlePageChange = (newPage: number) => {
-        const params = new URLSearchParams(searchParams.toString());
+    const rows = results?.hits?.map((element: any) => {
+        const isCompleted = Boolean(element.isCompleted);
 
-        params.set("page", String(newPage));
-
-        router.push(`?${params.toString()}`);
-    };
-
-    const rows = tableData?.map((element) => {
-        const isCompleted = element.isCompleted;
-
-        const isTheoryCompleted =
+        const isTheoryCompleted = Boolean(
             element.currentSection === "practice" ||
-            element.currentSection === "exam" ||
-            isCompleted;
+                element.currentSection === "exam" ||
+                isCompleted
+        );
 
-        const isPracticeCompleted = element.currentSection === "exam" || isCompleted;
+        const isPracticeCompleted = Boolean(element.currentSection === "exam" || isCompleted);
 
         const handleRowClick = () => {
-            setUserDetail(element);
+            // Get userId from objectID or element data
+            const userId = element?.objectID || element?.userId;
+            const groupId = element?.groupId || courseId;
 
-            setOpenedModalUserDetail(true);
+            if (userId && groupId) {
+                setSelectedUserId(userId);
+                setOpenedModalUserDetail(true);
+            }
         };
 
         return (
-            <Table.Tr key={element.userId} onClick={handleRowClick}>
-                <Table.Td>{element.fullname}</Table.Td>
+            <Table.Tr key={element?.cccd ?? element?.userIdCard} onClick={handleRowClick}>
+                <Table.Td>{element?.userFullname ?? ""}</Table.Td>
 
-                <Table.Td>{element.userIdCard}</Table.Td>
+                <Table.Td>{element?.userIdCard ?? element?.cccd ?? ""}</Table.Td>
 
-                <Table.Td>{element.birthDate}</Table.Td>
+                {/* <Table.Td>{element.birthDate}</Table.Td> */}
 
                 <Table.Td>
                     <Checkbox readOnly checked={isTheoryCompleted} />
@@ -93,11 +99,11 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
                     <Checkbox readOnly checked={isCompleted} />
                 </Table.Td>
 
-                <Table.Td>{element.companyName}</Table.Td>
+                {/* <Table.Td>{element.companyName}</Table.Td> */}
 
-                <Table.Td>{element.courseName}</Table.Td>
+                {/* <Table.Td>{element.courseName}</Table.Td> */}
 
-                <Table.Td>
+                {/* <Table.Td>
                     <Image
                         src={element.startImageUrl}
                         alt={element.fullname}
@@ -111,7 +117,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
                         alt={element.fullname}
                         className="max-w-[100px] max-h-[50px] object-cover"
                     />
-                </Table.Td>
+                </Table.Td> */}
 
                 <Table.Td>
                     <Checkbox readOnly checked={isCompleted} />
@@ -142,16 +148,37 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className, isLoa
                 </Table>
             </div>
 
-            <div className="w-full flex justify-end">
-                <Pagination total={totalPages} value={currentPage} onChange={handlePageChange} />
+            <div className="w-full">
+                <CustomPagination />
             </div>
 
-            <ModalUserDetail
-                opened={openedModalUserDetail}
-                onClose={() => setOpenedModalUserDetail(false)}
-                user={userDetail}
-                courseDetail={courseDetail}
-            />
+            {isLoadingUserDetail ? (
+                <Modal
+                    opened={openedModalUserDetail}
+                    onClose={() => {
+                        setOpenedModalUserDetail(false);
+                        setSelectedUserId(null);
+                    }}
+                    title="Đang tải..."
+                    closeOnEscape={false}
+                    centered
+                    size="lg"
+                >
+                    <div className="flex items-center justify-center min-h-[200px]">
+                        <Loader />
+                    </div>
+                </Modal>
+            ) : (
+                <ModalUserDetail
+                    opened={openedModalUserDetail}
+                    onClose={() => {
+                        setOpenedModalUserDetail(false);
+                        setSelectedUserId(null);
+                    }}
+                    user={userDetail || null}
+                    courseDetail={courseDetail}
+                />
+            )}
         </div>
     );
 });
