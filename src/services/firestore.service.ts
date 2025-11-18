@@ -214,6 +214,17 @@ export async function createUserProgress(
         lastUpdatedAt: now,
     };
 
+    const userProgressData = {
+        ...progressData,
+        startImageUrl: portraitUrl,
+        courseName,
+        userFullname,
+        userBirthDate,
+        userCompanyName,
+        userIdCard,
+        cccd,
+    };
+
     const progressGroupRef = adminDb.collection(COLLECTIONS.PROGRESS).doc(groupId);
     const docSnap = await progressGroupRef.get();
 
@@ -234,7 +245,7 @@ export async function createUserProgress(
         }
 
         // Quan trọng: chờ hoàn tất set này trước khi ghi xuống subcollection
-        await progressGroupRef.set(parentData);
+        await progressGroupRef.set(userProgressData);
     } else {
         // Cập nhật updatedAt và courseName nếu document đã tồn tại
         await progressGroupRef.update({
@@ -242,17 +253,6 @@ export async function createUserProgress(
             courseName,
         });
     }
-
-    const userProgressData = {
-        ...progressData,
-        startImageUrl: portraitUrl,
-        courseName,
-        userFullname,
-        userBirthDate,
-        userCompanyName,
-        userIdCard,
-        cccd,
-    };
 
     // Ghi tuần tự để chắc chắn parent đã tồn tại
     // await adminDb
@@ -340,11 +340,9 @@ export async function updateUserProgress(
         updateData.examResult = updates.examResult;
     }
 
-    // Use set with merge to create document if it doesn't exist
-    // This ensures both paths are updated even if documents don't exist yet
-    await progressRef.set(updateData, { merge: true });
+    await progressRef.update(updateData);
 
-    await progressRefAdmin.set(updateData, { merge: true });
+    await progressRefAdmin.update(updateData);
 
     return { success: true, lastUpdatedAt: now };
 }
