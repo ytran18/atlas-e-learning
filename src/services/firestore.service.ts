@@ -340,9 +340,11 @@ export async function updateUserProgress(
         updateData.examResult = updates.examResult;
     }
 
-    await progressRef.update(updateData);
+    // Use set with merge to create document if it doesn't exist
+    // This ensures both paths are updated even if documents don't exist yet
+    await progressRef.set(updateData, { merge: true });
 
-    await progressRefAdmin.update(updateData);
+    await progressRefAdmin.set(updateData, { merge: true });
 
     return { success: true, lastUpdatedAt: now };
 }

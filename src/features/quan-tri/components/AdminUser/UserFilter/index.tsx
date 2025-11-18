@@ -14,6 +14,9 @@ import "dayjs/locale/vi";
 import { SearchBox, useInstantSearch } from "react-instantsearch-hooks-web";
 
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
+import { generatePDFFromData } from "@/features/quan-tri/utils/pdfGenerator";
+import { getStudentStatsByUserIds } from "@/services/api.client";
+import { CourseType } from "@/types/api";
 import { navigationPaths } from "@/utils/navigationPaths";
 
 import "./style.css";
@@ -95,34 +98,18 @@ const UserFilter: FunctionComponent = () => {
         setIsExporting(true);
 
         try {
-            const params = new URLSearchParams({
-                type,
-                courseId,
-            });
+            // Fetch student stats data (lightweight API call)
+            const data = await getStudentStatsByUserIds(type as CourseType, courseId, objectIDs);
 
-            const response = await fetch(`/api/v1/admin/export-pdf?${params.toString()}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    objectIDs,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to export PDF");
+            if (data.length === 0) {
+                throw new Error("No data to export");
             }
 
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `bao-cao-hoc-vien-${courseId}-${Date.now()}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            // Get course name from first student or use default
+            const courseName = data[0]?.courseName || "Khóa học";
+
+            // Generate PDF on client-side
+            await generatePDFFromData(data, courseName, courseId);
 
             notifications.show({
                 title: "Thành công",
