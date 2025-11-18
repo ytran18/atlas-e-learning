@@ -20,6 +20,7 @@ import {
     GetStatsResponse,
     StartCourseRequest,
     StartCourseResponse,
+    StudentStats,
     SubmitExamRequest,
     SubmitExamResponse,
     UpdateCourseRequest,
@@ -306,5 +307,22 @@ export async function getCourseDetail(
     console.log("endpoint", endpoint);
 
     const response = await apiFetch<GetCourseDetailResponse>(endpoint);
+    return response.data;
+}
+
+/**
+ * Get user progress detail (admin only)
+ */
+export async function getUserDetail(
+    type: CourseType,
+    groupId: string,
+    userId: string
+): Promise<StudentStats> {
+    const endpoint =
+        type === "atld"
+            ? `/api/v1/admin/atld/user/${groupId}/${userId}`
+            : `/api/v1/admin/hoc-nghe/user/${groupId}/${userId}`;
+
+    const response = await apiFetch<StudentStats>(endpoint);
     return response.data;
 }

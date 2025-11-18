@@ -2,15 +2,16 @@
  * POST /api/v1/admin/export-pdf
  *
  * Export student statistics as PDF (admin only)
- * Query params: type, courseId, search (optional), page (optional), pageSize (optional)
- * Returns: PDF file for the specified page
+ * Query params: type, courseId
+ * Body: { objectIDs: string[] } - Array of user IDs from Algolia search results
+ * Returns: PDF file for the current page results
  */
 import { NextRequest } from "next/server";
 
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 
-import { getGroupStats } from "@/services/firestore.service";
+import { getGroupStatsByUserIds } from "@/services/firestore.service";
 import { CourseType, StudentStats } from "@/types/api";
 import { getQueryParams, handleApiError, requireAuth } from "@/utils/api.utils";
 
@@ -225,55 +226,37 @@ export async function POST(request: NextRequest) {
         const queryParams = getQueryParams(request);
         const type = queryParams.type as CourseType;
         const courseId = queryParams.courseId;
-        const search = queryParams.search;
-        const pageNumber = parseInt(queryParams.page || "1", 10);
-        const pageSize = parseInt(queryParams.pageSize || "50", 10);
 
         // Validate required params
         if (!type || !courseId) {
             throw new Error("VALIDATION: type and courseId are required");
         }
 
-        // Fetch only the current page data
-        // For page 1, we can fetch directly. For other pages, we need to navigate there.
-        // To optimize, we'll use a larger pageSize for PDF export to get more data per page
-        const pdfPageSize = Math.max(pageSize, 50); // Use at least 50 items per page for PDF
-        const targetPage = Math.max(1, pageNumber);
-        let cursor: string | undefined;
-        let currentPage = 1;
+        // Get objectIDs from request body (from Algolia results)
+        const body = await request.json();
+        const objectIDs: string[] = body?.objectIDs || [];
 
-        // Only navigate if we're not on page 1
-        if (targetPage > 1) {
-            // For pages > 1, we need to navigate there by fetching previous pages
-            // This is acceptable since we're only exporting one page at a time
-            while (currentPage < targetPage) {
-                const tempStats = await getGroupStats(courseId, pdfPageSize, cursor, search, false);
-                if (!tempStats.hasMore || !tempStats.nextCursor) {
-                    throw new Error(`VALIDATION: Page ${targetPage} does not exist`);
-                }
-                cursor = tempStats.nextCursor;
-                currentPage++;
-            }
+        if (objectIDs.length === 0) {
+            throw new Error("VALIDATION: objectIDs are required");
         }
 
-        // Fetch the target page data with count for first page only
-        const includeCount = targetPage === 1;
-        const stats = await getGroupStats(courseId, pdfPageSize, cursor, search, includeCount);
+        // Fetch student stats directly by userIds (from Algolia results)
+        const data = await getGroupStatsByUserIds(courseId, objectIDs);
 
-        if (stats.data.length === 0) {
+        if (data.length === 0) {
             throw new Error("VALIDATION: No data to export");
         }
 
         // Get course name from first student or use default
-        const courseName = stats.data[0]?.courseName || "Khóa học";
+        const courseName = data[0]?.courseName || "Khóa học";
 
-        // Calculate total pages if we have totalDocs
-        const totalPages =
-            stats.totalPages || Math.ceil((stats.totalDocs || stats.data.length) / pageSize);
-        const totalDocs = stats.totalDocs || stats.data.length;
+        // For single page export, we show current page as 1 and total pages as 1
+        const currentPage = 1;
+        const totalPages = 1;
+        const totalDocs = data.length;
 
-        // Generate HTML for current page only
-        const html = generatePDFHTML(stats.data, courseName, targetPage, totalPages, totalDocs);
+        // Generate HTML for current page
+        const html = generatePDFHTML(data, courseName, currentPage, totalPages, totalDocs);
 
         // Detect serverless environment (Vercel sets VERCEL env variable)
         const isServerless = !!process.env.VERCEL;
@@ -326,7 +309,7 @@ export async function POST(request: NextRequest) {
         return new Response(Buffer.from(pdf), {
             headers: {
                 "Content-Type": "application/pdf",
-                "Content-Disposition": `attachment; filename="bao-cao-hoc-vien-${courseId}-trang-${targetPage}-${Date.now()}.pdf"`,
+                "Content-Disposition": `attachment; filename="bao-cao-hoc-vien-${courseId}-${Date.now()}.pdf"`,
             },
         });
     } catch (error) {

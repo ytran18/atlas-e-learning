@@ -1,16 +1,19 @@
 "use client";
 
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { Button, CloseButton, Input, Select } from "@mantine/core";
+import { Button, Select } from "@mantine/core";
 import { useDebouncedValue, useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconPdf, IconSearch } from "@tabler/icons-react";
+import { IconPdf } from "@tabler/icons-react";
+import { SearchBox, useInstantSearch } from "react-instantsearch-hooks-web";
 
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
 import { navigationPaths } from "@/utils/navigationPaths";
+
+import "./style.css";
 
 const UserFilter: FunctionComponent = () => {
     const router = useRouter();
@@ -23,11 +26,9 @@ const UserFilter: FunctionComponent = () => {
 
     const search = searchParams.get("search");
 
-    const page = searchParams.get("page") || "1";
-
-    const pageSize = searchParams.get("pageSize") || "50";
-
     const { courseList } = useAdminUserContext();
+
+    const { results } = useInstantSearch();
 
     const isMobile = useMediaQuery("(max-width: 640px)");
 
@@ -37,6 +38,8 @@ const UserFilter: FunctionComponent = () => {
 
     const [isExporting, setIsExporting] = useState(false);
 
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
     // Sync value with search param from URL (e.g., when navigating back)
     useEffect(() => {
         setValue(search || "");
@@ -45,9 +48,7 @@ const UserFilter: FunctionComponent = () => {
     const handleSelectCourse = (value: string, option: any) => {
         if (!option?.type) return;
 
-        router.push(
-            `${navigationPaths.QUAN_TRI_USER}?type=${option?.type}&courseId=${value}&page=1&pageSize=10`
-        );
+        router.push(`${navigationPaths.QUAN_TRI_USER}?type=${option?.type}&courseId=${value}`);
     };
 
     const handleExportPDF = async () => {
@@ -60,22 +61,34 @@ const UserFilter: FunctionComponent = () => {
             return;
         }
 
+        // Get objectIDs from Algolia results
+        const objectIDs = results?.hits?.map((hit: any) => hit.objectID).filter(Boolean) || [];
+
+        if (objectIDs.length === 0) {
+            notifications.show({
+                title: "Lỗi",
+                message: "Không có dữ liệu để xuất file",
+                color: "red",
+            });
+            return;
+        }
+
         setIsExporting(true);
 
         try {
             const params = new URLSearchParams({
                 type,
                 courseId,
-                page,
-                pageSize,
             });
-
-            if (search) {
-                params.set("search", search);
-            }
 
             const response = await fetch(`/api/v1/admin/export-pdf?${params.toString()}`, {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    objectIDs,
+                }),
             });
 
             if (!response.ok) {
@@ -109,17 +122,26 @@ const UserFilter: FunctionComponent = () => {
         }
     };
 
-    const InputRightSection = () => {
-        if (!value) return <IconSearch size={16} />;
+    // Tạo queryHook với debounce 300ms
+    const queryHook = useMemo(() => {
+        return (query: string, search: (value: string) => void) => {
+            // Clear timeout cũ nếu có
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
 
-        return (
-            <CloseButton
-                aria-label="Clear input"
-                onClick={() => setValue("")}
-                style={{ display: value ? undefined : "none" }}
-            />
-        );
-    };
+            // Nếu query rỗng, search ngay lập tức
+            if (!query.trim()) {
+                search("");
+                return;
+            }
+
+            // Debounce search với 300ms
+            timeoutRef.current = setTimeout(() => {
+                search(query);
+            }, 300);
+        };
+    }, []);
 
     useEffect(() => {
         const params = new URLSearchParams(searchParams.toString());
@@ -135,20 +157,17 @@ const UserFilter: FunctionComponent = () => {
 
     return (
         <div className="w-full flex items-center gap-x-2">
-            <Input
-                placeholder="Tìm kiếm theo tên, ID card hoặc tên công ty"
-                value={value}
-                onChange={(event) => setValue(event.currentTarget.value)}
-                rightSectionPointerEvents="all"
-                mt="md"
-                className="mt-0! flex-1"
-                rightSection={<InputRightSection />}
+            <SearchBox
+                className="user-filter-search-box"
+                placeholder="Tìm kiếm theo tên..."
+                queryHook={queryHook}
             />
 
             {!isMobile && (
                 <Select
                     searchable
                     defaultValue={courseId}
+                    w={"400px"}
                     placeholder="Chọn khóa học"
                     nothingFoundMessage="Chưa có khóa học nào!"
                     data={courseList.map((item) => ({
@@ -163,8 +182,6 @@ const UserFilter: FunctionComponent = () => {
             <Button onClick={handleExportPDF} loading={isExporting} disabled={isExporting}>
                 <div className="flex items-center gap-x-2">
                     <IconPdf />
-
-                    <span>Xuất File</span>
                 </div>
             </Button>
         </div>

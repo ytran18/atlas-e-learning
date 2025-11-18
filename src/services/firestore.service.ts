@@ -165,8 +165,29 @@ export async function createUserProgress(
     const docSnap = await progressGroupRef.get();
 
     if (!docSnap.exists) {
+        // Lấy thông tin group để có metadata đầy đủ
+        const groupData = await getGroupById(groupId);
+
+        // Tạo parent document với metadata
+        const parentData: FirestoreData = {
+            createdAt: now,
+            updatedAt: now,
+            courseName,
+        };
+
+        // Thêm type nếu có trong group data
+        if (groupData?.type) {
+            parentData.type = groupData.type;
+        }
+
         // Quan trọng: chờ hoàn tất set này trước khi ghi xuống subcollection
-        await progressGroupRef.set({ createdAt: now });
+        await progressGroupRef.set(parentData);
+    } else {
+        // Cập nhật updatedAt và courseName nếu document đã tồn tại
+        await progressGroupRef.update({
+            updatedAt: now,
+            courseName,
+        });
     }
 
     const userProgressData = {
@@ -496,4 +517,112 @@ export async function getUserById(userId: string): Promise<FirestoreData | null>
         id: doc.id,
         ...doc.data(),
     };
+}
+
+/**
+ * Get user progress detail from progress/{groupId}/users/{userId}
+ * Returns full user document with all fields
+ */
+export async function getUserProgressDetail(
+    groupId: string,
+    userId: string
+): Promise<StudentStats | null> {
+    const doc = await adminDb
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId)
+        .collection(COLLECTIONS.USERS)
+        .doc(userId)
+        .get();
+
+    if (!doc.exists) {
+        return null;
+    }
+
+    const d = doc.data();
+
+    return {
+        userId: doc.id,
+        fullname: d?.userFullname || "",
+        birthDate: d?.userBirthDate || "",
+        companyName: d?.userCompanyName || "",
+        isCompleted: d?.isCompleted || false,
+        startedAt: d?.startedAt || 0,
+        lastUpdatedAt: d?.lastUpdatedAt || 0,
+        startImageUrl: d?.startImageUrl,
+        finishImageUrl: d?.finishImageUrl,
+        completedVideos: d?.completedVideos || [],
+        courseName: d?.courseName || "",
+        currentSection: d?.currentSection || "theory",
+        currentVideoIndex: d?.currentVideoIndex || 0,
+        examResult: d?.examResult || undefined,
+        userIdCard: String(d?.cccd ?? d?.userIdCard ?? ""),
+    };
+}
+
+/**
+ * Get student stats by list of user IDs (from Algolia results)
+ * This is more efficient than pagination when we already have the objectIDs
+ */
+export async function getGroupStatsByUserIds(
+    groupId: string,
+    userIds: string[]
+): Promise<StudentStats[]> {
+    if (userIds.length === 0) {
+        return [];
+    }
+
+    // Firestore 'in' queries are limited to 10 items, so we need to batch
+    const batchSize = 10;
+    const batches: string[][] = [];
+
+    for (let i = 0; i < userIds.length; i += batchSize) {
+        batches.push(userIds.slice(i, i + batchSize));
+    }
+
+    // Fetch all batches in parallel
+    const batchPromises = batches.map((batch) => {
+        const queryRef = adminDb
+            .collection(COLLECTIONS.PROGRESS)
+            .doc(groupId)
+            .collection(COLLECTIONS.USERS)
+            .where(admin.firestore.FieldPath.documentId(), "in", batch);
+
+        return queryRef.get();
+    });
+
+    const batchResults = await Promise.all(batchPromises);
+
+    // Combine all results and map to StudentStats
+    const allDocs: StudentStats[] = [];
+
+    batchResults.forEach((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+            const d = doc.data();
+
+            allDocs.push({
+                userId: doc.id,
+                fullname: d.userFullname || "",
+                companyName: d.userCompanyName || "",
+                isCompleted: d.isCompleted || false,
+                startedAt: d.startedAt || 0,
+                lastUpdatedAt: d.lastUpdatedAt || 0,
+                startImageUrl: d.startImageUrl,
+                finishImageUrl: d.finishImageUrl,
+                completedVideos: d.completedVideos || [],
+                courseName: d.courseName || "",
+                currentSection: d.currentSection || "",
+                currentVideoIndex: d.currentVideoIndex || 0,
+                birthDate: d.userBirthDate || "",
+                examResult: d.examResult || {},
+                userIdCard: String(d.cccd ?? d.userIdCard ?? ""),
+            });
+        });
+    });
+
+    // Maintain the order of userIds as provided (matching Algolia results order)
+    const orderedDocs = userIds
+        .map((userId) => allDocs.find((doc) => doc.userId === userId))
+        .filter((doc): doc is StudentStats => doc !== undefined);
+
+    return orderedDocs;
 }
