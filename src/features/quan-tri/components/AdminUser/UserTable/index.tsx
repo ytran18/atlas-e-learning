@@ -85,8 +85,6 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
 
                 <Table.Td>{element?.userIdCard ?? element?.cccd ?? ""}</Table.Td>
 
-                {/* <Table.Td>{element.birthDate}</Table.Td> */}
-
                 <Table.Td>
                     <Checkbox readOnly checked={isTheoryCompleted} />
                 </Table.Td>
@@ -98,26 +96,6 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
                 <Table.Td>
                     <Checkbox readOnly checked={isCompleted} />
                 </Table.Td>
-
-                {/* <Table.Td>{element.companyName}</Table.Td> */}
-
-                {/* <Table.Td>{element.courseName}</Table.Td> */}
-
-                {/* <Table.Td>
-                    <Image
-                        src={element.startImageUrl}
-                        alt={element.fullname}
-                        className="max-w-[100px] max-h-[50px] object-cover"
-                    />
-                </Table.Td>
-
-                <Table.Td>
-                    <Image
-                        src={element.finishImageUrl}
-                        alt={element.fullname}
-                        className="max-w-[100px] max-h-[50px] object-cover"
-                    />
-                </Table.Td> */}
 
                 <Table.Td>
                     <Checkbox readOnly checked={isCompleted} />
