@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getAllCourseProgresses } from "@/services/api.client";
-import { CourseType } from "@/types/api";
+import { getCourseProgress } from "@/services/api.client";
+import { CourseProgress, CourseType } from "@/types/api";
 
 interface UseAllCourseProgressOptions {
     courseIds: string[];
@@ -10,8 +10,8 @@ interface UseAllCourseProgressOptions {
 }
 
 /**
- * Hook to fetch progress for multiple courses in a single batch request
- * Optimized to reduce API calls and Vercel function invocations
+ * Hook to fetch progress for multiple courses
+ * In a real implementation, this would batch the API calls or use a single endpoint
  */
 export function useAllCourseProgress({
     courseIds,
@@ -19,14 +19,27 @@ export function useAllCourseProgress({
     enabled = true,
 }: UseAllCourseProgressOptions) {
     return useQuery({
-        queryKey: ["course-progress", type, courseIds.sort().join(",")],
+        queryKey: ["course-progress", type, courseIds],
         queryFn: async () => {
-            // Use batch endpoint to fetch all progress in a single API call
-            const progressMap = await getAllCourseProgresses(type, courseIds);
+            // In a real implementation, this would be a single API call
+            // that returns progress for all courses at once
+            const progressPromises = courseIds.map((courseId) =>
+                getCourseProgress(type, courseId).catch(() => null)
+            );
+
+            const results = await Promise.all(progressPromises);
+
+            // Convert array to object for easier lookup
+            const progressMap: Record<string, CourseProgress> = {};
+            courseIds.forEach((courseId, index) => {
+                if (results[index]) {
+                    progressMap[courseId] = results[index]!;
+                }
+            });
+
             return progressMap;
         },
         enabled: enabled && courseIds.length > 0,
         staleTime: 0,
-        gcTime: 0,
     });
 }
