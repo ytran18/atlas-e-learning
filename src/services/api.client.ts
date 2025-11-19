@@ -138,12 +138,20 @@ export async function getAllCourseProgresses(
         return {};
     }
 
+    console.log("[getAllCourseProgresses] Request:", { type, groupIds, count: groupIds.length });
+
     const endpoint =
         type === "atld" ? "/api/v1/atld/progress/batch" : "/api/v1/hoc-nghe/progress/batch";
     const response = await apiFetch<{ progress: Record<string, GetProgressResponse> }>(endpoint, {
         method: "POST",
         body: JSON.stringify({ groupIds }),
     });
+
+    console.log("[getAllCourseProgresses] Response:", {
+        progressKeys: Object.keys(response.data.progress),
+        progressCount: Object.keys(response.data.progress).length,
+    });
+
     return response.data.progress;
 }
 

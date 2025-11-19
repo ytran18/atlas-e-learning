@@ -24,11 +24,24 @@ interface UseCourseCategorizationProps {
 
 export function useCourseCategorization({ data, type }: UseCourseCategorizationProps) {
     // Get progress for all courses
+    const courseIds = useMemo(() => data?.map((course) => course.id) || [], [data]);
+
+    // Debug logging
+    console.log("[useCourseCategorization] Course IDs:", courseIds);
+    console.log("[useCourseCategorization] Total courses:", courseIds.length);
+
     const { data: progressData, isLoading: isProgressLoading } = useAllCourseProgress({
-        courseIds: data?.map((course) => course.id) || [],
+        courseIds,
         type,
         enabled: !!data && data.length > 0,
     });
+
+    // Debug logging for progress data
+    console.log("[useCourseCategorization] Progress data:", progressData);
+    console.log(
+        "[useCourseCategorization] Progress keys:",
+        progressData ? Object.keys(progressData) : []
+    );
 
     const categorizedCourses = useMemo((): CategorizedCourses => {
         if (!data) return { inProgress: [], notStarted: [], incomplete: [], completed: [] };
