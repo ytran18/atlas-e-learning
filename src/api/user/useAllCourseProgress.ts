@@ -26,9 +26,7 @@ export function useAllCourseProgress({
             return progressMap;
         },
         enabled: enabled && courseIds.length > 0,
-        // Cache for 5 minutes to reduce unnecessary API calls
-        staleTime: 5 * 60 * 1000,
-        // Keep data in cache for 10 minutes
-        gcTime: 10 * 60 * 1000,
+        staleTime: 0,
+        gcTime: 0,
     });
 }
