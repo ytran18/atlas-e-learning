@@ -27,6 +27,8 @@ import {
     UpdateProgressRequest,
     UpdateProgressResponse,
     UploadCaptureResponse,
+    UserCourseProgress,
+    UserInfo,
 } from "@/types/api";
 
 // ============================================================================
@@ -344,8 +346,19 @@ export async function getStudentStatsByUserIds(
 /*
  * Get user info by ID
  */
-export async function getUserById(userId: string): Promise<Record<string, any>> {
+export async function getUserById(userId: string): Promise<UserInfo> {
     const endpoint = `/api/v1/user/${userId}`;
-    const response = await apiFetch<Record<string, any>>(endpoint);
+    const response = await apiFetch<UserInfo>(endpoint);
+    return response.data;
+}
+
+export async function getUserCourseProgress(
+    userId: string,
+    type: CourseType
+): Promise<UserCourseProgress> {
+    const endpoint = `/api/v1/user/${userId}/progress?type=${type}`;
+
+    const response = await apiFetch<UserCourseProgress>(endpoint);
+
     return response.data;
 }

@@ -6,11 +6,13 @@
  */
 import { admin, adminDb } from "@/libs/firebase/firebaseAdmin.config";
 import {
+    CategorizedCourse,
     CompletedVideo,
     CourseDetail,
     CourseProgress,
     ExamAnswer,
     StudentStats,
+    UserCourseProgress,
 } from "@/types/api";
 
 // ============================================================================
@@ -677,4 +679,55 @@ export async function getGroupStatsByUserIds(
         .filter((doc): doc is StudentStats => doc !== undefined);
 
     return orderedDocs;
+}
+
+export async function getUserCourseProgress(
+    userId: string,
+    type: "atld" | "hoc-nghe"
+): Promise<UserCourseProgress> {
+    const userCourseProgress = await adminDb
+        .collection(COLLECTIONS.USERS)
+        .doc(userId)
+        .collection(COLLECTIONS.PROGRESS)
+        .get();
+
+    const allCourses = await getAllGroups(type);
+
+    // Build list with proper CategorizedCourse props and logic for CourseStatus assignment
+    const allCourseProgressData: CategorizedCourse[] = allCourses.map((course: any) => {
+        const progressDoc = userCourseProgress.docs.find((doc) => doc.id === course.id);
+
+        const progressData = progressDoc?.data();
+
+        // Determine course status
+        let status: "not-started" | "in-progress" | "incomplete" | "completed" = "not-started";
+
+        if (progressData) {
+            if (progressData.isCompleted) {
+                status = "completed";
+            } else if (progressData.completedVideos && progressData.completedVideos.length > 0) {
+                status = "in-progress";
+            } else {
+                status = "incomplete";
+            }
+        }
+
+        return {
+            ...course,
+            status,
+            progress: progressData as CourseProgress | undefined,
+        } as CategorizedCourse;
+    });
+
+    const inProgress = allCourseProgressData.filter((course) => course.status === "in-progress");
+    const notStarted = allCourseProgressData.filter((course) => course.status === "not-started");
+    const incomplete = allCourseProgressData.filter((course) => course.status === "incomplete");
+    const completed = allCourseProgressData.filter((course) => course.status === "completed");
+
+    return {
+        inProgress,
+        notStarted,
+        incomplete,
+        completed,
+    };
 }

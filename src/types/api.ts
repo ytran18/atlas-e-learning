@@ -343,3 +343,44 @@ export interface ApiSuccessResponse<T> {
     success: true;
     data: T;
 }
+
+export interface UserInfo {
+    id: string;
+    fullName: string;
+    birthDate: string;
+    cccd: string;
+    companyName: string;
+    jobTitle: string;
+    role: string;
+    /**
+     * progress?: Record<string, 'completed' | 'in-progress' | 'incomplete'>
+     *
+     * "progress" là một trường tuỳ chọn của UserInfo, dùng để lưu trạng thái học của user cho từng khoá học.
+     * Kiểu Record<string, 'completed' | 'in-progress' | 'incomplete'> nghĩa là:
+     *   - object này có các key là string (mỗi key thường là groupId hoặc courseId - tức ID của từng khoá học)
+     *   - mỗi value tương ứng là trạng thái của khóa học đó:
+     *     + 'completed': đã hoàn thành khóa học
+     *     + 'in-progress': đang học (có ít nhất 1 video đã xem)
+     *     + 'incomplete': đã bắt đầu nhưng chưa xem video nào
+     * Ví dụ:
+     *   progress = {
+     *     "abc123": "completed",
+     *     "xyz456": "in-progress"
+     *   }
+     */
+    progress?: Record<string, "completed" | "in-progress" | "incomplete">;
+}
+
+export type CourseStatus = "not-started" | "in-progress" | "incomplete" | "completed";
+
+export interface CategorizedCourse extends CourseListItem {
+    status: CourseStatus;
+    progress?: CourseProgress;
+}
+
+export interface UserCourseProgress {
+    inProgress: CategorizedCourse[];
+    notStarted: CategorizedCourse[];
+    incomplete: CategorizedCourse[];
+    completed: CategorizedCourse[];
+}

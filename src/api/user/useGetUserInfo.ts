@@ -1,6 +1,7 @@
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 
 import { getUserById } from "@/services";
+import { UserInfo } from "@/types/api";
 
 export const userInfoKeys = {
     all: ["userInfo"] as const,
@@ -9,7 +10,7 @@ export const userInfoKeys = {
 
 export function useGetUserInfo(
     userId: string,
-    options?: Omit<UseQueryOptions<Record<string, any>, Error>, "queryKey" | "queryFn">
+    options?: Omit<UseQueryOptions<UserInfo, Error>, "queryKey" | "queryFn">
 ) {
     return useQuery({
         queryKey: userInfoKeys.detail(userId),

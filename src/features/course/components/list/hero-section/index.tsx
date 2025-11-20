@@ -1,12 +1,10 @@
 import { IconBook, IconCertificate } from "@tabler/icons-react";
 
-import { GetCourseListResponse } from "@/types/api";
-
 interface CourseListHeroSectionProps {
-    data?: GetCourseListResponse;
+    totalCourses?: number;
 }
 
-const CourseListHeroSection = ({ data }: CourseListHeroSectionProps) => {
+const CourseListHeroSection = ({ totalCourses }: CourseListHeroSectionProps) => {
     return (
         <div className="bg-linear-to-br from-blue-50 via-indigo-50 to-blue-50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
@@ -21,11 +19,11 @@ const CourseListHeroSection = ({ data }: CourseListHeroSectionProps) => {
                     </p>
 
                     <div className="flex flex-wrap gap-8 text-base text-gray-600">
-                        {data?.length !== 0 && (
+                        {totalCourses !== 0 && (
                             <div className="flex items-center gap-2.5">
                                 <IconBook className="h-5 w-5 text-blue-600" strokeWidth={1.5} />
 
-                                <span className="font-medium">{data?.length} Nhóm đào tạo</span>
+                                <span className="font-medium">{totalCourses} Nhóm đào tạo</span>
                             </div>
                         )}
                         <div className="flex items-center gap-2.5">

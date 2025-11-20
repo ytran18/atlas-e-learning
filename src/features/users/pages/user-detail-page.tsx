@@ -12,8 +12,6 @@ const UserDetailPage = () => {
 
     const { data: userDetail } = useGetUserInfo(userId as string);
 
-    console.log("userDetail", userDetail);
-
     return (
         <div className="h-[calc(100vh-60px)] w-screen grid grid-cols-12 gap-x-10 px-10 py-5 bg-linear-to-br from-white via-blue-50 to-blue-100">
             <div className="col-span-4">
