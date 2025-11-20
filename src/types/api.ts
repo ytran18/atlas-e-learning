@@ -10,7 +10,7 @@
 // ============================================================================
 
 export type CourseType = "atld" | "hoc-nghe";
-export type SectionType = "theory" | "practice" | "exam";
+type SectionType = "theory" | "practice" | "exam";
 export type CaptureType = "start" | "learning" | "finish";
 
 // ============================================================================
@@ -176,12 +176,6 @@ export interface UpdateProgressResponse {
 // 6. POST /api/v1/atld/upload-learning-capture - Upload capture image
 // ============================================================================
 
-export interface UploadCaptureRequest {
-    groupId: string;
-    type: CaptureType;
-    // file is sent as FormData
-}
-
 export interface UploadCaptureResponse {
     imageUrl: string;
     savedTo: string;
@@ -190,12 +184,6 @@ export interface UploadCaptureResponse {
 // ============================================================================
 // 7. GET /api/v1/admin/atld/stats - Get student stats (admin)
 // ============================================================================
-
-export interface GetStatsQueryParams {
-    groupId: string;
-    pageSize?: number;
-    cursor?: string;
-}
 
 export interface StudentStats {
     userId: string;
@@ -294,7 +282,7 @@ export type GetCourseDetailResponse = CourseDetail;
 // 12. GET /api/v1/atld/exam/:groupId - Get exam questions
 // ============================================================================
 
-export interface ExamQuestionForUser {
+interface ExamQuestionForUser {
     id: string;
     content: string;
     options: {
@@ -304,7 +292,7 @@ export interface ExamQuestionForUser {
     // Note: answer field is removed for user-facing API
 }
 
-export interface ExamForUser {
+interface ExamForUser {
     title: string;
     description?: string;
     timeLimit: number; // in seconds

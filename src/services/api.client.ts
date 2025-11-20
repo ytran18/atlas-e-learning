@@ -17,7 +17,6 @@ import {
     GetCoursePreviewResponse,
     GetExamResponse,
     GetProgressResponse,
-    GetStatsResponse,
     StartCourseRequest,
     StartCourseResponse,
     StudentStats,
@@ -235,34 +234,6 @@ export async function submitExamAnswers(
 // ============================================================================
 // Admin API Methods
 // ============================================================================
-
-/**
- * Get student statistics (admin only)
- */
-export async function getStudentStats(
-    type: CourseType,
-    groupId: string,
-    pageSize?: number,
-    cursor?: string,
-    search?: string
-): Promise<GetStatsResponse> {
-    const params = new URLSearchParams({ groupId });
-
-    if (pageSize) params.append("pageSize", pageSize.toString());
-
-    if (cursor) params.append("cursor", cursor);
-
-    if (search) params.append("search", search);
-
-    const endpoint =
-        type === "atld"
-            ? `/api/v1/admin/atld/stats?${params}`
-            : `/api/v1/admin/hoc-nghe/stats?${params}`;
-
-    const response = await apiFetch<GetStatsResponse>(endpoint);
-
-    return response.data;
-}
 
 /**
  * Create a new course (admin only)

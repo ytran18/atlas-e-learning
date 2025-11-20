@@ -4,7 +4,7 @@ import { FunctionComponent, PropsWithChildren, createContext, useContext, useSta
 
 import { CourseDetail } from "@/types/api";
 
-export type AdminDetailProviderProps = PropsWithChildren<{
+type AdminDetailProviderProps = PropsWithChildren<{
     courseDetail: CourseDetail;
 }>;
 

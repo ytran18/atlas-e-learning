@@ -5,7 +5,7 @@ export enum Role {
     ADMIN = "ADMIN",
 }
 
-export interface CreateUserPayload {
+type CreateUserPayload = {
     userId: string;
     fullName: string;
     birthDate: string;
@@ -14,15 +14,15 @@ export interface CreateUserPayload {
     photoUrl?: string;
     role: Role;
     jobTitle?: string;
-}
+};
 
-export interface CreateUserResponse {
+type CreateUserResponse = {
     success: boolean;
     message: string;
     data: {
         userId: string;
     };
-}
+};
 
 export const authService = {
     /**

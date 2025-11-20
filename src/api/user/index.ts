@@ -11,7 +11,6 @@ export * from "./useCourseProgress";
 export * from "./useUpdateProgress";
 export * from "./useUploadCapture";
 export * from "./useCourseDetail";
-export * from "./useExamQuestions";
 export * from "./useSubmitExam";
 export * from "./useGetUserInfo";
 export * from "./useUpdateUserInfo";

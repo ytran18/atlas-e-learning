@@ -17,10 +17,3 @@ export function makeGrowthBook(payload?: FeatureApiResponse): GrowthBook {
 
     return gb;
 }
-
-let growthBook: GrowthBook | undefined;
-
-export function getGrowthBook(payload?: FeatureApiResponse) {
-    if (!growthBook) growthBook = makeGrowthBook(payload);
-    return growthBook;
-}

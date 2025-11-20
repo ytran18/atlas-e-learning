@@ -78,14 +78,6 @@ export async function getGroupById(groupId: string): Promise<FirestoreData | nul
 }
 
 /**
- * Create a new group
- */
-export async function createGroup(groupId: string, data: FirestoreData) {
-    await adminDb.collection(COLLECTIONS.GROUPS).doc(groupId).set(data);
-    return groupId;
-}
-
-/**
  * Update an existing group
  */
 export async function updateGroup(groupId: string, data: Partial<CourseDetail>) {

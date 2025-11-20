@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 
-export const queryClientConfig = {
+const queryClientConfig = {
     defaultOptions: {
         queries: {
             // Thời gian cache data (5 phút)

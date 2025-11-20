@@ -13,7 +13,7 @@ import { navigationPaths } from "@/utils/navigationPaths";
 
 import { getCurrentAdminPathname } from "../../utils/get-current-admin-pathname";
 
-export const adminNavItems = [
+const adminNavItems = [
     {
         value: "atld",
         label: "An toàn lao động",
@@ -89,7 +89,7 @@ const AdminTabs = () => {
                             <Tabs.Tab
                                 key={item.value}
                                 value={item.value}
-                                className={`px-3 sm:px-6 !py-1 !rounded-sm ${
+                                className={`px-3 sm:px-6 py-1! rounded-sm! ${
                                     isNavigating ? "opacity-60 pointer-events-none" : ""
                                 }`}
                                 onMouseEnter={() => router.prefetch(item.href)}
@@ -103,7 +103,7 @@ const AdminTabs = () => {
                                         size="md"
                                         variant="light"
                                         color={item.color}
-                                        className="!bg-transparent"
+                                        className="bg-transparent!"
                                     >
                                         {isNavigating ? (
                                             <Loader size={14} />

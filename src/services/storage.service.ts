@@ -33,7 +33,7 @@ const PUBLIC_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "";
  * @param type - Type of capture (start, learning, finish)
  * @returns Public URL of uploaded file
  */
-export async function uploadLearningCapture(
+async function uploadLearningCapture(
     file: Buffer,
     userId: string,
     groupId: string,

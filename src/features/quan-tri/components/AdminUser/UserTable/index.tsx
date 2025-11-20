@@ -80,7 +80,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
         };
 
         return (
-            <Table.Tr key={element?.cccd ?? element?.userIdCard} onClick={handleRowClick}>
+            <Table.Tr key={element?.objectID} onClick={handleRowClick}>
                 <Table.Td>{element?.userFullname ?? ""}</Table.Td>
 
                 <Table.Td>{element?.userIdCard ?? element?.cccd ?? ""}</Table.Td>

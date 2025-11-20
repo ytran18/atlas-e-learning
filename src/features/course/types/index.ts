@@ -1,6 +1,6 @@
 export type CourseType = "atld" | "hoc-nghe";
 
-export interface CourseTheme {
+interface CourseTheme {
     primary: string;
     secondary: string;
     gradient: string;
@@ -21,27 +21,3 @@ export const COURSE_THEMES: Record<CourseType, CourseTheme> = {
         accent: "green-400",
     },
 };
-
-export interface VideoSection {
-    videos: Array<{
-        url: string;
-        title: string;
-        description?: string;
-        canSeek: boolean;
-    }>;
-}
-
-export interface LearnDetail {
-    id: string;
-    theory: VideoSection;
-    practice: VideoSection;
-    exam: VideoSection;
-}
-
-export interface Progress {
-    currentVideoIndex: number;
-    completedVideos: Array<{
-        section: string;
-        index: number;
-    }>;
-}

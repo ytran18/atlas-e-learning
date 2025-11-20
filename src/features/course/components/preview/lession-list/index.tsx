@@ -2,12 +2,6 @@ import { IconPlayerPlay } from "@tabler/icons-react";
 
 import { Video } from "@/types/api";
 
-export interface Lesson {
-    id: string;
-    title: string;
-    duration?: string;
-}
-
 interface LessonListProps {
     lessons: Video[];
 }

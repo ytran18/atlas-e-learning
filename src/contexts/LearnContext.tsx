@@ -11,7 +11,7 @@ import {
 
 import { CourseDetail, CourseProgress } from "@/types/api";
 
-export type LearnProviderProps = PropsWithChildren<{
+type LearnProviderProps = PropsWithChildren<{
     learnDetail: CourseDetail;
     progress: CourseProgress;
 }>;

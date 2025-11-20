@@ -12,7 +12,7 @@ import { CourseType, GetCourseDetailResponse } from "@/types/api";
 /**
  * Query key factory cho course detail
  */
-export const courseDetailKeys = {
+const courseDetailKeys = {
     all: ["courseDetail"] as const,
     details: () => [...courseDetailKeys.all, "detail"] as const,
     detail: (type: CourseType, groupId: string) =>
