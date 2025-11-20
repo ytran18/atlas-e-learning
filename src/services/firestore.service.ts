@@ -573,6 +573,13 @@ export async function getUserById(userId: string): Promise<FirestoreData | null>
 }
 
 /**
+ * Update user info
+ */
+export async function updateUserInfo(userId: string, updates: Partial<FirestoreData>) {
+    await adminDb.collection(COLLECTIONS.USERS).doc(userId).update(updates);
+}
+
+/**
  * Get user progress detail from progress/{groupId}/users/{userId}
  * Returns full user document with all fields
  */

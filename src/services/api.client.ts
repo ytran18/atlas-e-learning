@@ -369,3 +369,12 @@ export async function getStudentStatsByUserIds(
 
     return response.data;
 }
+
+/*
+ * Get user info by ID
+ */
+export async function getUserById(userId: string): Promise<Record<string, any>> {
+    const endpoint = `/api/v1/user/${userId}`;
+    const response = await apiFetch<Record<string, any>>(endpoint);
+    return response.data;
+}

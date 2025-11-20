@@ -9,7 +9,7 @@ import { Avatar, Box, Button, Group, Loader, Text } from "@mantine/core";
 import { IconLogout } from "@tabler/icons-react";
 
 import { trackUserSignedOut } from "@/libs/mixpanel";
-import { navigationPaths } from "@/utils/navigationPaths";
+import { USER_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 type AuthButtonProps = {
     className?: string;
@@ -50,6 +50,12 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
         }
     };
 
+    const handleUserDetail = () => {
+        if (!user?.id) return;
+
+        router.push(navigationPaths.USER_DETAIL.replace(`[${USER_SLUG}]`, user.id));
+    };
+
     // Show loading state while checking authentication
     if (!isLoaded) {
         return (
@@ -65,7 +71,12 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
     if (!!userData) {
         return (
             <Group className="hover:cursor-pointer">
-                <Avatar src={user?.imageUrl || ""} radius="xl" size="sm" />
+                <Avatar
+                    src={user?.imageUrl || ""}
+                    radius="xl"
+                    size="sm"
+                    onClick={handleUserDetail}
+                />
 
                 <Box style={{ flex: 1 }}>
                     <Text size="sm" fw={500}>

@@ -1,5 +1,6 @@
 export const ATLD_SLUG = "atld";
 export const HOC_NGHE_SLUG = "hocNgheId";
+export const USER_SLUG = "userId";
 
 export const navigationPaths = {
     LANDING_PAGE: "/landing-page",
@@ -17,6 +18,7 @@ export const navigationPaths = {
     QUAN_TRI_ATLD: `/quan-tri/atld`,
     QUAN_TRI_HOC_NGHE: `/quan-tri/hoc-nghe`,
     QUAN_TRI_USER: `/quan-tri/user`,
+    USER_DETAIL: `/user/[${USER_SLUG}]`,
 };
 
 export const publicPaths = [
