@@ -4,10 +4,10 @@ import Link from "next/link";
 
 import { IconBook, IconClipboardCheck, IconPlayerPlay } from "@tabler/icons-react";
 
-import { CourseListItem } from "@/types/api";
+import { CategorizedCourse } from "@/types/api";
 
 type CoursePreviewCardProps = {
-    course: CourseListItem;
+    course: CategorizedCourse;
 };
 
 const CoursePreviewCard = ({ course }: CoursePreviewCardProps) => {

@@ -28,6 +28,7 @@ type FirestoreData = Record<string, any>;
 const COLLECTIONS = {
     GROUPS: "groups",
     USERS: "users",
+    SEARCH_INDEX: "search_index",
     PROGRESS: "progress",
 } as const;
 
@@ -192,10 +193,11 @@ export async function createUserProgress(
     userFullname: string,
     userBirthDate: string,
     userCompanyName: string,
-    userIdCard: string,
-    cccd: string
+    userIdCard: string
 ): Promise<CourseProgress> {
     const now = Date.now();
+
+    const objectId = `${userId}_${groupId}`;
 
     const progressData: CourseProgress = {
         groupId,
@@ -206,59 +208,36 @@ export async function createUserProgress(
         isCompleted: false,
         startedAt: now,
         lastUpdatedAt: now,
-    };
-
-    const userProgressData = {
-        ...progressData,
         startImageUrl: portraitUrl,
         courseName,
         userFullname,
         userBirthDate,
         userCompanyName,
         userIdCard,
-        cccd,
     };
 
-    const progressGroupRef = adminDb.collection(COLLECTIONS.PROGRESS).doc(groupId);
+    const progressGroupRef = adminDb.collection(COLLECTIONS.SEARCH_INDEX).doc(objectId);
+
+    const userRef = adminDb
+        .collection(COLLECTIONS.USERS)
+        .doc(userId)
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId);
+
     const docSnap = await progressGroupRef.get();
 
+    // set vào collection search_index để sync qua algolia
     if (!docSnap.exists) {
-        // Lấy thông tin group để có metadata đầy đủ
-        const groupData = await getGroupById(groupId);
-
-        // Tạo parent document với metadata
-        const parentData: FirestoreData = {
-            createdAt: now,
-            updatedAt: now,
-            courseName,
-        };
-
-        // Thêm type nếu có trong group data
-        if (groupData?.type) {
-            parentData.type = groupData.type;
-        }
-
-        // Quan trọng: chờ hoàn tất set này trước khi ghi xuống subcollection
-        await progressGroupRef.set(userProgressData);
-    } else {
-        // Cập nhật updatedAt và courseName nếu document đã tồn tại
-        await progressGroupRef.update({
-            updatedAt: now,
-            courseName,
+        await progressGroupRef.set({
+            objectID: objectId,
+            ...progressData,
         });
     }
 
-    // Ghi tuần tự để chắc chắn parent đã tồn tại
-    // await adminDb
-    //     .collection(COLLECTIONS.USERS)
-    //     .doc(userId)
-    //     .collection(COLLECTIONS.PROGRESS)
-    //     .doc(groupId)
-    //     .set(userProgressData);
+    // set thêm 1 document vào subcollection users
+    await userRef.set(progressData);
 
-    await progressGroupRef.collection(COLLECTIONS.USERS).doc(userId).set(userProgressData);
-
-    return userProgressData;
+    return progressData;
 }
 
 /**
@@ -292,11 +271,7 @@ export async function updateUserProgress(
         .collection(COLLECTIONS.PROGRESS)
         .doc(groupId);
 
-    const progressRefAdmin = adminDb
-        .collection(COLLECTIONS.PROGRESS)
-        .doc(groupId)
-        .collection(COLLECTIONS.USERS)
-        .doc(userId);
+    const searchIndexRef = adminDb.collection(COLLECTIONS.SEARCH_INDEX).doc(`${userId}_${groupId}`);
 
     const updateData: FirestoreData = {
         lastUpdatedAt: updates.lastUpdatedAt || now,
@@ -336,7 +311,7 @@ export async function updateUserProgress(
 
     await progressRef.update(updateData);
 
-    await progressRefAdmin.update(updateData);
+    await searchIndexRef.update(updateData);
 
     return { success: true, lastUpdatedAt: now };
 }
@@ -581,12 +556,7 @@ export async function getUserProgressDetail(
     groupId: string,
     userId: string
 ): Promise<StudentStats | null> {
-    const doc = await adminDb
-        .collection(COLLECTIONS.PROGRESS)
-        .doc(groupId)
-        .collection(COLLECTIONS.USERS)
-        .doc(userId)
-        .get();
+    const doc = await adminDb.collection(COLLECTIONS.SEARCH_INDEX).doc(userId).get();
 
     if (!doc.exists) {
         return null;
@@ -713,10 +683,32 @@ export async function getUserCourseProgress(
         }
 
         return {
-            ...course,
+            id: course?.id,
+            sortNo: course?.sortNo,
+            type: course?.type,
+            title: course?.title || "",
+            description: course?.description || "",
+            numberOfTheory: course?.theory?.videos?.length || 0,
+            numberOfPractice: course?.practice?.videos?.length || 0,
+            totalQuestionOfExam: course?.exam?.questions?.length || 0,
             status,
             progress: progressData as CourseProgress | undefined,
-        } as CategorizedCourse;
+        };
+    });
+
+    // sort by sortNo
+    allCourseProgressData?.sort((a, b) => {
+        const aHas = typeof a.sortNo === "number";
+
+        const bHas = typeof b.sortNo === "number";
+
+        if (aHas && bHas) return (a.sortNo as number) - (b.sortNo as number);
+
+        if (aHas) return -1; // a comes before b
+
+        if (bHas) return 1; // b comes before a
+
+        return 0; // both missing
     });
 
     const inProgress = allCourseProgressData.filter((course) => course.status === "in-progress");

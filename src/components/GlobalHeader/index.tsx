@@ -9,7 +9,7 @@ import { Avatar, Box, Burger, Button, Drawer, Group, Stack, Text } from "@mantin
 import { useDisclosure } from "@mantine/hooks";
 import { IconLogout } from "@tabler/icons-react";
 
-import { navigationPaths } from "@/utils/navigationPaths";
+import { USER_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 import AuthButton from "./AuthButton";
 
@@ -39,6 +39,12 @@ const GlobalHeader = () => {
     const handleLogout = () => {
         close();
         signOut(() => router.push("/"));
+    };
+
+    const handleUserDetail = () => {
+        if (!user?.id) return;
+
+        router.push(navigationPaths.USER_DETAIL.replace(`[${USER_SLUG}]`, user.id));
     };
 
     return (
@@ -109,7 +115,7 @@ const GlobalHeader = () => {
                 size="280px"
                 title={
                     userData ? (
-                        <div className="flex items-center gap-x-3">
+                        <div className="flex items-center gap-x-3" onClick={handleUserDetail}>
                             <Avatar src={user?.imageUrl || ""} radius="xl" size="sm" />
 
                             <Box style={{ flex: 1 }}>

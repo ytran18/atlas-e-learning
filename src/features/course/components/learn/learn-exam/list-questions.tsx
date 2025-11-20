@@ -78,7 +78,7 @@ const ListQuestions: FunctionComponent<ListQuestionsProps> = ({ questions, isFin
     }
 
     return (
-        <List type="ordered" className="list-decimal flex flex-col gap-y-2">
+        <List type="ordered" className="list-decimal flex flex-col gap-y-2 mx-2!">
             {questions.map((question) => {
                 return (
                     <List.Item key={question.id}>

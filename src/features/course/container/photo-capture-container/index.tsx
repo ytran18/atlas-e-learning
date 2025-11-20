@@ -4,7 +4,7 @@ import { redirect, useParams, useRouter, useSearchParams } from "next/navigation
 
 import { useUser } from "@clerk/nextjs";
 
-import { useStartCourse, useUploadCapture } from "@/api";
+import { useStartCourse } from "@/api";
 import { CourseType } from "@/types/api";
 import { navigationPaths } from "@/utils/navigationPaths";
 
@@ -18,7 +18,6 @@ import { PhotoPreview } from "../../components/verify/photo-preview";
 import { PrivacyNotice } from "../../components/verify/privacy-notice";
 import { SuccessMessage } from "../../components/verify/success-message";
 import { useCameraCapture } from "../../hooks";
-import { dataURLtoFile } from "../../utils/data-url-to-file";
 
 interface PhotoCaptureContainerProps {
     courseType: CourseType;
@@ -49,38 +48,16 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
         retakePhoto,
     } = useCameraCapture();
 
-    // Hook để upload ảnh lên Cloudflare R2
-    const {
-        mutateAsync: uploadCapture,
-        isPending: isUploading,
-        error: uploadError,
-    } = useUploadCapture(courseType, {
-        onSuccess: (data) => {
-            console.log("[v0] Photo uploaded successfully:", data.imageUrl);
-            // Navigate to learning page after successful upload
+    const { mutateAsync: startCourse, isPending: isStarting } = useStartCourse(courseType, {
+        onSuccess: () => {
             router.push(learnPath.replace(`[${paramKey}]`, courseId));
         },
-        onError: (error) => {
-            console.error("[v0] Error uploading photo:", error);
-        },
     });
-
-    const { mutateAsync: startCourse, isPending: isStarting } = useStartCourse(courseType);
 
     const handleUploadAndContinue = async () => {
         if (!capturedPhoto || !courseId || !user?.unsafeMetadata) return;
 
         try {
-            // Convert data URL to File
-            const file = dataURLtoFile(capturedPhoto, `verification-${Date.now()}.jpg`);
-
-            // Upload using the hook
-            await uploadCapture({
-                file,
-                groupId: courseId,
-                captureType: "start", // Ảnh verification trước khi bắt đầu
-            });
-
             await startCourse({
                 groupId: courseId,
                 portraitUrl: capturedPhoto,
@@ -88,7 +65,6 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
                 userFullname: user?.unsafeMetadata?.fullName as string,
                 userBirthDate: user?.unsafeMetadata?.birthDate as string,
                 userCompanyName: user?.unsafeMetadata?.companyName as string,
-                cccd: user?.unsafeMetadata?.cccd as string,
                 userIdCard: user?.unsafeMetadata?.cccd as string,
             });
         } catch (err) {
@@ -96,7 +72,7 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
         }
     };
 
-    const displayError = cameraError || uploadError?.message;
+    const displayError = cameraError;
 
     const getGradientColors = () => {
         switch (courseType) {
@@ -173,7 +149,7 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
                         <ActionButtons
                             onRetake={retakePhoto}
                             onConfirm={handleUploadAndContinue}
-                            isUploading={isUploading || isStarting}
+                            isUploading={isStarting}
                         />
                     )}
                 </div>

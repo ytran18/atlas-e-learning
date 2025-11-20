@@ -108,7 +108,6 @@ export interface StartCourseRequest {
     userBirthDate: string;
     userCompanyName: string;
     userIdCard: string;
-    cccd: string;
 }
 
 export interface StartCourseResponse {
@@ -138,6 +137,7 @@ export interface CourseProgress {
     isCompleted: boolean;
     startedAt: number; // timestamp
     lastUpdatedAt: number; // timestamp
+    startImageUrl?: string; // Portrait image URL
     finishImageUrl?: string; // Auto-captured finish image URL
     examResult?: {
         score: number;
@@ -150,6 +150,7 @@ export interface CourseProgress {
     userFullname?: string;
     userBirthDate?: string;
     userCompanyName?: string;
+    userIdCard?: string;
 }
 
 export type GetProgressResponse = CourseProgress;

@@ -78,7 +78,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                     onClick={handleUserDetail}
                 />
 
-                <Box style={{ flex: 1 }}>
+                <Box style={{ flex: 1 }} onClick={handleUserDetail}>
                     <Text size="sm" fw={500}>
                         {userData?.fullName as string}
                     </Text>
