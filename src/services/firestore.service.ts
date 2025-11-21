@@ -606,9 +606,7 @@ export async function getGroupStatsByUserIds(
     // Fetch all batches in parallel
     const batchPromises = batches.map((batch) => {
         const queryRef = adminDb
-            .collection(COLLECTIONS.PROGRESS)
-            .doc(groupId)
-            .collection(COLLECTIONS.USERS)
+            .collection(COLLECTIONS.SEARCH_INDEX)
             .where(admin.firestore.FieldPath.documentId(), "in", batch);
 
         return queryRef.get();
@@ -626,19 +624,37 @@ export async function getGroupStatsByUserIds(
             allDocs.push({
                 userId: doc.id,
                 fullname: d.userFullname || "",
+                userIdCard: String(d.cccd ?? d.userIdCard ?? ""),
+                birthDate: d.userBirthDate || "",
                 companyName: d.userCompanyName || "",
                 isCompleted: d.isCompleted || false,
-                startedAt: d.startedAt || 0,
-                lastUpdatedAt: d.lastUpdatedAt || 0,
-                startImageUrl: d.startImageUrl,
-                finishImageUrl: d.finishImageUrl,
-                completedVideos: d.completedVideos || [],
+                startedAt: d.startedAt
+                    ? new Date(d.startedAt)
+                          .toLocaleString("vi-VN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                          })
+                          .replace(",", "")
+                    : "",
                 courseName: d.courseName || "",
+                lastUpdatedAt: d.lastUpdatedAt
+                    ? new Date(d.lastUpdatedAt)
+                          .toLocaleString("vi-VN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                          })
+                          .replace(",", "")
+                    : "",
                 currentSection: d.currentSection || "",
-                currentVideoIndex: d.currentVideoIndex || 0,
-                birthDate: d.userBirthDate || "",
-                examResult: d.examResult || {},
-                userIdCard: String(d.cccd ?? d.userIdCard ?? ""),
+                finishImageUrl: d.finishImageUrl,
             });
         });
     });

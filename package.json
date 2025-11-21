@@ -61,6 +61,7 @@
         "react-instantsearch-hooks-web": "^6.47.3",
         "react-player": "^3.3.3",
         "socket.io-client": "^4.8.1",
+        "xlsx-js-style": "^1.2.0",
         "zod": "^4.1.11"
     },
     "devDependencies": {

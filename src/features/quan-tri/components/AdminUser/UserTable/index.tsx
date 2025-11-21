@@ -3,7 +3,7 @@ import { forwardRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 
-import { Checkbox, Modal, Table } from "@mantine/core";
+import { Checkbox, Modal, Table, Tooltip } from "@mantine/core";
 import { Empty } from "antd";
 import { useInstantSearch } from "react-instantsearch-hooks-web";
 
@@ -80,27 +80,29 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
         };
 
         return (
-            <Table.Tr key={element?.objectID} onClick={handleRowClick}>
-                <Table.Td>{element?.userFullname ?? ""}</Table.Td>
+            <Tooltip key={element?.objectID} label="Nhấn vào để xem chi tiết" withArrow>
+                <Table.Tr onClick={handleRowClick}>
+                    <Table.Td>{element?.userFullname ?? ""}</Table.Td>
 
-                <Table.Td>{element?.userIdCard ?? element?.cccd ?? ""}</Table.Td>
+                    <Table.Td>{element?.userIdCard ?? element?.cccd ?? ""}</Table.Td>
 
-                <Table.Td>
-                    <Checkbox readOnly checked={isTheoryCompleted} />
-                </Table.Td>
+                    <Table.Td>
+                        <Checkbox readOnly checked={isTheoryCompleted} />
+                    </Table.Td>
 
-                <Table.Td>
-                    <Checkbox readOnly checked={isPracticeCompleted} />
-                </Table.Td>
+                    <Table.Td>
+                        <Checkbox readOnly checked={isPracticeCompleted} />
+                    </Table.Td>
 
-                <Table.Td>
-                    <Checkbox readOnly checked={isCompleted} />
-                </Table.Td>
+                    <Table.Td>
+                        <Checkbox readOnly checked={isCompleted} />
+                    </Table.Td>
 
-                <Table.Td>
-                    <Checkbox readOnly checked={isCompleted} />
-                </Table.Td>
-            </Table.Tr>
+                    <Table.Td>
+                        <Checkbox readOnly checked={isCompleted} />
+                    </Table.Td>
+                </Table.Tr>
+            </Tooltip>
         );
     });
 

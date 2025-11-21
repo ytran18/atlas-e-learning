@@ -192,14 +192,14 @@ export interface StudentStats {
     birthDate: string;
     companyName?: string;
     isCompleted: boolean;
-    startedAt: number;
-    lastUpdatedAt: number;
+    startedAt: number | string;
+    lastUpdatedAt: number | string;
     startImageUrl?: string;
     finishImageUrl?: string;
-    completedVideos: CompletedVideo[];
+    completedVideos?: CompletedVideo[];
     courseName: string;
     currentSection: SectionType;
-    currentVideoIndex: number;
+    currentVideoIndex?: number;
     examResult?: {
         score: number;
         totalQuestions: number;
