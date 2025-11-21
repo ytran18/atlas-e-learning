@@ -33,6 +33,20 @@ export async function getCourseList(
         return item;
     });
 
+    courseList.sort((a, b) => {
+        const aHas = typeof a.sortNo === "number";
+
+        const bHas = typeof b.sortNo === "number";
+
+        if (aHas && bHas) return (a.sortNo as number) - (b.sortNo as number);
+
+        if (aHas) return -1;
+
+        if (bHas) return 1;
+
+        return 0;
+    });
+
     return courseList;
 }
 
