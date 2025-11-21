@@ -47,6 +47,7 @@ declare module "react-instantsearch-hooks-web" {
 
     export interface UseInstantSearchReturn {
         results: SearchResults<Hit>;
+        refresh: () => void;
     }
 
     export function useInstantSearch(): UseInstantSearchReturn;

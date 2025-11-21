@@ -362,3 +362,12 @@ export async function getUserCourseProgress(
 
     return response.data;
 }
+
+// delete user progress
+export async function deleteUserProgress(userId: string, groupId: string) {
+    const endpoint = `/api/v1/admin/user/${userId}/progress/${groupId}/reset`;
+    const response = await apiFetch<boolean>(endpoint, {
+        method: "DELETE",
+    });
+    return response.data;
+}

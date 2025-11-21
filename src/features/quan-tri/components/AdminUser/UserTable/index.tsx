@@ -31,7 +31,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
 
     const courseId = searchParams.get("courseId");
 
-    const { results } = useInstantSearch();
+    const { results, refresh } = useInstantSearch();
 
     // Check if Algolia is still loading (results might be null initially)
     const isLoading = !results;
@@ -52,6 +52,13 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
             enabled: !!selectedUserId && !!courseId && !!type,
         }
     );
+
+    const handleDeleteSuccess = () => {
+        // Clear selected user to prevent showing deleted data
+        setSelectedUserId(null);
+        // Refresh Algolia results
+        refresh();
+    };
 
     const isTableDataEmpty = results?.hits?.length === 0;
 
@@ -85,6 +92,10 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
                     <Table.Td>{element?.userFullname ?? ""}</Table.Td>
 
                     <Table.Td>{element?.userIdCard ?? element?.cccd ?? ""}</Table.Td>
+
+                    <Table.Td>{element?.userBirthDate ?? ""}</Table.Td>
+
+                    <Table.Td>{element?.userCompanyName ?? ""}</Table.Td>
 
                     <Table.Td>
                         <Checkbox readOnly checked={isTheoryCompleted} />
@@ -157,6 +168,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
                     }}
                     user={userDetail || null}
                     courseDetail={courseDetail}
+                    onDeleteSuccess={handleDeleteSuccess}
                 />
             )}
         </div>

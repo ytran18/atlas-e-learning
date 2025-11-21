@@ -7,10 +7,14 @@ export const tableHeader = [
         label: "ID Card",
         key: "userIdCard",
     },
-    // {
-    //     label: "Ngày sinh",
-    //     key: "birthDate",
-    // },
+    {
+        label: "Ngày sinh",
+        key: "birthDate",
+    },
+    {
+        label: "Công ty",
+        key: "companyName",
+    },
     {
         label: "Lý thuyết",
         key: "theory",
@@ -23,10 +27,6 @@ export const tableHeader = [
         label: "Bài kiểm tra",
         key: "exam",
     },
-    // {
-    //     label: "Công ty",
-    //     key: "companyName",
-    // },
     // {
     //     label: "Khóa học",
     //     key: "course",

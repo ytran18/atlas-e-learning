@@ -565,7 +565,7 @@ export async function getUserProgressDetail(
     const d = doc.data();
 
     return {
-        userId: doc.id,
+        userId: (doc?.id as string).split("_").slice(0, 2).join("_"),
         fullname: d?.userFullname || "",
         birthDate: d?.userBirthDate || "",
         companyName: d?.userCompanyName || "",
@@ -738,4 +738,31 @@ export async function getUserCourseProgress(
         incomplete,
         completed,
     };
+}
+
+// delete user progress
+export async function deleteUserProgress(userId: string, groupId: string): Promise<boolean> {
+    const userCollectionProgressRef = adminDb
+        .collection(COLLECTIONS.USERS)
+        .doc(userId)
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId);
+
+    const searchIndexCollectionRef = adminDb
+        .collection(COLLECTIONS.SEARCH_INDEX)
+        .doc(`${userId}_${groupId}`);
+
+    const [userCollectionProgressSnapshot, searchIndexCollectionSnapshot] = await Promise.all([
+        userCollectionProgressRef.get(),
+        searchIndexCollectionRef.get(),
+    ]);
+
+    if (!userCollectionProgressSnapshot.exists || !searchIndexCollectionSnapshot.exists) {
+        return false;
+    }
+
+    await userCollectionProgressRef.delete();
+    await searchIndexCollectionRef.delete();
+
+    return true;
 }

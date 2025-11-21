@@ -1,9 +1,14 @@
 import { FunctionComponent } from "react";
 
-import { Card, Text, Tooltip } from "@mantine/core";
+import { useSearchParams } from "next/navigation";
+
+import { Button, Card, Text, Tooltip } from "@mantine/core";
+import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
 import { IconChevronRight, IconCircleCheck } from "@tabler/icons-react";
 import { Image } from "antd";
 
+import { useDeleteUserProgress } from "@/api/admin/useDeleteUserProgress";
 import { DEFAULT_IMAGE_URL } from "@/constants";
 import { StudentStats } from "@/types/api";
 
@@ -15,6 +20,8 @@ type ModalUserDetailInfoProps = {
     isTheoryCompleted: boolean;
     isPracticeCompleted: boolean;
     setTab: (tab: UserDetailTabs) => void;
+    onClose: () => void;
+    onDeleteSuccess?: () => void;
 };
 
 const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
@@ -23,7 +30,14 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
     isTheoryCompleted,
     isPracticeCompleted,
     setTab,
+    onClose,
+    onDeleteSuccess,
 }) => {
+    const { mutate: deleteUserProgress, isPending: isDeletingUserProgress } =
+        useDeleteUserProgress();
+
+    const groupId = useSearchParams().get("courseId");
+
     const handleExamTabClick = () => {
         if (!isCompleted) return;
 
@@ -34,10 +48,50 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
         ? "Nhấn vào để xem chi tiết bài kiểm tra"
         : "Chưa hoàn thành khóa học";
 
+    const handleDeleteUserProgress = () => {
+        modals.openConfirmModal({
+            title: "Xác nhận xóa kết học tập",
+            centered: true,
+            children: (
+                <Text size="xs">
+                    Kết học tập sẽ được xóa khỏi hệ thống và không thể khôi phục lại.
+                </Text>
+            ),
+            labels: { confirm: "Xóa", cancel: "Huỷ" },
+            onConfirm: async () => {
+                deleteUserProgress(
+                    { userId: user.userId, groupId: groupId as string },
+                    {
+                        onSuccess: async () => {
+                            notifications.show({
+                                title: "Thành công",
+                                message: "Kết học tập đã được xóa thành công",
+                                color: "green",
+                                position: "top-right",
+                            });
+
+                            // Close modal first
+                            onClose();
+
+                            // Trigger refresh callback if provided
+                            if (onDeleteSuccess) {
+                                // Small delay to ensure modal is closed before refresh
+                                setTimeout(() => {
+                                    onDeleteSuccess();
+                                }, 100);
+                            }
+                        },
+                    }
+                );
+            },
+            confirmProps: { color: "red" },
+        });
+    };
+
     return (
         <div className="w-full flex flex-col gap-y-4">
             <div className="w-full flex items-center justify-between gap-x-2">
-                <Card withBorder className="w-full !py-1">
+                <Card withBorder className="w-full py-1!">
                     <Text size="xs" fw={500} c="dimmed">
                         Ngày sinh
                     </Text>
@@ -46,7 +100,7 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                     </Text>
                 </Card>
 
-                <Card withBorder className="w-full !py-1">
+                <Card withBorder className="w-full py-1!">
                     <Text size="xs" fw={500} c="dimmed">
                         Công ty
                     </Text>
@@ -87,7 +141,7 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
             <Tooltip label={renderLabel} color={isCompleted ? "green" : "red"} withArrow>
                 <Card
                     withBorder
-                    className="w-full cursor-pointer hover:!bg-gray-50"
+                    className="w-full cursor-pointer hover:bg-gray-50!"
                     onClick={handleExamTabClick}
                 >
                     <div className="flex items-center justify-between gap-x-2">
@@ -170,6 +224,16 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                         </Text>
                     </div>
                 </Card>
+            </div>
+
+            <div className="w-full flex items-center justify-end">
+                <Button
+                    color="red"
+                    onClick={handleDeleteUserProgress}
+                    loading={isDeletingUserProgress}
+                >
+                    Xóa kết học tập
+                </Button>
             </div>
         </div>
     );
