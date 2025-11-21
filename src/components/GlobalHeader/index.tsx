@@ -9,12 +9,15 @@ import { Avatar, Box, Burger, Button, Drawer, Group, Stack, Text } from "@mantin
 import { useDisclosure } from "@mantine/hooks";
 import { IconLogout } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { USER_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 import AuthButton from "./AuthButton";
 
 const GlobalHeader = () => {
     const router = useRouter();
+
+    const { t } = useI18nTranslate();
 
     const { signOut, user, isSignedIn } = useClerk();
 
@@ -30,10 +33,10 @@ const GlobalHeader = () => {
     const [opened, { toggle, close }] = useDisclosure(false);
 
     const navigationItems = [
-        { href: navigationPaths.LANDING_PAGE, label: "Trang chủ", isVisible: true },
-        { href: navigationPaths.ATLD, label: "Đào tạo ATLD", isVisible: true },
-        { href: navigationPaths.HOC_NGHE, label: "Học nghề", isVisible: true },
-        { href: navigationPaths.QUAN_TRI_ATLD, label: "Quản trị", isVisible: isAdmin },
+        { href: navigationPaths.LANDING_PAGE, label: t("trang_chu"), isVisible: true },
+        { href: navigationPaths.ATLD, label: t("dao_tao_atld"), isVisible: true },
+        { href: navigationPaths.HOC_NGHE, label: t("hoc_nghe_1"), isVisible: true },
+        { href: navigationPaths.QUAN_TRI_ATLD, label: t("quan_tri"), isVisible: isAdmin },
     ];
 
     const handleLogout = () => {
@@ -130,7 +133,7 @@ const GlobalHeader = () => {
                         </div>
                     ) : (
                         <Text fw={600} size="lg">
-                            An toàn lao động
+                            {t("an_toan_lao_dong")}
                         </Text>
                     )
                 }
@@ -170,7 +173,7 @@ const GlobalHeader = () => {
                         <Button color="red" size="sm" onClick={handleLogout}>
                             <div className="flex items-center gap-x-2">
                                 <IconLogout className="text-white" size={16} />
-                                <Text>Đăng xuất</Text>
+                                <Text>{t("dang_xuat")}</Text>
                             </div>
                         </Button>
                     )}

@@ -4,6 +4,7 @@ import { useLearnContext } from "@/contexts/LearnContext";
 import { CourseType } from "@/features/course/types";
 import { isVideoActive } from "@/features/course/utils/check-is-video-active";
 import { isVideoCompleted } from "@/features/course/utils/check-is-video-completed";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 import LearnSidebarContent from "./learn-sidebar-content";
 
@@ -32,6 +33,8 @@ interface LearnSidebarProps {
 }
 
 const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
+    const { t } = useI18nTranslate();
+
     const {
         learnDetail,
         progress,
@@ -101,7 +104,7 @@ const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
     const sections: SectionData[] = [
         {
             id: "theory",
-            label: "Bài học lý thuyết",
+            label: t("bai_hoc_ly_thuyet"),
             description: "Video",
             isAccessible: isSectionAccessible("theory"),
             isVisible: learnDetail?.theory?.videos?.length > 0,
@@ -118,7 +121,7 @@ const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
         },
         {
             id: "practice",
-            label: "Bài học thực hành",
+            label: t("bai_hoc_thuc_hanh"),
             description: "Video",
             isAccessible: isSectionAccessible("practice"),
             isVisible: learnDetail?.practice?.videos?.length > 0,
@@ -135,8 +138,8 @@ const LearnSidebar = ({ courseType }: LearnSidebarProps) => {
         },
         {
             id: "exam",
-            label: "Bài kiểm tra",
-            description: "Trắc nghiệm",
+            label: t("bai_kiem_tra"),
+            description: t("trac_nghiem"),
             isVisible: learnDetail?.exam?.questions?.length > 0,
             isAccessible: isSectionAccessible("exam"),
             content: [

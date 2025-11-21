@@ -3,6 +3,7 @@ import { RefObject } from "react";
 import { IconLoader } from "@tabler/icons-react";
 
 import { CourseType } from "@/features/course/types";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 interface CameraPreviewProps {
     videoRef: RefObject<HTMLVideoElement | null>;
@@ -11,6 +12,8 @@ interface CameraPreviewProps {
 }
 
 export const CameraPreview = ({ videoRef, isCameraReady, courseType }: CameraPreviewProps) => {
+    const { t } = useI18nTranslate();
+
     const getGradientColors = () => {
         switch (courseType) {
             case "atld":
@@ -106,7 +109,7 @@ export const CameraPreview = ({ videoRef, isCameraReady, courseType }: CameraPre
                                 <div className="flex flex-col sm:flex-row items-center gap-2">
                                     <IconLoader className={`w-5 h-5 animate-spin ${iconColor}`} />
                                     <span className="text-xs sm:text-sm font-medium text-gray-700 text-center">
-                                        Đang khởi động camera...
+                                        {t("dang_khoi_dong_camera")}
                                     </span>
                                 </div>
                             </div>

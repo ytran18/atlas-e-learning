@@ -6,6 +6,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { Accordion, Button } from "@mantine/core";
 import { IconChevronLeft } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { ATLD_SLUG, HOC_NGHE_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 import SectionItem from "./section-item";
@@ -48,6 +49,8 @@ const LearnSidebarContent = ({
 }: LearnSidebarContentProps) => {
     const { atldId, hocNgheId } = useParams();
 
+    const { t } = useI18nTranslate();
+
     const searchParams = useSearchParams();
 
     const sectionDB = searchParams.get("section");
@@ -70,7 +73,7 @@ const LearnSidebarContent = ({
             <div className="flex items-center gap-x-2">
                 <Link href={backPath}>
                     <Button leftSection={<IconChevronLeft className="w-6 h-6 min-h-6 min-w-6" />}>
-                        Quay về
+                        {t("quay_ve")}
                     </Button>
                 </Link>
             </div>
@@ -89,7 +92,7 @@ const LearnSidebarContent = ({
                     onClick={handleReturnToCurrent}
                     className="mb-2"
                 >
-                    Đến phần hiện tại
+                    {t("den_phan_hien_tai")}
                 </Button>
             </div>
 

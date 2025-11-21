@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 export const useCameraCapture = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -7,6 +9,8 @@ export const useCameraCapture = () => {
     const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
     const [isCameraReady, setIsCameraReady] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const { t } = useI18nTranslate();
 
     useEffect(() => {
         startCamera();
@@ -39,9 +43,7 @@ export const useCameraCapture = () => {
         } catch (err) {
             console.error("Error accessing camera:", err);
 
-            setError(
-                "Không thể truy cập camera. Vui lòng cho phép truy cập camera trong trình duyệt."
-            );
+            setError(t("khong_the_truy_cap_camera_vui_long_cho_phep_truy_c"));
         }
     };
 

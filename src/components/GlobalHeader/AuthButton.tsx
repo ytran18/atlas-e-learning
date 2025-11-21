@@ -8,6 +8,7 @@ import { useClerk, useUser } from "@clerk/nextjs";
 import { Avatar, Box, Button, Group, Loader, Text } from "@mantine/core";
 import { IconLogout } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { trackUserSignedOut } from "@/libs/mixpanel";
 import { USER_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
@@ -27,6 +28,8 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
     onSignUp,
 }) => {
     const router = useRouter();
+
+    const { t } = useI18nTranslate();
 
     const { signOut } = useClerk();
 
@@ -62,7 +65,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
             <Group gap="xs">
                 <Loader size="sm" />
                 <Text size="sm" c="dimmed" hiddenFrom="sm">
-                    Loading...
+                    {t("dang_tai")}
                 </Text>
             </Group>
         );
@@ -104,7 +107,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                     <div className="flex items-center gap-x-2">
                         <IconLogout className="text-gray-700" size={16} />
                         <Text size="xs" visibleFrom="sm">
-                            Đăng xuất
+                            {t("dang_xuat")}
                         </Text>
                     </div>
                 </Button>
@@ -120,10 +123,10 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                 onClick={handleLogin}
                 className={signInButtonClassName}
             >
-                Đăng nhập
+                {t("dang_nhap")}
             </Button>
             <Button size="xs" onClick={handleSignUp} className={signUpButtonClassName}>
-                Đăng ký
+                {t("dang_ky_1")}
             </Button>
         </Group>
     );

@@ -1,3 +1,5 @@
+"use client";
+
 import { Card } from "@mantine/core";
 import {
     IconAward,
@@ -8,16 +10,20 @@ import {
     IconVideo,
 } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 const FeaturesSection = () => {
+    const { t } = useI18nTranslate();
+
     return (
         <section className="py-20 bg-linear-to-b from-(--primary)/10 to-background">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-(--mantine-color-dark-9)">
-                        Tại sao chọn chúng tôi?
+                        {t("tai_sao_chon_chung_toi")}
                     </h2>
                     <p className="text-(--mantine-color-dark-5) max-w-2xl mx-auto">
-                        Hệ thống đào tạo toàn diện với phương pháp học tập hiện đại
+                        {t("he_thong_dao_tao_toan_dien_voi_phuong_phap_hoc_tap")}
                     </p>
                 </div>
 
@@ -27,10 +33,10 @@ const FeaturesSection = () => {
                             <IconVideo className="h-6 w-6 text-primary" />
                         </div>
                         <h3 className="text-xl font-semibold mb-2 text-(--mantine-color-dark-9)">
-                            Video học tập
+                            {t("video_hoc_tap")}
                         </h3>
                         <p className="text-(--mantine-color-dark-5)">
-                            Học qua video lý thuyết và thực hành chi tiết, dễ hiểu
+                            {t("hoc_qua_video_ly_thuyet_va_thuc_hanh_chi_tiet_de_h")}
                         </p>
                     </Card>
 
@@ -39,10 +45,10 @@ const FeaturesSection = () => {
                             <IconFileCheck className="h-6 w-6 text-accent" />
                         </div>
                         <h3 className="text-xl font-semibold mb-2 text-(--mantine-color-dark-9)">
-                            Kiểm tra đánh giá
+                            {t("kiem_tra_danh_gia")}
                         </h3>
                         <p className="text-(--mantine-color-dark-5)">
-                            Bài kiểm tra sau mỗi khóa học để đánh giá kiến thức
+                            {t("bai_kiem_tra_sau_moi_khoa_hoc_de_danh_gia_kien_thu")}
                         </p>
                     </Card>
 
@@ -51,10 +57,10 @@ const FeaturesSection = () => {
                             <IconAward className="h-6 w-6 text-success" />
                         </div>
                         <h3 className="text-xl font-semibold mb-2 text-(--mantine-color-dark-9)">
-                            Chứng chỉ
+                            {t("chung_chi")}
                         </h3>
                         <p className="text-(--mantine-color-dark-5)">
-                            Nhận chứng chỉ sau khi hoàn thành khóa học thành công
+                            {t("nhan_chung_chi_sau_khi_hoan_thanh_khoa_hoc_thanh_c")}
                         </p>
                     </Card>
 
@@ -63,10 +69,10 @@ const FeaturesSection = () => {
                             <IconShield className="h-6 w-6 text-warning" />
                         </div>
                         <h3 className="text-xl font-semibold mb-2 text-(--mantine-color-dark-9)">
-                            6 nhóm ATLĐ
+                            {t("6_nhom_atld")}
                         </h3>
                         <p className="text-(--mantine-color-dark-5)">
-                            Đào tạo đầy đủ 6 nhóm an toàn lao động theo quy định
+                            {t("dao_tao_day_du_6_nhom_an_toan_lao_dong_theo_quy_di")}
                         </p>
                     </Card>
 
@@ -75,10 +81,10 @@ const FeaturesSection = () => {
                             <IconBook className="h-6 w-6 text-primary" />
                         </div>
                         <h3 className="text-xl font-semibold mb-2 text-(--mantine-color-dark-9)">
-                            Học nghề
+                            {t("hoc_nghe_1")}
                         </h3>
                         <p className="text-(--mantine-color-dark-5)">
-                            Các khóa học nghề nghiệp chuyên sâu và thực tế
+                            {t("cac_khoa_hoc_nghe_nghiep_chuyen_sau_va_thuc_te")}
                         </p>
                     </Card>
 
@@ -87,10 +93,10 @@ const FeaturesSection = () => {
                             <IconUsers className="h-6 w-6 text-accent" />
                         </div>
                         <h3 className="text-xl font-semibold mb-2 text-(--mantine-color-dark-9)">
-                            Quản lý dễ dàng
+                            {t("quan_ly_de_dang")}
                         </h3>
                         <p className="text-(--mantine-color-dark-5)">
-                            Hệ thống quản trị tiện lợi cho doanh nghiệp
+                            {t("he_thong_quan_tri_tien_loi_cho_doanh_nghiep")}
                         </p>
                     </Card>
                 </div>

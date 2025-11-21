@@ -1,5 +1,6 @@
 import { IconClipboardCheck, IconPlaylist, IconVideo } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { CoursePreview } from "@/types/api";
 
 import CourseContentCard from "../../components/preview/course-content-card";
@@ -22,6 +23,8 @@ const CoursePreviewContainer = ({
     isCompleted,
     type,
 }: AtldPreviewContainerProps) => {
+    const { t } = useI18nTranslate();
+
     const totlaLessons = course.theory.videos.length + course.practice.videos.length;
 
     const totalQuestions = course.totalQuestionOfExam || 0;
@@ -48,10 +51,10 @@ const CoursePreviewContainer = ({
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl py-8">
                 <div className="mb-8">
                     <h2 className="text-2xl font-semibold text-gray-900 mb-2 tracking-tight">
-                        Nội dung khóa học
+                        {t("noi_dung_khoa_hoc")}
                     </h2>
                     <p className="text-sm text-gray-600">
-                        Hoàn thành tất cả các phần để nhận chứng chỉ
+                        {t("hoan_thanh_tat_ca_cac_phan_de_nhan_chung_chi")}
                     </p>
                 </div>
 
@@ -59,8 +62,8 @@ const CoursePreviewContainer = ({
                     {/* Theory Card */}
                     <CourseContentCard
                         icon={<IconPlaylist className="h-6 w-6" strokeWidth={1.5} />}
-                        title="1. Học lý thuyết"
-                        description="Xem các video lý thuyết để hiểu rõ về an toàn lao động"
+                        title={t("1_hoc_ly_thuyet")}
+                        description={t("xem_cac_video_ly_thuyet_de_hieu_ro_ve_an_toan_lao_")}
                         step="01"
                     >
                         <LessonList lessons={course.theory.videos} />
@@ -69,8 +72,8 @@ const CoursePreviewContainer = ({
                     {/* Practice Card */}
                     <CourseContentCard
                         icon={<IconVideo className="h-6 w-6" strokeWidth={1.5} />}
-                        title="2. Học thực hành"
-                        description="Xem các video thực hành để hiểu rõ về an toàn lao động"
+                        title={t("2_hoc_thuc_hanh")}
+                        description={t("xem_cac_video_thuc_hanh_de_hieu_ro_ve_an_toan_lao_")}
                         step="02"
                     >
                         <LessonList lessons={course.practice.videos} />
@@ -79,14 +82,15 @@ const CoursePreviewContainer = ({
                     {/* Quiz Card */}
                     <CourseContentCard
                         icon={<IconClipboardCheck className="h-6 w-6" strokeWidth={1.5} />}
-                        title="3. Kiểm tra"
-                        description="Hoàn thành bài kiểm tra để đánh giá kiến thức đã học"
+                        title={t("3_kiem_tra")}
+                        description={t("hoan_thanh_bai_kiem_tra_de_danh_gia_kien_thuc_da_h")}
                         step="03"
                     >
                         <div className="bg-gray-50 px-4 py-3 rounded-lg border border-gray-200 inline-block">
                             <p className="text-sm text-gray-700 font-medium">
-                                {course.totalQuestionOfExam} câu hỏi trắc nghiệm •{" "}
-                                {course.totalQuestionOfExam * 2} phút
+                                {t("count_cau_hoi_trac_nghiem", {
+                                    total: course.totalQuestionOfExam,
+                                })}
                             </p>
                         </div>
                     </CourseContentCard>

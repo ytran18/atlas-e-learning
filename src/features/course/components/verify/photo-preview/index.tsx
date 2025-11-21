@@ -2,16 +2,20 @@ import Image from "next/image";
 
 import { IconCircleCheck } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 interface PhotoPreviewProps {
     photoUrl: string;
 }
 
 export const PhotoPreview = ({ photoUrl }: PhotoPreviewProps) => {
+    const { t } = useI18nTranslate();
+
     return (
         <>
             <Image
                 src={photoUrl}
-                alt="Ảnh đã chụp"
+                alt={t("anh_da_chup")}
                 width={1280}
                 height={720}
                 className="w-full h-full object-cover"

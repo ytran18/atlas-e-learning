@@ -5,6 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 
 import { courseProgressKeys, useSubmitExam, useUpdateProgress } from "@/api/user";
 import { useLearnContext } from "@/contexts/LearnContext";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { CourseType, ExamAnswer } from "@/types/api";
 
 import ListQuestions from "./list-questions";
@@ -18,6 +19,8 @@ interface LearnExamProps {
 }
 
 const LearnExam = ({ courseType }: LearnExamProps) => {
+    const { t } = useI18nTranslate();
+
     const { learnDetail, progress } = useLearnContext();
 
     const queryClient = useQueryClient();
@@ -61,8 +64,8 @@ const LearnExam = ({ courseType }: LearnExamProps) => {
 
             // Show success notification
             notifications.show({
-                title: "Nộp bài thành công!",
-                message: `Điểm số: ${result.score}/${result.totalQuestions} (${result.passed ? "Đạt" : "Không đạt"})`,
+                title: t("nop_bai_thanh_cong"),
+                message: `Điểm số: ${result.score}/${result.totalQuestions} (${result.passed ? t("dat") : t("khong_dat")})`,
                 position: "top-right",
                 variant: "success",
             });
@@ -96,7 +99,6 @@ const LearnExam = ({ courseType }: LearnExamProps) => {
             }
         } catch (error) {
             console.error("Failed to submit exam:", error);
-            alert("Lỗi nộp bài\nCó lỗi xảy ra khi nộp bài thi. Vui lòng thử lại.");
         }
     };
 
@@ -129,8 +131,8 @@ const LearnExam = ({ courseType }: LearnExamProps) => {
                                         variant="filled"
                                     >
                                         {submitExam.isPending
-                                            ? "Đang nộp bài..."
-                                            : "Nộp bài kiểm tra"}
+                                            ? t("dang_nop_bai")
+                                            : t("nop_bai_kiem_tra")}
                                     </Button>
                                 </div>
                             </>

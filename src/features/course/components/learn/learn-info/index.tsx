@@ -1,5 +1,7 @@
 import React from "react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 interface LearnInfoProps {
     title?: string;
     description?: string;
@@ -15,6 +17,8 @@ const LearnInfo = React.memo(function LearnInfo({
     total,
     isFinished,
 }: LearnInfoProps) {
+    const { t } = useI18nTranslate();
+
     return (
         <div className="shrink-0 space-y-4 px-2 sm:px-0">
             <div className="space-y-2">
@@ -27,7 +31,7 @@ const LearnInfo = React.memo(function LearnInfo({
                     Video {currentIndex + 1} / {total}
                 </span>
 
-                <span>{isFinished ? "✓ Hoàn thành" : "Đang học"}</span>
+                <span>{isFinished ? t("hoan_thanh_1") : t("dang_hoc")}</span>
             </div>
         </div>
     );

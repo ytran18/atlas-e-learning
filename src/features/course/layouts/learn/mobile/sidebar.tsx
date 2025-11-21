@@ -1,6 +1,7 @@
 import LearnSidebar from "@/features/course/components/learn/learn-sidebar";
 import { CloseIcon } from "@/features/course/icons";
 import { CourseType } from "@/features/course/types";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 interface MobileSidebarProps {
     isOpen: boolean;
@@ -9,6 +10,8 @@ interface MobileSidebarProps {
 }
 
 const MobileSidebar = ({ isOpen, onClose, courseType }: MobileSidebarProps) => {
+    const { t } = useI18nTranslate();
+
     if (!isOpen) return null;
 
     return (
@@ -17,7 +20,9 @@ const MobileSidebar = ({ isOpen, onClose, courseType }: MobileSidebarProps) => {
 
             <div className="fixed top-0 left-0 h-full w-90 max-w-[90vw] bg-white shadow-xl overflow-y-auto">
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                    <h2 className="text-lg font-semibold text-gray-900">Nội dung khóa học</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">
+                        {t("noi_dung_khoa_hoc")}
+                    </h2>
 
                     <button
                         onClick={onClose}

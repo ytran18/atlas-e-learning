@@ -6,9 +6,12 @@ import { useGetUserProgress } from "@/api/user/useGetUserProgress";
 import CourseLoading from "@/features/course/components/list/course-loading";
 import CourseListHeroSection from "@/features/course/components/list/hero-section";
 import CourseListSection from "@/features/course/components/list/list-section";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 const AtldListPage = () => {
     const { user } = useClerk();
+
+    const { t } = useI18nTranslate();
 
     const { data: userProgress, isLoading: isLoadingUserProgress } = useGetUserProgress(
         user?.id || "",
@@ -41,10 +44,10 @@ const AtldListPage = () => {
                     {hasAnyCourses && (
                         <div className="mb-10 text-center">
                             <h2 className="text-3xl font-semibold text-gray-900 mb-3 tracking-tight">
-                                Khám phá các khóa học
+                                {t("kham_pha_cac_khoa_hoc")}
                             </h2>
                             <p className="text-lg text-gray-600 font-normal">
-                                Chọn nhóm phù hợp với công việc của bạn
+                                {t("chon_nhom_phu_hop_voi_cong_viec_cua_ban")}
                             </p>
                         </div>
                     )}

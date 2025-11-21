@@ -1,6 +1,8 @@
 import { Button } from "@mantine/core";
 import { IconCircleCheck, IconLoader, IconRotate } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 interface ActionButtonsProps {
     onRetake: () => void;
     onConfirm: () => void;
@@ -8,6 +10,8 @@ interface ActionButtonsProps {
 }
 
 export const ActionButtons = ({ onRetake, onConfirm, isUploading }: ActionButtonsProps) => {
+    const { t } = useI18nTranslate();
+
     return (
         <div className="flex gap-3 w-full">
             <Button
@@ -18,7 +22,7 @@ export const ActionButtons = ({ onRetake, onConfirm, isUploading }: ActionButton
                 radius="md"
             >
                 <IconRotate className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                <span className="text-sm sm:text-base font-semibold">Chụp lại</span>
+                <span className="text-sm sm:text-base font-semibold">{t("chup_lai")}</span>
             </Button>
             <Button
                 onClick={onConfirm}
@@ -30,12 +34,14 @@ export const ActionButtons = ({ onRetake, onConfirm, isUploading }: ActionButton
                 {isUploading ? (
                     <>
                         <IconLoader className="mr-1.5 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-                        <span className="text-sm sm:text-base font-semibold">Đang xử lý...</span>
+                        <span className="text-sm sm:text-base font-semibold">
+                            {t("dang_xu_ly_1")}
+                        </span>
                     </>
                 ) : (
                     <>
                         <IconCircleCheck className="mr-1.5 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                        <span className="text-sm sm:text-base font-semibold">Xác nhận</span>
+                        <span className="text-sm sm:text-base font-semibold">{t("xac_nhan")}</span>
                     </>
                 )}
             </Button>

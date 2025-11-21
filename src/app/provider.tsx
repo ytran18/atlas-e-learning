@@ -15,9 +15,11 @@ import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { CookiesProvider } from "react-cookie";
 
 import { createQueryClient } from "@/configs/reactQuery.config";
 import { makeGrowthBook } from "@/libs/growthbook/make-growthbook";
+import { I18nProvider } from "@/libs/i18n/provider";
 import { initMixpanel } from "@/libs/mixpanel/mixpanel-client";
 import { useMixpanelUserIdentification } from "@/libs/mixpanel/tracking";
 
@@ -57,19 +59,23 @@ function ProviderContent({
     }, []);
 
     return (
-        <QueryClientProvider client={queryClient}>
-            <AntdRegistry>
-                <MantineProvider>
-                    <ModalsProvider>
-                        <Notifications />
+        <CookiesProvider>
+            <QueryClientProvider client={queryClient}>
+                <I18nProvider lng={"kr"}>
+                    <AntdRegistry>
+                        <MantineProvider>
+                            <ModalsProvider>
+                                <Notifications />
 
-                        {children}
-                    </ModalsProvider>
-                </MantineProvider>
-            </AntdRegistry>
-            {/* React Query Devtools - chỉ hiện trong development */}
-            <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
+                                {children}
+                            </ModalsProvider>
+                        </MantineProvider>
+                    </AntdRegistry>
+                </I18nProvider>
+                {/* React Query Devtools - chỉ hiện trong development */}
+                <ReactQueryDevtools initialIsOpen={false} />
+            </QueryClientProvider>
+        </CookiesProvider>
     );
 }
 

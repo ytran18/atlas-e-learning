@@ -8,6 +8,7 @@ import { courseProgressKeys, useUpdateProgress } from "@/api";
 import { useLearnContext } from "@/contexts/LearnContext";
 import { useAutoCapture } from "@/features/course/hooks/useAutoCapture";
 import { COURSE_THEMES } from "@/features/course/types";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import VideoPlayer from "@/libs/player/VideoPlayer";
 import { CourseType } from "@/types/api";
 
@@ -20,6 +21,8 @@ interface LearnPracticeProps {
 }
 
 const LearnPractice = ({ courseType }: LearnPracticeProps) => {
+    const { t } = useI18nTranslate();
+
     const { learnDetail, progress, currentVideoIndex, navigateToVideo, navigateToExam } =
         useLearnContext();
 
@@ -149,10 +152,10 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
     });
 
     const buttonText = useMemo(() => {
-        if (learnDetail.practice.videos.length > 0) return "Tiếp theo";
-        if (learnDetail.exam.questions.length > 0) return "Chuyển sang bài kiểm tra";
-        return "Hoàn thành khóa học";
-    }, [learnDetail.practice.videos.length, learnDetail.exam.questions.length]);
+        if (learnDetail.practice.videos.length > 0) return t("tiep_theo");
+        if (learnDetail.exam.questions.length > 0) return t("chuyen_sang_bai_kiem_tra");
+        return t("hoan_thanh_khoa_hoc");
+    }, [learnDetail.practice.videos.length, learnDetail.exam.questions.length, t]);
 
     return (
         <LearnView

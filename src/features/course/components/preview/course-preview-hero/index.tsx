@@ -7,6 +7,7 @@ import { Button, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconArrowLeft } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { trackCoursePreviewStartClicked } from "@/libs/mixpanel";
 import { ATLD_SLUG, HOC_NGHE_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
@@ -25,7 +26,6 @@ interface CoursePreviewHeroProps {
 const CoursePreviewHero = ({
     title,
     description,
-    badge = "An toàn Lao động",
     isJoined,
     isLoadingJoiabled,
     children,
@@ -34,6 +34,8 @@ const CoursePreviewHero = ({
     type,
 }: CoursePreviewHeroProps) => {
     const { atldId, hocNgheId } = useParams();
+
+    const { t } = useI18nTranslate();
 
     const [isNavigating, setIsNavigating] = useState<boolean>(false);
 
@@ -69,20 +71,13 @@ const CoursePreviewHero = ({
                             size="sm"
                             className="text-gray-700 hover:bg-white/80"
                         >
-                            Quay lại
+                            {t("quay_lai")}
                         </Button>
                     </Link>
                 </div>
 
                 {/* Course Header */}
                 <div className="max-w-4xl">
-                    {/* Badge */}
-                    <div className="mb-4">
-                        <span className="inline-block px-3 py-1.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
-                            {badge}
-                        </span>
-                    </div>
-
                     <h1 className="text-2xl sm:text-3xl font-semibold mb-4 text-gray-900 tracking-tight leading-tight">
                         {title}
                     </h1>
@@ -96,7 +91,9 @@ const CoursePreviewHero = ({
                     {/* CTA Button */}
                     <div className="flex flex-col gap-y-2">
                         {isCompleted && (
-                            <Text className="text-green-600!">Bạn đã hoàn thành khóa học này</Text>
+                            <Text className="text-green-600!">
+                                {t("ban_da_hoan_thanh_khoa_hoc_nay")}
+                            </Text>
                         )}
 
                         <Link
@@ -108,7 +105,7 @@ const CoursePreviewHero = ({
 
                                     notifications.show({
                                         position: "top-center",
-                                        message: "Khóa học chưa có nội dung",
+                                        message: t("khoa_hoc_chua_co_noi_dung"),
                                         color: "yellow",
                                         withBorder: true,
                                     });
@@ -137,10 +134,10 @@ const CoursePreviewHero = ({
                                 loaderProps={{ type: "dots" }}
                             >
                                 {isCompleted
-                                    ? "Xem lại khóa học"
+                                    ? t("xem_lai_khoa_hoc")
                                     : isJoined
-                                      ? "Tiếp tục học"
-                                      : "Bắt đầu học ngay"}
+                                      ? t("tiep_tuc_hoc")
+                                      : t("bat_dau_hoc_ngay")}
                             </Button>
                         </Link>
                     </div>

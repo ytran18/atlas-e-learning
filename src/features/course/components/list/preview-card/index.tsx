@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { IconBook, IconClipboardCheck, IconPlayerPlay } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { CategorizedCourse } from "@/types/api";
 
 type CoursePreviewCardProps = {
@@ -13,9 +14,11 @@ type CoursePreviewCardProps = {
 const CoursePreviewCard = ({ course }: CoursePreviewCardProps) => {
     const [isNavigating, setIsNavigating] = useState<boolean>(false);
 
+    const { t } = useI18nTranslate();
+
     const courseType = course?.type ?? "atld";
 
-    const courseBadge = courseType === "atld" ? "An toàn Lao động" : "Học Nghề";
+    const courseBadge = courseType === "atld" ? t("an_toan_lao_dong") : t("hoc_nghe");
 
     return (
         <Link
@@ -64,18 +67,30 @@ const CoursePreviewCard = ({ course }: CoursePreviewCardProps) => {
                     <div className="flex items-center gap-2 text-xs text-gray-600">
                         <IconBook className="h-4 w-4 text-gray-500" strokeWidth={1.5} />
 
-                        <span>{course?.numberOfTheory || 0} bài lý thuyết</span>
+                        <span>
+                            {t("count_khoa_hoc", {
+                                count: course?.numberOfTheory || 0,
+                            })}
+                        </span>
 
                         <span className="text-gray-300">•</span>
 
                         <IconPlayerPlay className="h-4 w-4 text-gray-500" strokeWidth={1.5} />
 
-                        <span>{course?.numberOfPractice || 0} bài thực hành</span>
+                        <span>
+                            {t("count_bai_thuc_hanh", {
+                                count: course?.numberOfPractice || 0,
+                            })}
+                        </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-gray-600">
                         <IconClipboardCheck className="h-4 w-4 text-gray-500" strokeWidth={1.5} />
 
-                        <span>{course?.totalQuestionOfExam || 0} câu hỏi kiểm tra</span>
+                        <span>
+                            {t("count_cau_hoi_kiem_tra", {
+                                count: course?.totalQuestionOfExam || 0,
+                            })}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -85,7 +100,7 @@ const CoursePreviewCard = ({ course }: CoursePreviewCardProps) => {
                 <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10">
                     <div className="flex items-center gap-2 text-blue-600">
                         <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                        <span className="text-sm font-medium">Đang tải khóa học...</span>
+                        <span className="text-sm font-medium">{t("dang_tai_khoa_hoc_1")}</span>
                     </div>
                 </div>
             )}
