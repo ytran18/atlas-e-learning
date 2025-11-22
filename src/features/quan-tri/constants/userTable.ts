@@ -16,6 +16,10 @@ export const tableHeader = [
         key: "companyName",
     },
     {
+        label: "Thời gian học",
+        key: "lastUpdatedAt",
+    },
+    {
         label: "Lý thuyết",
         key: "theory",
     },

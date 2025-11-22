@@ -164,7 +164,11 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
                 <div className="min-h-0">
                     <VideoPlayer
                         src={currentVideo?.url || learnDetail.practice.videos?.[0]?.url}
-                        canSeek={currentVideo?.canSeek || learnDetail.practice.videos?.[0]?.canSeek}
+                        canSeek={
+                            currentVideo?.canSeek ||
+                            learnDetail.practice.videos?.[0]?.canSeek ||
+                            progress?.isCompleted
+                        }
                         isUsingLink={
                             currentVideo?.isUsingLink ||
                             learnDetail.practice.videos?.[0]?.isUsingLink

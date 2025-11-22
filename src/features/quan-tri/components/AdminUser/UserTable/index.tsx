@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 
 import { Checkbox, Modal, Table, Tooltip } from "@mantine/core";
 import { Empty } from "antd";
+import dayjs from "dayjs";
 import { useInstantSearch } from "react-instantsearch-hooks-web";
 
 import { useCourseDetail, useGetUserDetail } from "@/api";
@@ -96,6 +97,12 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
                     <Table.Td>{element?.userBirthDate ?? ""}</Table.Td>
 
                     <Table.Td>{element?.userCompanyName ?? ""}</Table.Td>
+
+                    <Table.Td>
+                        {element?.lastUpdatedAt
+                            ? dayjs(Number(element.lastUpdatedAt)).format("DD-MM-YYYY HH:mm")
+                            : ""}
+                    </Table.Td>
 
                     <Table.Td>
                         <Checkbox readOnly checked={isTheoryCompleted} />

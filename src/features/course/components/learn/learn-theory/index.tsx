@@ -180,7 +180,11 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                 <div className="min-h-0">
                     <VideoPlayer
                         src={currentVideo?.url || learnDetail?.theory?.videos?.[0]?.url}
-                        canSeek={currentVideo?.canSeek || learnDetail?.theory?.videos?.[0]?.canSeek}
+                        canSeek={
+                            currentVideo?.canSeek ||
+                            learnDetail?.theory?.videos?.[0]?.canSeek ||
+                            progress?.isCompleted
+                        }
                         isUsingLink={
                             currentVideo?.isUsingLink ||
                             learnDetail?.theory?.videos?.[0]?.isUsingLink
