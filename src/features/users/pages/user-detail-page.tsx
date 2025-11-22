@@ -4,8 +4,10 @@ import { useParams } from "next/navigation";
 
 import { useGetUserInfo } from "@/api/user/useGetUserInfo";
 
+import UserCourseCompleted from "../components/user-couse-completed";
 import UserLeftSection from "../components/user-left-section";
 import UserRightSection from "../components/user-right-section";
+import UserProfileTabs from "../container/user-profile-tabs";
 
 const UserDetailPage = () => {
     const { userId } = useParams();
@@ -18,8 +20,13 @@ const UserDetailPage = () => {
                 <UserLeftSection user={userDetail as Record<string, any>} />
             </div>
 
-            <div className="col-span-8">
-                <UserRightSection user={userDetail as Record<string, any>} />
+            <div className="col-span-8 h-full">
+                <UserProfileTabs
+                    slots={{
+                        Info: () => <UserRightSection user={userDetail as Record<string, any>} />,
+                        Course: () => <UserCourseCompleted />,
+                    }}
+                />
             </div>
         </div>
     );

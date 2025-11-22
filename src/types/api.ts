@@ -385,3 +385,24 @@ export interface UserCourseProgress {
     incomplete: CategorizedCourse[];
     completed: CategorizedCourse[];
 }
+
+export interface UserCourseCompleted {
+    id: string;
+    userIdCard: string;
+    startedAt: number;
+    lastUpdatedAt: number;
+    startImageUrl: string;
+    finishImageUrl: string;
+    groupId: string;
+    examResult?: {
+        score: number;
+        totalQuestions: number;
+        passed: boolean;
+        completedAt: number;
+        answers?: ExamAnswer[];
+    };
+    isCompleted: boolean;
+    currentSection: SectionType;
+    courseName: string;
+    objectID: string;
+}

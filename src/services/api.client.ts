@@ -27,6 +27,7 @@ import {
     UpdateProgressRequest,
     UpdateProgressResponse,
     UploadCaptureResponse,
+    UserCourseCompleted,
     UserCourseProgress,
     UserInfo,
 } from "@/types/api";
@@ -369,5 +370,14 @@ export async function deleteUserProgress(userId: string, groupId: string) {
     const response = await apiFetch<boolean>(endpoint, {
         method: "DELETE",
     });
+    return response.data;
+}
+
+// get user course completed
+export async function getUserCourseCompleted(userId: string) {
+    const endpoint = `/api/v1/user/${userId}/course/completed`;
+
+    const response = await apiFetch<UserCourseCompleted[]>(endpoint);
+
     return response.data;
 }

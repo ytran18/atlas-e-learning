@@ -11,7 +11,7 @@ import { IconLanguage, IconLogout } from "@tabler/icons-react";
 import { useCookies } from "react-cookie";
 
 import { useI18nContext } from "@/libs/i18n/provider";
-import { i18nCookieName, listLanguages } from "@/libs/i18n/settings";
+import { fallbackLng, i18nCookieName, listLanguages } from "@/libs/i18n/settings";
 import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { trackUserSignedOut } from "@/libs/mixpanel";
 import { USER_SLUG, navigationPaths } from "@/utils/navigationPaths";
@@ -33,6 +33,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
 }) => {
     const router = useRouter();
 
+    // eslint-disable-next-line
     const [_, setCookie] = useCookies([i18nCookieName]);
 
     const isLargeScreen = useMediaQuery("(min-width: 1280px)");
@@ -90,7 +91,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
             <Group className="hover:cursor-pointer">
                 <Select
                     leftSection={<IconLanguage className="size-5" />}
-                    value={lng}
+                    value={lng ?? fallbackLng}
                     data={listLanguages}
                     onChange={handleLanguageChange}
                     w={isLargeScreen ? 200 : 140}

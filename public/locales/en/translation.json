@@ -388,5 +388,6 @@
     "quay_lai": "Back",
     "count_video": "{{count}} Videos",
     "count_cau_hoi": "{{count}} Questions",
-    "quay_ve": "Return"
+    "quay_ve": "Return",
+    "khoa_hoc_cua_ban": "My Courses"
 }

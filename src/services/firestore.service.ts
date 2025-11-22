@@ -12,6 +12,7 @@ import {
     CourseProgress,
     ExamAnswer,
     StudentStats,
+    UserCourseCompleted,
     UserCourseProgress,
 } from "@/types/api";
 
@@ -765,4 +766,29 @@ export async function deleteUserProgress(userId: string, groupId: string): Promi
     await searchIndexCollectionRef.delete();
 
     return true;
+}
+
+// get user completed courses
+export async function getUserCourseCompleted(userId: string): Promise<UserCourseCompleted[]> {
+    const snapshot = await adminDb
+        .collection(COLLECTIONS.SEARCH_INDEX)
+        .where("userId", "==", userId)
+        .get();
+
+    return snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            userIdCard: data.userIdCard || "",
+            startedAt: data.startedAt || 0,
+            lastUpdatedAt: data.lastUpdatedAt || 0,
+            startImageUrl: data.startImageUrl || "",
+            finishImageUrl: data.finishImageUrl || "",
+            groupId: data?.groupId ?? "",
+            examResult: data.examResult,
+            isCompleted: data.isCompleted || true,
+            currentSection: data.currentSection || "exam",
+            courseName: data.courseName || "",
+        } as UserCourseCompleted;
+    });
 }
