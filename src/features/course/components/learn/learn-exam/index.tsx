@@ -94,8 +94,11 @@ const LearnExam = ({ courseType }: LearnExamProps) => {
                     );
                 } catch (progressError) {
                     console.error("Failed to update progress:", progressError);
-                    // Don't show error to user as exam was already submitted successfully
                 }
+            } else {
+                queryClient.invalidateQueries({
+                    queryKey: courseProgressKeys.progress(courseType, learnDetail.id),
+                });
             }
         } catch (error) {
             console.error("Failed to submit exam:", error);

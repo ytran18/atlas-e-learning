@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 
@@ -57,6 +59,16 @@ const LearnSidebarContent = ({
 
     const videoIndexDB = searchParams.get("video");
 
+    const [activeAccordion, setActiveAccordion] = useState<string | null>(
+        currentSection || "theory"
+    );
+
+    useEffect(() => {
+        if (currentSection) {
+            setActiveAccordion(currentSection);
+        }
+    }, [currentSection]);
+
     const backPath = atldId
         ? navigationPaths.ATLD_PREVIEW.replace(`[${ATLD_SLUG}]`, atldId as string)
         : hocNgheId
@@ -99,7 +111,8 @@ const LearnSidebarContent = ({
             <Accordion
                 chevronPosition="right"
                 variant="contained"
-                defaultValue={currentSection || "theory"}
+                value={activeAccordion}
+                onChange={setActiveAccordion}
                 classNames={{
                     content: "pb-0",
                     item: "border-b border-gray-100 last:border-b-0",

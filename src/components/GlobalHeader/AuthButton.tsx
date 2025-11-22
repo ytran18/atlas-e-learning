@@ -5,7 +5,7 @@ import { FunctionComponent } from "react";
 import { useRouter } from "next/navigation";
 
 import { useClerk, useUser } from "@clerk/nextjs";
-import { Avatar, Box, Button, Group, Loader, Select, Text } from "@mantine/core";
+import { Avatar, Box, Button, Group, Select, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconLanguage, IconLogout } from "@tabler/icons-react";
 import { useCookies } from "react-cookie";
@@ -75,16 +75,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
     };
 
     // Show loading state while checking authentication
-    if (!isLoaded) {
-        return (
-            <Group gap="xs">
-                <Loader size="sm" />
-                <Text size="sm" c="dimmed" hiddenFrom="sm">
-                    {t("dang_tai")}
-                </Text>
-            </Group>
-        );
-    }
+    if (!isLoaded) return null;
 
     if (!!userData) {
         return (
@@ -105,7 +96,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                     onClick={handleUserDetail}
                 />
 
-                <Box visibleFrom="xl" style={{ flex: 1 }} onClick={handleUserDetail}>
+                <Box visibleFrom="xl" onClick={handleUserDetail}>
                     <Text size="sm" fw={500}>
                         {userData?.fullName as string}
                     </Text>
@@ -140,7 +131,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
     }
 
     return (
-        <Group gap="xs" className={className}>
+        <Group gap="xs" className={`${className} justify-end!`}>
             <Button
                 variant="default"
                 size="xs"

@@ -792,3 +792,24 @@ export async function getUserCourseCompleted(userId: string): Promise<UserCourse
         } as UserCourseCompleted;
     });
 }
+
+// retake the exam
+export async function retakeCourseExam(userId: string, groupId: string) {
+    const objectId = `${userId}_${groupId}`;
+
+    const userCollectionRef = adminDb
+        .collection(COLLECTIONS.USERS)
+        .doc(userId)
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId);
+
+    const searchIndexRef = adminDb.collection(COLLECTIONS.SEARCH_INDEX).doc(objectId);
+
+    const updateData = {
+        isCompleted: false,
+    };
+
+    await Promise.all([userCollectionRef.update(updateData), searchIndexRef.update(updateData)]);
+
+    return { success: true };
+}

@@ -38,6 +38,9 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
 
     const currentVideo = learnDetail.practice.videos[videoIndex];
 
+    const isCompletedThisVideo =
+        videoIndex < progress.currentVideoIndex || progress.currentSection === "exam";
+
     const sectionDB = searchParams.get("section");
 
     const videoIndexDB = searchParams.get("video");
@@ -167,7 +170,8 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
                         canSeek={
                             currentVideo?.canSeek ||
                             learnDetail.practice.videos?.[0]?.canSeek ||
-                            progress?.isCompleted
+                            Boolean(progress?.isCompleted) ||
+                            isCompletedThisVideo
                         }
                         isUsingLink={
                             currentVideo?.isUsingLink ||

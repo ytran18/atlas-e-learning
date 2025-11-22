@@ -38,6 +38,11 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
 
     const currentVideo = learnDetail.theory.videos[videoIndex];
 
+    const isCompletedThisVideo =
+        videoIndex < progress.currentVideoIndex ||
+        progress.currentSection === "practice" ||
+        progress.currentSection === "exam";
+
     const sectionDB = searchParams.get("section");
 
     const videoIndexDB = searchParams.get("video");
@@ -183,7 +188,8 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                         canSeek={
                             currentVideo?.canSeek ||
                             learnDetail?.theory?.videos?.[0]?.canSeek ||
-                            progress?.isCompleted
+                            Boolean(progress?.isCompleted) ||
+                            isCompletedThisVideo
                         }
                         isUsingLink={
                             currentVideo?.isUsingLink ||

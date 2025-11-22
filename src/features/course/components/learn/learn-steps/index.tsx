@@ -9,6 +9,7 @@ import { Stepper } from "@mantine/core";
 import { useLearnContext } from "@/contexts/LearnContext";
 
 import CompletedContent from "./completed-content";
+import ExamNotPassed from "./exam-not-passed";
 import MobileTabNavigation from "./mobile-tab-navigation";
 
 type LearnStepSlots = {
@@ -40,6 +41,8 @@ const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots }) => {
 
     const isCompleted = progress.isCompleted;
 
+    const isExamNotPassed = progress?.examResult?.passed === false;
+
     useEffect(() => {
         const newActive = sectionToIndex[currentSection as keyof typeof sectionToIndex] ?? 0;
         setActive(newActive);
@@ -53,6 +56,8 @@ const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots }) => {
     };
 
     if (isCompleted && !viewAgain) {
+        if (isExamNotPassed) return <ExamNotPassed />;
+
         return (
             <div className="w-full h-full">
                 <CompletedContent />

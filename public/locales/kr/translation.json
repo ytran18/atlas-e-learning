@@ -389,5 +389,8 @@
     "count_video": "{{count}}개의 동영상",
     "count_cau_hoi": "{{count}}개의 문제",
     "quay_ve": "돌아가기",
-    "khoa_hoc_cua_ban": "나의 코스"
+    "khoa_hoc_cua_ban": "나의 코스",
+    "ban_chua_vuot_qua_bai_kiem_tra": "시험에 통과하지 못했습니다",
+    "vui_long_lam_lai_bai_kiem_tra": "시험에 다시 응시해 주세요",
+    "lam_lai_bai_kiem_tra": "시험 재응시"
 }

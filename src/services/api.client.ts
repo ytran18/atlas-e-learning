@@ -299,8 +299,6 @@ export async function getCourseDetail(
     const endpoint =
         type === "atld" ? `/api/v1/atld/detail/${groupId}` : `/api/v1/hoc-nghe/detail/${groupId}`;
 
-    console.log("endpoint", endpoint);
-
     const response = await apiFetch<GetCourseDetailResponse>(endpoint);
     return response.data;
 }
@@ -380,4 +378,15 @@ export async function getUserCourseCompleted(userId: string) {
     const response = await apiFetch<UserCourseCompleted[]>(endpoint);
 
     return response.data;
+}
+
+// retake course exam
+export async function retakeCourseExam(userId: string, groupId: string) {
+    const endpoint = `/api/v1/user/${userId}/course/exam/retake/${groupId}`;
+
+    const response = await apiFetch(endpoint, {
+        method: "POST",
+    });
+
+    return response;
 }

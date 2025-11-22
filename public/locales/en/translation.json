@@ -389,5 +389,8 @@
     "count_video": "{{count}} Videos",
     "count_cau_hoi": "{{count}} Questions",
     "quay_ve": "Return",
-    "khoa_hoc_cua_ban": "My Courses"
+    "khoa_hoc_cua_ban": "My Courses",
+    "ban_chua_vuot_qua_bai_kiem_tra": "You did not pass the exam",
+    "vui_long_lam_lai_bai_kiem_tra": "Please retake the exam",
+    "lam_lai_bai_kiem_tra": "Retake Exam"
 }
