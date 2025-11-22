@@ -1,5 +1,7 @@
 import { Modal, ModalProps } from "@mantine/core";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 import { EditInfoType } from "../user-right-section";
 import ModalEditBirthday from "./modal-edit-birthday";
 import ModalEditCompanyName from "./modal-edit-company-name";
@@ -13,6 +15,8 @@ type ModalEditInfoProps = ModalProps & {
 };
 
 const ModalEditInfo = ({ opened, onClose, type, user, ...props }: ModalEditInfoProps) => {
+    const { t } = useI18nTranslate();
+
     const renderContent = () => {
         switch (type) {
             case EditInfoType.FULL_NAME:
@@ -33,15 +37,15 @@ const ModalEditInfo = ({ opened, onClose, type, user, ...props }: ModalEditInfoP
     const renderTitle = () => {
         switch (type) {
             case EditInfoType.FULL_NAME:
-                return "Chỉnh sửa họ và tên";
+                return t("chinh_sua_ho_va_ten");
             case EditInfoType.BIRTH_DATE:
-                return "Chỉnh sửa ngày sinh";
+                return t("chinh_sua_ngay_sinh");
             case EditInfoType.JOB_TITLE:
-                return "Chỉnh sửa chức vụ";
+                return t("chinh_sua_chuc_vu");
             case EditInfoType.COMPANY_NAME:
-                return "Chỉnh sửa công ty";
+                return t("chinh_sua_cong_ty");
             case EditInfoType.CCCD:
-                return "Chỉnh sửa căn cước công dân / hộ chiếu";
+                return t("chinh_sua_can_cuoc_cong_dan_ho_chieu");
             default:
                 return null;
         }

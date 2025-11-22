@@ -6,6 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
 import { useUpdateUserInfo } from "@/api/user/useUpdateUserInfo";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 type ModalEditBirthdayProps = {
     user: Record<string, any>;
@@ -13,6 +14,8 @@ type ModalEditBirthdayProps = {
 };
 
 const ModalEditBirthday = ({ user, onClose }: ModalEditBirthdayProps) => {
+    const { t } = useI18nTranslate();
+
     const { mutate: updateUserInfo, isPending } = useUpdateUserInfo();
 
     // Parse existing birthDate from YYYY-MM-DD format to DD/MM/YYYY string
@@ -35,8 +38,8 @@ const ModalEditBirthday = ({ user, onClose }: ModalEditBirthdayProps) => {
             z.object({
                 birthDate: z
                     .string()
-                    .min(1, "Vui lòng nhập ngày sinh")
-                    .regex(/^\d{2}\/\d{2}\/\d{4}$/, "Định dạng ngày sinh không hợp lệ (DD/MM/YYYY)")
+                    .min(1, t("vui_long_nhap_ngay_sinh"))
+                    .regex(/^\d{2}\/\d{2}\/\d{4}$/, t("dinh_dang_ngay_sinh_khong_hop_le_ddmmyyyy"))
                     .refine(
                         (value) => {
                             const [day, month, year] = value.split("/").map(Number);
@@ -49,7 +52,7 @@ const ModalEditBirthday = ({ user, onClose }: ModalEditBirthdayProps) => {
                             );
                         },
                         {
-                            message: "Ngày sinh không hợp lệ hoặc lớn hơn ngày hiện tại",
+                            message: t("ngay_sinh_khong_hop_le_hoac_lon_hon_ngay_hien_tai"),
                         }
                     ),
             })
@@ -69,16 +72,16 @@ const ModalEditBirthday = ({ user, onClose }: ModalEditBirthdayProps) => {
             {
                 onSuccess: () => {
                     notifications.show({
-                        title: "Thành công",
-                        message: "Cập nhật ngày sinh thành công.",
+                        title: t("thanh_cong"),
+                        message: t("cap_nhat_ngay_sinh_thanh_cong"),
                         color: "green",
                     });
                     onClose();
                 },
                 onError: (error) => {
                     notifications.show({
-                        title: "Lỗi",
-                        message: error.message || "Cập nhật ngày sinh thất bại",
+                        title: t("loi"),
+                        message: error.message || t("cap_nhat_ngay_sinh_that_bai"),
                         color: "red",
                     });
                 },
@@ -97,7 +100,7 @@ const ModalEditBirthday = ({ user, onClose }: ModalEditBirthdayProps) => {
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-2">
                 <InputLabel fw={400} size="sm">
-                    Chọn ngày sinh
+                    {t("chon_ngay_sinh")}
                 </InputLabel>
 
                 <Controller
@@ -128,7 +131,7 @@ const ModalEditBirthday = ({ user, onClose }: ModalEditBirthdayProps) => {
 
             <Group gap="sm" justify="flex-end">
                 <Button size="xs" variant="outline" onClick={onClose} disabled={isPending}>
-                    Hủy
+                    {t("huy_1")}
                 </Button>
 
                 <Button
@@ -138,7 +141,7 @@ const ModalEditBirthday = ({ user, onClose }: ModalEditBirthdayProps) => {
                     type="submit"
                     loading={isPending}
                 >
-                    Lưu
+                    {t("luu")}
                 </Button>
             </Group>
         </div>

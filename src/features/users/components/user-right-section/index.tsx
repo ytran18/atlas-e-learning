@@ -8,6 +8,8 @@ import {
     IconUser,
 } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 import ModalEditInfo from "../modal-edit-info";
 import InfoCard from "./info-card";
 
@@ -24,6 +26,8 @@ export enum EditInfoType {
 }
 
 const UserRightSection = ({ user }: UserRightSectionProps) => {
+    const { t } = useI18nTranslate();
+
     const [openedModalEditInfo, setOpenedModalEditInfo] = useState<boolean>(false);
 
     const [editInfoType, setEditInfoType] = useState<EditInfoType | null>(null);
@@ -41,7 +45,7 @@ const UserRightSection = ({ user }: UserRightSectionProps) => {
     return (
         <div className="w-full h-full flex flex-col gap-y-4">
             <InfoCard
-                title="Căn cước công dân / Hộ chiếu"
+                title={t("can_cuoc_cong_dan_ho_chieu")}
                 value={user?.cccd}
                 icon={<IconEPassport className="size-5" />}
                 type={EditInfoType.CCCD}
@@ -49,7 +53,7 @@ const UserRightSection = ({ user }: UserRightSectionProps) => {
             />
 
             <InfoCard
-                title="Họ và tên"
+                title={t("ho_va_ten")}
                 icon={<IconUser className="size-5" />}
                 type={EditInfoType.FULL_NAME}
                 value={user?.fullName}
@@ -57,7 +61,7 @@ const UserRightSection = ({ user }: UserRightSectionProps) => {
             />
 
             <InfoCard
-                title="Ngày sinh"
+                title={t("ngay_sinh")}
                 icon={<IconCalendar className="size-5" />}
                 type={EditInfoType.BIRTH_DATE}
                 value={user?.birthDate}
@@ -65,18 +69,18 @@ const UserRightSection = ({ user }: UserRightSectionProps) => {
             />
 
             <InfoCard
-                title="Chức vụ"
+                title={t("chuc_vu")}
                 icon={<IconBriefcase className="size-5" />}
                 type={EditInfoType.JOB_TITLE}
-                value={user?.jobTitle ?? "Không có"}
+                value={user?.jobTitle ?? t("khong_co")}
                 onEdit={() => handleOpenModalEditInfo(EditInfoType.JOB_TITLE)}
             />
 
             <InfoCard
-                title="Công ty"
+                title={t("cong_ty")}
                 icon={<IconBuilding className="size-5" />}
                 type={EditInfoType.COMPANY_NAME}
-                value={user?.companyName ?? "Không có"}
+                value={user?.companyName ?? t("khong_co")}
                 onEdit={() => handleOpenModalEditInfo(EditInfoType.COMPANY_NAME)}
             />
 

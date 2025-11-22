@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 import { useUpdateUserInfo } from "@/api/user/useUpdateUserInfo";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 type ModalEditJobTitleProps = {
     user: Record<string, any>;
@@ -12,6 +13,8 @@ type ModalEditJobTitleProps = {
 };
 
 const ModalEditJobTitle = ({ user, onClose }: ModalEditJobTitleProps) => {
+    const { t } = useI18nTranslate();
+
     const { mutate: updateUserInfo, isPending } = useUpdateUserInfo();
 
     const jobTitleForm = useForm({
@@ -35,16 +38,16 @@ const ModalEditJobTitle = ({ user, onClose }: ModalEditJobTitleProps) => {
             {
                 onSuccess: () => {
                     notifications.show({
-                        title: "Thành công",
-                        message: "Cập nhật chức vụ thành công",
+                        title: t("thanh_cong"),
+                        message: t("cap_nhat_chuc_vu_thanh_cong"),
                         color: "green",
                     });
                     onClose();
                 },
                 onError: (error) => {
                     notifications.show({
-                        title: "Lỗi",
-                        message: error.message || "Cập nhật chức vụ thất bại",
+                        title: t("loi"),
+                        message: error.message || t("cap_nhat_chuc_vu_that_bai"),
                         color: "red",
                     });
                 },
@@ -56,12 +59,12 @@ const ModalEditJobTitle = ({ user, onClose }: ModalEditJobTitleProps) => {
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-2">
                 <InputLabel fw={400} size="sm">
-                    Nhập chức vụ
+                    {t("nhap_chuc_vu")}
                 </InputLabel>
 
                 <Input
                     {...jobTitleForm.register("jobTitle")}
-                    placeholder="Ví dụ: Giám đốc, Nhân viên,..."
+                    placeholder={t("vi_du_giam_doc_nhan_vien")}
                     error={jobTitleForm.formState.errors.jobTitle?.message as string}
                 />
 
@@ -74,7 +77,7 @@ const ModalEditJobTitle = ({ user, onClose }: ModalEditJobTitleProps) => {
 
             <Group gap="sm" justify="flex-end">
                 <Button size="xs" variant="outline" onClick={onClose} disabled={isPending}>
-                    Hủy
+                    {t("huy_1")}
                 </Button>
 
                 <Button
@@ -84,7 +87,7 @@ const ModalEditJobTitle = ({ user, onClose }: ModalEditJobTitleProps) => {
                     type="submit"
                     loading={isPending}
                 >
-                    Lưu
+                    {t("luu")}
                 </Button>
             </Group>
         </div>

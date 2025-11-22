@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 import { useUpdateUserInfo } from "@/api/user/useUpdateUserInfo";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 type ModalEditIdCardProps = {
     user: Record<string, any>;
@@ -12,6 +13,8 @@ type ModalEditIdCardProps = {
 };
 
 const ModalEditIdCard = ({ user, onClose }: ModalEditIdCardProps) => {
+    const { t } = useI18nTranslate();
+
     const { mutate: updateUserInfo, isPending } = useUpdateUserInfo();
 
     const idCardForm = useForm({
@@ -22,7 +25,7 @@ const ModalEditIdCard = ({ user, onClose }: ModalEditIdCardProps) => {
         resolver: zodResolver(
             z
                 .object({
-                    idCard: z.string().min(1, "Vui lòng nhập CCCD hoặc Hộ chiếu"),
+                    idCard: z.string().min(1, t("vui_long_nhap_cccd_hoac_ho_chieu")),
                 })
                 .superRefine((data, ctx) => {
                     const cccdUpper = data.idCard.toUpperCase().trim();
@@ -32,7 +35,7 @@ const ModalEditIdCard = ({ user, onClose }: ModalEditIdCardProps) => {
                     if (!isCCCD && !isPassport) {
                         ctx.addIssue({
                             code: z.ZodIssueCode.custom,
-                            message: "CCCD phải là 12 số hoặc Hộ chiếu phải từ 6-9 ký tự chữ và số",
+                            message: t("cccd_phai_la_12_so_hoac_ho_chieu_phai_tu_69_ky_tu_"),
                             path: ["idCard"],
                         });
                     }
@@ -49,16 +52,16 @@ const ModalEditIdCard = ({ user, onClose }: ModalEditIdCardProps) => {
             {
                 onSuccess: () => {
                     notifications.show({
-                        title: "Thành công",
-                        message: "Cập nhật CCCD/Hộ chiếu thành công.",
+                        title: t("thanh_cong"),
+                        message: t("cap_nhat_cccdho_chieu_thanh_cong"),
                         color: "green",
                     });
                     onClose();
                 },
                 onError: (error) => {
                     notifications.show({
-                        title: "Lỗi",
-                        message: error.message || "Cập nhật CCCD/Hộ chiếu thất bại",
+                        title: t("loi"),
+                        message: error.message || t("cap_nhat_cccdho_chieu_that_bai"),
                         color: "red",
                     });
                 },
@@ -70,7 +73,7 @@ const ModalEditIdCard = ({ user, onClose }: ModalEditIdCardProps) => {
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-2">
                 <InputLabel fw={400} size="sm">
-                    Nhập CCCD hoặc Hộ chiếu
+                    {t("nhap_cccd_hoac_ho_chieu")}
                 </InputLabel>
 
                 <Input
@@ -87,7 +90,7 @@ const ModalEditIdCard = ({ user, onClose }: ModalEditIdCardProps) => {
 
             <Group gap="sm" justify="flex-end">
                 <Button size="xs" variant="outline" onClick={onClose} disabled={isPending}>
-                    Hủy
+                    {t("huy_1")}
                 </Button>
 
                 <Button
@@ -97,7 +100,7 @@ const ModalEditIdCard = ({ user, onClose }: ModalEditIdCardProps) => {
                     type="submit"
                     loading={isPending}
                 >
-                    Lưu
+                    {t("luu")}
                 </Button>
             </Group>
         </div>

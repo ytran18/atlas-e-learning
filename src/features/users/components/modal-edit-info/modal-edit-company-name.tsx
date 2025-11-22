@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 import { useUpdateUserInfo } from "@/api/user/useUpdateUserInfo";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 type ModalEditCompanyNameProps = {
     user: Record<string, any>;
@@ -12,6 +13,8 @@ type ModalEditCompanyNameProps = {
 };
 
 const ModalEditCompanyName = ({ user, onClose }: ModalEditCompanyNameProps) => {
+    const { t } = useI18nTranslate();
+
     const { mutate: updateUserInfo, isPending } = useUpdateUserInfo();
 
     const companyNameForm = useForm({
@@ -35,16 +38,16 @@ const ModalEditCompanyName = ({ user, onClose }: ModalEditCompanyNameProps) => {
             {
                 onSuccess: () => {
                     notifications.show({
-                        title: "Thành công",
-                        message: "Cập nhật công ty thành công",
+                        title: t("thanh_cong"),
+                        message: t("cap_nhat_cong_ty_thanh_cong"),
                         color: "green",
                     });
                     onClose();
                 },
                 onError: (error) => {
                     notifications.show({
-                        title: "Lỗi",
-                        message: error.message || "Cập nhật công ty thất bại",
+                        title: t("loi"),
+                        message: error.message || t("cap_nhat_cong_ty_that_bai"),
                         color: "red",
                     });
                 },
@@ -56,12 +59,12 @@ const ModalEditCompanyName = ({ user, onClose }: ModalEditCompanyNameProps) => {
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-2">
                 <InputLabel fw={400} size="sm">
-                    Nhập tên công ty
+                    {t("nhap_ten_cong_ty")}
                 </InputLabel>
 
                 <Input
                     {...companyNameForm.register("companyName")}
-                    placeholder="Ví dụ: Công ty ABC,..."
+                    placeholder={t("vi_du_cong_ty_abc")}
                     error={companyNameForm.formState.errors.companyName?.message as string}
                 />
 
@@ -74,7 +77,7 @@ const ModalEditCompanyName = ({ user, onClose }: ModalEditCompanyNameProps) => {
 
             <Group gap="sm" justify="flex-end">
                 <Button size="xs" variant="outline" onClick={onClose} disabled={isPending}>
-                    Hủy
+                    {t("huy_1")}
                 </Button>
 
                 <Button
@@ -84,7 +87,7 @@ const ModalEditCompanyName = ({ user, onClose }: ModalEditCompanyNameProps) => {
                     type="submit"
                     loading={isPending}
                 >
-                    Lưu
+                    {t("luu")}
                 </Button>
             </Group>
         </div>

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { useClerk, useUser } from "@clerk/nextjs";
 import { Avatar, Box, Button, Group, Loader, Select, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { IconLanguage, IconLogout } from "@tabler/icons-react";
 import { useCookies } from "react-cookie";
 
@@ -33,6 +34,8 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
     const router = useRouter();
 
     const [_, setCookie] = useCookies([i18nCookieName]);
+
+    const isLargeScreen = useMediaQuery("(min-width: 1280px)");
 
     const { lng } = useI18nContext();
 
@@ -90,7 +93,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                     value={lng}
                     data={listLanguages}
                     onChange={handleLanguageChange}
-                    className="w-fit!"
+                    w={isLargeScreen ? 200 : 140}
                     checkIconPosition="right"
                 />
 
@@ -101,7 +104,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                     onClick={handleUserDetail}
                 />
 
-                <Box style={{ flex: 1 }} onClick={handleUserDetail}>
+                <Box visibleFrom="xl" style={{ flex: 1 }} onClick={handleUserDetail}>
                     <Text size="sm" fw={500}>
                         {userData?.fullName as string}
                     </Text>

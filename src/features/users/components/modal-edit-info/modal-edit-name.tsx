@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 import { useUpdateUserInfo } from "@/api/user/useUpdateUserInfo";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 type ModalEditNameProps = {
     user: Record<string, any>;
@@ -12,6 +13,8 @@ type ModalEditNameProps = {
 };
 
 const ModalEditName = ({ user, onClose }: ModalEditNameProps) => {
+    const { t } = useI18nTranslate();
+
     const { mutate: updateUserInfo, isPending } = useUpdateUserInfo();
 
     const nameForm = useForm({
@@ -21,7 +24,7 @@ const ModalEditName = ({ user, onClose }: ModalEditNameProps) => {
         },
         resolver: zodResolver(
             z.object({
-                fullName: z.string().min(1, "Vui lòng nhập họ và tên"),
+                fullName: z.string().min(1, t("vui_long_nhap_ho_va_ten")),
             })
         ),
     });
@@ -35,16 +38,16 @@ const ModalEditName = ({ user, onClose }: ModalEditNameProps) => {
             {
                 onSuccess: () => {
                     notifications.show({
-                        title: "Thành công",
-                        message: "Cập nhật họ và tên thành công",
+                        title: t("thanh_cong"),
+                        message: t("cap_nhat_ho_va_ten_thanh_cong"),
                         color: "green",
                     });
                     onClose();
                 },
                 onError: (error) => {
                     notifications.show({
-                        title: "Lỗi",
-                        message: error.message || "Cập nhật họ và tên thất bại",
+                        title: t("loi"),
+                        message: error.message || t("cap_nhat_ho_va_ten_that_bai"),
                         color: "red",
                     });
                 },
@@ -56,7 +59,7 @@ const ModalEditName = ({ user, onClose }: ModalEditNameProps) => {
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-2">
                 <InputLabel fw={400} size="sm">
-                    Nhập họ và tên
+                    {t("nhap_ho_va_ten")}
                 </InputLabel>
 
                 <Input
@@ -73,7 +76,7 @@ const ModalEditName = ({ user, onClose }: ModalEditNameProps) => {
 
             <Group gap="sm" justify="flex-end">
                 <Button size="xs" variant="outline" onClick={onClose} disabled={isPending}>
-                    Hủy
+                    {t("huy_1")}
                 </Button>
 
                 <Button
@@ -83,7 +86,7 @@ const ModalEditName = ({ user, onClose }: ModalEditNameProps) => {
                     type="submit"
                     loading={isPending}
                 >
-                    Lưu
+                    {t("luu")}
                 </Button>
             </Group>
         </div>
