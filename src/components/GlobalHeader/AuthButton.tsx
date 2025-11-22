@@ -5,9 +5,12 @@ import { FunctionComponent } from "react";
 import { useRouter } from "next/navigation";
 
 import { useClerk, useUser } from "@clerk/nextjs";
-import { Avatar, Box, Button, Group, Loader, Text } from "@mantine/core";
-import { IconLogout } from "@tabler/icons-react";
+import { Avatar, Box, Button, Group, Loader, Select, Text } from "@mantine/core";
+import { IconLanguage, IconLogout } from "@tabler/icons-react";
+import { useCookies } from "react-cookie";
 
+import { useI18nContext } from "@/libs/i18n/provider";
+import { i18nCookieName, listLanguages } from "@/libs/i18n/settings";
 import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { trackUserSignedOut } from "@/libs/mixpanel";
 import { USER_SLUG, navigationPaths } from "@/utils/navigationPaths";
@@ -28,6 +31,10 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
     onSignUp,
 }) => {
     const router = useRouter();
+
+    const [_, setCookie] = useCookies([i18nCookieName]);
+
+    const { lng } = useI18nContext();
 
     const { t } = useI18nTranslate();
 
@@ -59,6 +66,10 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
         router.push(navigationPaths.USER_DETAIL.replace(`[${USER_SLUG}]`, user.id));
     };
 
+    const handleLanguageChange = (value: string | null) => {
+        setCookie(i18nCookieName, value);
+    };
+
     // Show loading state while checking authentication
     if (!isLoaded) {
         return (
@@ -74,6 +85,15 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
     if (!!userData) {
         return (
             <Group className="hover:cursor-pointer">
+                <Select
+                    leftSection={<IconLanguage className="size-5" />}
+                    value={lng}
+                    data={listLanguages}
+                    onChange={handleLanguageChange}
+                    className="w-fit!"
+                    checkIconPosition="right"
+                />
+
                 <Avatar
                     src={user?.imageUrl || ""}
                     radius="xl"

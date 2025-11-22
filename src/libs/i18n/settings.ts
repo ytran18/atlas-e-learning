@@ -14,3 +14,20 @@ export function getOptions(lng = fallbackLng, ns = defaultNS) {
         supportedLngs: languages,
     };
 }
+
+export enum Language {
+    VIETNAM = "vi",
+    ENGLISH = "en",
+    KOREAN = "kr",
+}
+
+export type ListLanguaeType = {
+    value: Language;
+    label: string;
+};
+
+export const listLanguages: ListLanguaeType[] = [
+    { value: Language.VIETNAM, label: "Tiếng Việt" },
+    { value: Language.ENGLISH, label: "English" },
+    { value: Language.KOREAN, label: "한국어" },
+];
