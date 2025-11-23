@@ -1,5 +1,3 @@
-import { useParams } from "next/navigation";
-
 import { Checkbox, Table } from "@mantine/core";
 import dayjs from "dayjs";
 
@@ -9,12 +7,12 @@ import { UserCourseCompleted as UserCourseCompletedType } from "@/types/api";
 
 import { tableUserInfoHeader } from "../../utils/table-user-info-header";
 
-const UserCourseCompleted = () => {
-    const { userId } = useParams();
+type UserCourseCompletedProps = {
+    userIdCard: string;
+};
 
-    const { data, isLoading } = useGetUserCourseCompleted(userId as string);
-
-    console.log({ data });
+const UserCourseCompleted = ({ userIdCard }: UserCourseCompletedProps) => {
+    const { data, isLoading } = useGetUserCourseCompleted(userIdCard as string);
 
     const rows = data?.map((element: UserCourseCompletedType) => {
         const isCompleted = Boolean(element.isCompleted);

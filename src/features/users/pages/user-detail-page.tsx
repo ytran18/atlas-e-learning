@@ -24,7 +24,9 @@ const UserDetailPage = () => {
                 <UserProfileTabs
                     slots={{
                         Info: () => <UserRightSection user={userDetail as Record<string, any>} />,
-                        Course: () => <UserCourseCompleted />,
+                        Course: () => (
+                            <UserCourseCompleted userIdCard={userDetail?.cccd as string} />
+                        ),
                     }}
                 />
             </div>

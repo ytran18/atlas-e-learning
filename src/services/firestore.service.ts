@@ -772,7 +772,7 @@ export async function deleteUserProgress(userId: string, groupId: string): Promi
 export async function getUserCourseCompleted(userId: string): Promise<UserCourseCompleted[]> {
     const snapshot = await adminDb
         .collection(COLLECTIONS.SEARCH_INDEX)
-        .where("userId", "==", userId)
+        .where("userIdCard", "==", userId)
         .get();
 
     return snapshot.docs.map((doc) => {
