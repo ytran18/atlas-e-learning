@@ -35,15 +35,15 @@ const UserCourseCompleted = ({ userIdCard }: UserCourseCompletedProps) => {
                         : ""}
                 </Table.Td>
 
-                <Table.Td>
+                <Table.Td visibleFrom="sm">
                     <Checkbox readOnly checked={isTheoryCompleted} />
                 </Table.Td>
 
-                <Table.Td>
+                <Table.Td visibleFrom="sm">
                     <Checkbox readOnly checked={isPracticeCompleted} />
                 </Table.Td>
 
-                <Table.Td>
+                <Table.Td visibleFrom="sm">
                     <Checkbox readOnly checked={isCompleted} />
                 </Table.Td>
 
@@ -55,12 +55,17 @@ const UserCourseCompleted = ({ userIdCard }: UserCourseCompletedProps) => {
     });
 
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-full overflow-x-auto">
             <Table highlightOnHover withTableBorder withColumnBorders stickyHeader>
                 <Table.Thead>
                     <Table.Tr>
                         {tableUserInfoHeader.map((header) => (
-                            <Table.Th key={header.key}>{header.label}</Table.Th>
+                            <Table.Th
+                                key={header.key}
+                                visibleFrom={header?.visibleFromSm ? "sm" : undefined}
+                            >
+                                {header.label}
+                            </Table.Th>
                         ))}
                     </Table.Tr>
                 </Table.Thead>

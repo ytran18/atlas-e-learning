@@ -1,6 +1,7 @@
 import { FunctionComponent, ReactNode } from "react";
 
 import { Tabs, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 
 import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
@@ -21,6 +22,8 @@ type UserProfileTabs = {
 const UserProfileTabs: FunctionComponent<UserProfileTabs> = ({ slots }) => {
     const { t } = useI18nTranslate();
 
+    const isSmallScreen = useMediaQuery("(max-width: 640px)");
+
     return (
         <Tabs
             defaultValue={ProfileTabs.INFO}
@@ -32,13 +35,13 @@ const UserProfileTabs: FunctionComponent<UserProfileTabs> = ({ slots }) => {
         >
             <Tabs.List grow>
                 <Tabs.Tab value={ProfileTabs.INFO}>
-                    <Text fw={600} size="md">
+                    <Text fw={600} size={isSmallScreen ? "xs" : "sm"}>
                         {t("thong_tin_ca_nhan")}
                     </Text>
                 </Tabs.Tab>
 
                 <Tabs.Tab value={ProfileTabs.COURSE}>
-                    <Text fw={600} size="md">
+                    <Text fw={600} size={isSmallScreen ? "xs" : "sm"}>
                         {t("khoa_hoc_cua_ban")}
                     </Text>
                 </Tabs.Tab>

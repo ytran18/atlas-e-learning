@@ -69,7 +69,7 @@ function SignUpFormDatePicker<T extends FieldValues = FieldValues>({
                                     paddingLeft: "40px",
                                     borderRadius: "8px",
                                     border: "1px solid #dee2e6",
-                                    fontSize: "14px",
+                                    fontSize: "16px",
                                 },
                             }}
                             maxLength={10}

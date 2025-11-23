@@ -10,14 +10,17 @@ export const tableUserInfoHeader = [
     {
         label: "Lý thuyết",
         key: "theory",
+        visibleFromSm: true,
     },
     {
         label: "Thực hành",
         key: "practice",
+        visibleFromSm: true,
     },
     {
         label: "Bài kiểm tra",
         key: "exam",
+        visibleFromSm: true,
     },
     {
         label: "Hoàn thành",

@@ -5,9 +5,20 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useClerk } from "@clerk/nextjs";
-import { Avatar, Box, Burger, Button, Drawer, Group, Select, Stack, Text } from "@mantine/core";
+import {
+    Avatar,
+    Box,
+    Burger,
+    Button,
+    Card,
+    Drawer,
+    Group,
+    Select,
+    Stack,
+    Text,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLanguage, IconLogout } from "@tabler/icons-react";
+import { IconChevronRight, IconLanguage, IconLogout } from "@tabler/icons-react";
 import { useCookies } from "react-cookie";
 
 import { useI18nContext } from "@/libs/i18n/provider";
@@ -54,6 +65,8 @@ const GlobalHeader = () => {
 
     const handleUserDetail = () => {
         if (!user?.id) return;
+
+        close?.();
 
         router.push(navigationPaths.USER_DETAIL.replace(`[${USER_SLUG}]`, user.id));
     };
@@ -150,24 +163,33 @@ const GlobalHeader = () => {
                 withCloseButton={false}
                 position="right"
                 size="280px"
+                classNames={{
+                    title: "w-full",
+                }}
                 title={
                     userData ? (
-                        <div
-                            className="flex items-center gap-x-3 cursor-pointer"
-                            onClick={handleUserDetail}
-                        >
-                            <Avatar src={user?.imageUrl || ""} radius="xl" size="sm" />
+                        <Card withBorder shadow="md">
+                            <div
+                                className="w-full flex items-center justify-between gap-x-3 cursor-pointer"
+                                onClick={handleUserDetail}
+                            >
+                                <div className="flex items-center gap-x-3">
+                                    <Avatar src={user?.imageUrl || ""} radius="xl" size="sm" />
 
-                            <Box style={{ flex: 1 }}>
-                                <Text size="sm" fw={500}>
-                                    {userData?.fullName as string}
-                                </Text>
+                                    <Box style={{ flex: 1 }}>
+                                        <Text size="sm" fw={500}>
+                                            {userData?.fullName as string}
+                                        </Text>
 
-                                <Text c="dimmed" size="xs">
-                                    {userData?.cccd as string}
-                                </Text>
-                            </Box>
-                        </div>
+                                        <Text c="dimmed" size="xs">
+                                            {userData?.cccd as string}
+                                        </Text>
+                                    </Box>
+                                </div>
+
+                                <IconChevronRight />
+                            </div>
+                        </Card>
                     ) : (
                         <Text fw={600} size="lg">
                             {t("an_toan_lao_dong")}

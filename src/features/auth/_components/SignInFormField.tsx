@@ -34,6 +34,11 @@ function SignInFormField<T extends FieldValues = FieldValues>({
                 placeholder={placeholder}
                 {...register(name as never)}
                 error={!!error}
+                styles={{
+                    input: {
+                        fontSize: "16px",
+                    },
+                }}
             />
 
             {error && <span className="text-sm text-red-500">{error}</span>}

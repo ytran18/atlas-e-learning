@@ -34,6 +34,11 @@ function SignUpFormField<T extends FieldValues = FieldValues>({
                 placeholder={placeholder}
                 {...register(name as never)}
                 className={` ${error ? "border-red-500" : "border-gray-300"}`}
+                styles={{
+                    input: {
+                        fontSize: "16px",
+                    },
+                }}
             />
             {error && <span className="text-sm text-red-500">{error}</span>}
         </div>
