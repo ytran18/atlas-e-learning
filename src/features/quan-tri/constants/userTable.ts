@@ -11,6 +11,10 @@ export const tableHeader = [
         label: "Ngày sinh",
         key: "birthDate",
     },
+    // {
+    //     label: "Ngày sinh",
+    //     key: "birthDate",
+    // },
     {
         label: "Công ty",
         key: "companyName",
