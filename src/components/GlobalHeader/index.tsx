@@ -66,7 +66,7 @@ const GlobalHeader = () => {
         <Box className="sticky top-0 z-50 supports-backdrop-filter:bg-white">
             <header className="h-[60px] pl-(--mantine-spacing-md) pr-(--mantine-spacing-md) border-b border-(--mantine-color-gray-3)">
                 <Group display="grid" className="grid-cols-12" h="100%">
-                    <div className="col-span-4 md:col-span-2 xl:col-span-4">
+                    <div className="col-span-4 md:col-span-2 xl:col-span-3">
                         <Image
                             src="/images/atld-logo.webp"
                             alt="ATLD Logo"
@@ -80,7 +80,7 @@ const GlobalHeader = () => {
 
                     {/* Desktop Navigation */}
                     <Group
-                        className="col-span-6 xl:col-span-4 justify-center!"
+                        className="col-span-6 xl:col-span-5 justify-center!"
                         h="100%"
                         gap={0}
                         visibleFrom="md"
@@ -113,12 +113,16 @@ const GlobalHeader = () => {
                     </Group>
 
                     {/* Desktop Auth Button */}
-                    <Box visibleFrom="sm" className="col-span-10 xl:col-span-4 place-items-end">
+                    <Box visibleFrom="md" className="col-span-4 place-items-end">
                         <AuthButton />
                     </Box>
 
                     {/* Mobile Menu Button */}
-                    <Group gap="xs" hiddenFrom="sm" className="col-span-8 justify-end!">
+                    <Group
+                        gap="xs"
+                        hiddenFrom="md"
+                        className="col-span-8 md:col-span-10 justify-end!"
+                    >
                         <Group hiddenFrom="xs">
                             <Select
                                 leftSection={<IconLanguage className="size-5" />}
@@ -130,7 +134,7 @@ const GlobalHeader = () => {
                             />
                         </Group>
 
-                        <Group visibleFrom="xs" hiddenFrom="sm">
+                        <Group visibleFrom="xs" hiddenFrom="md">
                             <AuthButton />
                         </Group>
 

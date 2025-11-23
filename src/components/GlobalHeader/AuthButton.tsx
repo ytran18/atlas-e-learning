@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 
 import { useClerk, useUser } from "@clerk/nextjs";
 import { Avatar, Box, Button, Group, Select, Text } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import { IconLanguage, IconLogout } from "@tabler/icons-react";
 import { useCookies } from "react-cookie";
 
@@ -35,8 +34,6 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
 
     // eslint-disable-next-line
     const [_, setCookie] = useCookies([i18nCookieName]);
-
-    const isLargeScreen = useMediaQuery("(min-width: 1280px)");
 
     const { lng } = useI18nContext();
 
@@ -85,7 +82,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                     value={lng ?? fallbackLng}
                     data={listLanguages}
                     onChange={handleLanguageChange}
-                    w={isLargeScreen ? 200 : 140}
+                    w={140}
                     checkIconPosition="right"
                 />
 
@@ -107,7 +104,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                 </Box>
 
                 <Button
-                    visibleFrom="sm"
+                    visibleFrom="md"
                     variant="default"
                     size="xs"
                     onClick={() => {
@@ -121,7 +118,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                 >
                     <div className="flex items-center gap-x-2">
                         <IconLogout className="text-gray-700" size={16} />
-                        <Text size="xs" visibleFrom="sm">
+                        <Text size="xs" visibleFrom="xl">
                             {t("dang_xuat")}
                         </Text>
                     </div>
