@@ -5,16 +5,27 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useClerk } from "@clerk/nextjs";
-import { Avatar, Box, Burger, Button, Drawer, Group, Stack, Text } from "@mantine/core";
+import { Avatar, Box, Burger, Button, Drawer, Group, Select, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLogout } from "@tabler/icons-react";
+import { IconLanguage, IconLogout } from "@tabler/icons-react";
+import { useCookies } from "react-cookie";
 
-import { navigationPaths } from "@/utils/navigationPaths";
+import { useI18nContext } from "@/libs/i18n/provider";
+import { fallbackLng, i18nCookieName, listLanguages } from "@/libs/i18n/settings";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+import { USER_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 import AuthButton from "./AuthButton";
 
 const GlobalHeader = () => {
     const router = useRouter();
+
+    const { t } = useI18nTranslate();
+
+    const { lng } = useI18nContext();
+
+    // eslint-disable-next-line
+    const [_, setCookie] = useCookies([i18nCookieName]);
 
     const { signOut, user, isSignedIn } = useClerk();
 
@@ -30,10 +41,10 @@ const GlobalHeader = () => {
     const [opened, { toggle, close }] = useDisclosure(false);
 
     const navigationItems = [
-        { href: navigationPaths.LANDING_PAGE, label: "Trang chủ", isVisible: true },
-        { href: navigationPaths.ATLD, label: "Đào tạo ATLD", isVisible: true },
-        { href: navigationPaths.HOC_NGHE, label: "Học nghề", isVisible: true },
-        { href: navigationPaths.QUAN_TRI_ATLD, label: "Quản trị", isVisible: isAdmin },
+        { href: navigationPaths.LANDING_PAGE, label: t("trang_chu"), isVisible: true },
+        { href: navigationPaths.ATLD, label: t("dao_tao_atld"), isVisible: true },
+        { href: navigationPaths.HOC_NGHE, label: t("hoc_nghe_1"), isVisible: true },
+        { href: navigationPaths.QUAN_TRI_ATLD, label: t("quan_tri"), isVisible: isAdmin },
     ];
 
     const handleLogout = () => {
@@ -41,22 +52,39 @@ const GlobalHeader = () => {
         signOut(() => router.push("/"));
     };
 
+    const handleUserDetail = () => {
+        if (!user?.id) return;
+
+        router.push(navigationPaths.USER_DETAIL.replace(`[${USER_SLUG}]`, user.id));
+    };
+
+    const handleLanguageChange = (value: string | null) => {
+        setCookie(i18nCookieName, value);
+    };
+
     return (
         <Box className="sticky top-0 z-50 supports-backdrop-filter:bg-white">
             <header className="h-[60px] pl-(--mantine-spacing-md) pr-(--mantine-spacing-md) border-b border-(--mantine-color-gray-3)">
-                <Group justify="space-between" h="100%">
-                    <Image
-                        src="/images/atld-logo.webp"
-                        alt="ATLD Logo"
-                        width={120}
-                        height={40}
-                        onClick={() => router.push(navigationPaths.LANDING_PAGE)}
-                        className="cursor-pointer"
-                        priority
-                    />
+                <Group display="grid" className="grid-cols-12" h="100%">
+                    <div className="col-span-4 md:col-span-2 xl:col-span-3">
+                        <Image
+                            src="/images/atld-logo.webp"
+                            alt="ATLD Logo"
+                            width={120}
+                            height={40}
+                            onClick={() => router.push(navigationPaths.LANDING_PAGE)}
+                            className="cursor-pointer"
+                            priority
+                        />
+                    </div>
 
                     {/* Desktop Navigation */}
-                    <Group h="100%" gap={0} visibleFrom="sm">
+                    <Group
+                        className="col-span-6 xl:col-span-5 justify-center!"
+                        h="100%"
+                        gap={0}
+                        visibleFrom="md"
+                    >
                         {navigationItems.map((item) => {
                             if (!item.isVisible) {
                                 return null;
@@ -85,13 +113,28 @@ const GlobalHeader = () => {
                     </Group>
 
                     {/* Desktop Auth Button */}
-                    <Box visibleFrom="sm">
+                    <Box visibleFrom="md" className="col-span-4 place-items-end">
                         <AuthButton />
                     </Box>
 
                     {/* Mobile Menu Button */}
-                    <Group gap="xs" hiddenFrom="sm">
-                        <Group visibleFrom="xs" hiddenFrom="sm">
+                    <Group
+                        gap="xs"
+                        hiddenFrom="md"
+                        className="col-span-8 md:col-span-10 justify-end!"
+                    >
+                        <Group hiddenFrom="xs">
+                            <Select
+                                leftSection={<IconLanguage className="size-5" />}
+                                value={lng ?? fallbackLng}
+                                data={listLanguages}
+                                onChange={handleLanguageChange}
+                                w={140}
+                                checkIconPosition="right"
+                            />
+                        </Group>
+
+                        <Group visibleFrom="xs" hiddenFrom="md">
                             <AuthButton />
                         </Group>
 
@@ -109,7 +152,10 @@ const GlobalHeader = () => {
                 size="280px"
                 title={
                     userData ? (
-                        <div className="flex items-center gap-x-3">
+                        <div
+                            className="flex items-center gap-x-3 cursor-pointer"
+                            onClick={handleUserDetail}
+                        >
                             <Avatar src={user?.imageUrl || ""} radius="xl" size="sm" />
 
                             <Box style={{ flex: 1 }}>
@@ -124,7 +170,7 @@ const GlobalHeader = () => {
                         </div>
                     ) : (
                         <Text fw={600} size="lg">
-                            An toàn lao động
+                            {t("an_toan_lao_dong")}
                         </Text>
                     )
                 }
@@ -164,7 +210,7 @@ const GlobalHeader = () => {
                         <Button color="red" size="sm" onClick={handleLogout}>
                             <div className="flex items-center gap-x-2">
                                 <IconLogout className="text-white" size={16} />
-                                <Text>Đăng xuất</Text>
+                                <Text>{t("dang_xuat")}</Text>
                             </div>
                         </Button>
                     )}

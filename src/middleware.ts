@@ -18,11 +18,11 @@ export default clerkMiddleware(async (auth, req) => {
 
     // Protect non-public routes
     if (!isPublicRoute(req)) {
-        const signInUrl = new URL("/sign-in", req.url);
+        const signUpUrl = new URL("/sign-up", req.url);
 
         await auth.protect({
-            unauthenticatedUrl: signInUrl.toString(),
-            unauthorizedUrl: signInUrl.toString(),
+            unauthenticatedUrl: signUpUrl.toString(),
+            unauthorizedUrl: signUpUrl.toString(),
         });
     }
 });

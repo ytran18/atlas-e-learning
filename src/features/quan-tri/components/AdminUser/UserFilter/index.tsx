@@ -4,17 +4,18 @@ import { FunctionComponent, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { Button, Select } from "@mantine/core";
+import { Button, Select, Tooltip } from "@mantine/core";
 import { DatePickerInput, DatesRangeValue } from "@mantine/dates";
 import { useDebouncedValue, useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconPdf } from "@tabler/icons-react";
+import { IconFileExcel } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import { SearchBox, useInstantSearch } from "react-instantsearch-hooks-web";
 
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
-import { generatePDFFromData } from "@/features/quan-tri/utils/pdfGenerator";
+import { formatXLSXData } from "@/features/quan-tri/utils/format-xlsx-data";
+import { exportToXLSX } from "@/libs/xlsx/export-to-xlsx";
 import { getStudentStatsByUserIds } from "@/services/api.client";
 import { CourseType } from "@/types/api";
 import { navigationPaths } from "@/utils/navigationPaths";
@@ -105,22 +106,23 @@ const UserFilter: FunctionComponent = () => {
                 throw new Error("No data to export");
             }
 
+            const formattedData = data.map((item) => formatXLSXData(item));
+
             // Get course name from first student or use default
             const courseName = data[0]?.courseName || "Khóa học";
 
-            // Generate PDF on client-side
-            await generatePDFFromData(data, courseName, courseId);
+            await exportToXLSX(formattedData, courseName);
 
             notifications.show({
                 title: "Thành công",
-                message: "Xuất file PDF thành công",
+                message: "Xuất file XLSX thành công",
                 color: "green",
             });
         } catch (error) {
-            console.error("Error exporting PDF:", error);
+            console.error("Error exporting XLSX:", error);
             notifications.show({
                 title: "Lỗi",
-                message: "Không thể xuất file PDF. Vui lòng thử lại.",
+                message: "Không thể xuất file XLSX. Vui lòng thử lại.",
                 color: "red",
             });
         } finally {
@@ -229,11 +231,13 @@ const UserFilter: FunctionComponent = () => {
                 }}
             />
 
-            <Button onClick={handleExportPDF} loading={isExporting} disabled={isExporting}>
-                <div className="flex items-center gap-x-2">
-                    <IconPdf />
-                </div>
-            </Button>
+            <Tooltip label="Xuất file XLSX" withArrow>
+                <Button onClick={handleExportPDF} loading={isExporting} disabled={isExporting}>
+                    <div className="flex items-center gap-x-2">
+                        <IconFileExcel className="size-5" />
+                    </div>
+                </Button>
+            </Tooltip>
         </div>
     );
 };

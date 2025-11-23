@@ -126,10 +126,6 @@ export const identifyMixpanel = (unique_id: string) => {
     }
 };
 
-export const isMixpanelLoadedSuccess = () => {
-    return isMixpanelReady();
-};
-
 export const initMixpanel = () => {
     if (!MIXPANEL_TOKEN) {
         console.warn("Mixpanel token is missing!");

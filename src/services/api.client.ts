@@ -17,7 +17,6 @@ import {
     GetCoursePreviewResponse,
     GetExamResponse,
     GetProgressResponse,
-    GetStatsResponse,
     StartCourseRequest,
     StartCourseResponse,
     StudentStats,
@@ -28,6 +27,9 @@ import {
     UpdateProgressRequest,
     UpdateProgressResponse,
     UploadCaptureResponse,
+    UserCourseCompleted,
+    UserCourseProgress,
+    UserInfo,
 } from "@/types/api";
 
 // ============================================================================
@@ -138,20 +140,12 @@ export async function getAllCourseProgresses(
         return {};
     }
 
-    console.log("[getAllCourseProgresses] Request:", { type, groupIds, count: groupIds.length });
-
     const endpoint =
         type === "atld" ? "/api/v1/atld/progress/batch" : "/api/v1/hoc-nghe/progress/batch";
     const response = await apiFetch<{ progress: Record<string, GetProgressResponse> }>(endpoint, {
         method: "POST",
         body: JSON.stringify({ groupIds }),
     });
-
-    console.log("[getAllCourseProgresses] Response:", {
-        progressKeys: Object.keys(response.data.progress),
-        progressCount: Object.keys(response.data.progress).length,
-    });
-
     return response.data.progress;
 }
 
@@ -245,34 +239,6 @@ export async function submitExamAnswers(
 // ============================================================================
 
 /**
- * Get student statistics (admin only)
- */
-export async function getStudentStats(
-    type: CourseType,
-    groupId: string,
-    pageSize?: number,
-    cursor?: string,
-    search?: string
-): Promise<GetStatsResponse> {
-    const params = new URLSearchParams({ groupId });
-
-    if (pageSize) params.append("pageSize", pageSize.toString());
-
-    if (cursor) params.append("cursor", cursor);
-
-    if (search) params.append("search", search);
-
-    const endpoint =
-        type === "atld"
-            ? `/api/v1/admin/atld/stats?${params}`
-            : `/api/v1/admin/hoc-nghe/stats?${params}`;
-
-    const response = await apiFetch<GetStatsResponse>(endpoint);
-
-    return response.data;
-}
-
-/**
  * Create a new course (admin only)
  */
 export async function createCourse(
@@ -333,8 +299,6 @@ export async function getCourseDetail(
     const endpoint =
         type === "atld" ? `/api/v1/atld/detail/${groupId}` : `/api/v1/hoc-nghe/detail/${groupId}`;
 
-    console.log("endpoint", endpoint);
-
     const response = await apiFetch<GetCourseDetailResponse>(endpoint);
     return response.data;
 }
@@ -376,4 +340,53 @@ export async function getStudentStatsByUserIds(
     });
 
     return response.data;
+}
+
+/*
+ * Get user info by ID
+ */
+export async function getUserById(userId: string): Promise<UserInfo> {
+    const endpoint = `/api/v1/user/${userId}`;
+    const response = await apiFetch<UserInfo>(endpoint);
+    return response.data;
+}
+
+export async function getUserCourseProgress(
+    userId: string,
+    type: CourseType
+): Promise<UserCourseProgress> {
+    const endpoint = `/api/v1/user/${userId}/progress?type=${type}`;
+
+    const response = await apiFetch<UserCourseProgress>(endpoint);
+
+    return response.data;
+}
+
+// delete user progress
+export async function deleteUserProgress(userId: string, groupId: string) {
+    const endpoint = `/api/v1/admin/user/${userId}/progress/${groupId}/reset`;
+    const response = await apiFetch<boolean>(endpoint, {
+        method: "DELETE",
+    });
+    return response.data;
+}
+
+// get user course completed
+export async function getUserCourseCompleted(userId: string) {
+    const endpoint = `/api/v1/user/${userId}/course/completed`;
+
+    const response = await apiFetch<UserCourseCompleted[]>(endpoint);
+
+    return response.data;
+}
+
+// retake course exam
+export async function retakeCourseExam(userId: string, groupId: string) {
+    const endpoint = `/api/v1/user/${userId}/course/exam/retake/${groupId}`;
+
+    const response = await apiFetch(endpoint, {
+        method: "POST",
+    });
+
+    return response;
 }

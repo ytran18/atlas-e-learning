@@ -33,12 +33,6 @@ export async function POST(request: NextRequest) {
         // Parse request body
         const body = await parseJsonBody<BatchProgressRequest>(request);
 
-        console.log("[ATLD Batch Progress] Request:", {
-            userId,
-            groupIdsCount: body.groupIds?.length,
-            groupIds: body.groupIds,
-        });
-
         if (!body.groupIds || !Array.isArray(body.groupIds) || body.groupIds.length === 0) {
             return errorResponse("groupIds must be a non-empty array", 400);
         }
@@ -52,11 +46,6 @@ export async function POST(request: NextRequest) {
         // Get progress from Firestore in batch
         const progressMap = await getUserProgresses(userId, body.groupIds);
 
-        console.log("[ATLD Batch Progress] Response:", {
-            progressKeys: Object.keys(progressMap),
-            progressCount: Object.keys(progressMap).length,
-        });
-
         // Map to response format
         const response: BatchProgressResponse = {
             progress: progressMap,
@@ -64,7 +53,6 @@ export async function POST(request: NextRequest) {
 
         return successResponse(response);
     } catch (error) {
-        console.error("[ATLD Batch Progress] Error:", error);
         return handleApiError(error);
     }
 }

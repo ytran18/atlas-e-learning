@@ -1,4 +1,4 @@
-import { HeadBucketCommand, S3Client } from "@aws-sdk/client-s3";
+import { S3Client } from "@aws-sdk/client-s3";
 
 const getR2Endpoint = () => {
     const accountId = process.env.NEXT_PUBLIC_R2_ACCOUNT_ID!;
@@ -36,21 +36,6 @@ export const R2_CONFIG = {
     ],
     presignedUrlExpiry: 3600, // 1 hour for large video uploads
 };
-
-// test r2 connection
-export async function testR2Connection(): Promise<boolean> {
-    try {
-        await r2Client.send(
-            new HeadBucketCommand({
-                Bucket: R2_CONFIG.bucketName,
-            })
-        );
-        return true;
-    } catch (error) {
-        console.error("R2 connection test failed:", error);
-        return false;
-    }
-}
 
 // Convert R2 SDK errors into user-friendly messages
 

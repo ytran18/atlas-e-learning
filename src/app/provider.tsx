@@ -15,9 +15,12 @@ import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { CookiesProvider, useCookies } from "react-cookie";
 
 import { createQueryClient } from "@/configs/reactQuery.config";
 import { makeGrowthBook } from "@/libs/growthbook/make-growthbook";
+import { I18nProvider } from "@/libs/i18n/provider";
+import { i18nCookieName } from "@/libs/i18n/settings";
 import { initMixpanel } from "@/libs/mixpanel/mixpanel-client";
 import { useMixpanelUserIdentification } from "@/libs/mixpanel/tracking";
 
@@ -41,6 +44,8 @@ function ProviderContent({
     // Tạo QueryClient instance, chỉ tạo 1 lần duy nhất
     const [queryClient] = useState(() => createQueryClient());
 
+    const [cookies] = useCookies([i18nCookieName]);
+
     const gb = useMemo(() => makeGrowthBook(growthBookPayload), [growthBookPayload]);
 
     // Identify user in Mixpanel when authenticated
@@ -58,15 +63,17 @@ function ProviderContent({
 
     return (
         <QueryClientProvider client={queryClient}>
-            <AntdRegistry>
-                <MantineProvider>
-                    <ModalsProvider>
-                        <Notifications />
+            <I18nProvider lng={cookies["Atld.Locale"]}>
+                <AntdRegistry>
+                    <MantineProvider>
+                        <ModalsProvider>
+                            <Notifications />
 
-                        {children}
-                    </ModalsProvider>
-                </MantineProvider>
-            </AntdRegistry>
+                            {children}
+                        </ModalsProvider>
+                    </MantineProvider>
+                </AntdRegistry>
+            </I18nProvider>
             {/* React Query Devtools - chỉ hiện trong development */}
             <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
@@ -90,7 +97,11 @@ export default function Provider({
                 signInUrl="/sign-in"
                 signUpUrl="/sign-up"
             >
-                <ProviderContent growthBookPayload={growthBookPayload}>{children}</ProviderContent>
+                <CookiesProvider>
+                    <ProviderContent growthBookPayload={growthBookPayload}>
+                        {children}
+                    </ProviderContent>
+                </CookiesProvider>
             </ClerkProvider>
         </GrowthBookProvider>
     );

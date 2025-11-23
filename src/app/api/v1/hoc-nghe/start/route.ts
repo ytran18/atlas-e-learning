@@ -32,7 +32,6 @@ export async function POST(request: NextRequest) {
             "userBirthDate",
             "userCompanyName",
             "userIdCard",
-            "cccd",
         ]);
 
         const {
@@ -43,7 +42,6 @@ export async function POST(request: NextRequest) {
             userBirthDate,
             userCompanyName,
             userIdCard,
-            cccd,
         } = body;
 
         // Create initial progress
@@ -55,8 +53,7 @@ export async function POST(request: NextRequest) {
             userFullname,
             userBirthDate,
             userCompanyName,
-            userIdCard,
-            cccd
+            userIdCard
         );
 
         // Map to response format

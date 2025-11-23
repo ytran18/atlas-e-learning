@@ -46,6 +46,8 @@
         "framer-motion": "^12.23.22",
         "hls.js": "^1.6.13",
         "html2canvas": "^1.4.1",
+        "i18next": "^25.6.3",
+        "i18next-resources-to-backend": "^1.2.1",
         "jspdf": "^3.0.3",
         "media-chrome": "^4.14.0",
         "mixpanel-browser": "^2.70.0",
@@ -56,11 +58,14 @@
         "postcss-simple-vars": "^7.0.1",
         "puppeteer-core": "^24.30.0",
         "react": "^18.3.1",
+        "react-cookie": "^8.0.1",
         "react-dom": "^18.3.1",
         "react-hook-form": "^7.64.0",
+        "react-i18next": "^16.3.5",
         "react-instantsearch-hooks-web": "^6.47.3",
         "react-player": "^3.3.3",
         "socket.io-client": "^4.8.1",
+        "xlsx-js-style": "^1.2.0",
         "zod": "^4.1.11"
     },
     "devDependencies": {

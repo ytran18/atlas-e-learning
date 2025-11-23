@@ -6,7 +6,7 @@ import {
     generateCourseStructuredData,
     generateMetadata as generateSeoMetadata,
 } from "@/configs/seo.config";
-import HocNghePreview from "@/features/hoc-nghe/pages/HocNghePreview";
+import HocNghePreviewPage from "@/features/course/pages/hoc-nghe/hoc-nghe-preview";
 import { getCoursePreviewServer } from "@/services/api.server";
 import { GetCoursePreviewResponse } from "@/types/api";
 
@@ -60,7 +60,7 @@ export default async function Page({ params }: PageProps) {
                     })}
                 />
             )}
-            <HocNghePreview initialData={initialData} />
+            <HocNghePreviewPage initialData={initialData} />
         </>
     );
 }

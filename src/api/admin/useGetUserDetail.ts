@@ -12,7 +12,7 @@ import { CourseType, StudentStats } from "@/types/api";
 /**
  * Query key factory cho user detail
  */
-export const userDetailKeys = {
+const userDetailKeys = {
     all: ["userDetail"] as const,
     details: () => [...userDetailKeys.all, "details"] as const,
     detail: (type: CourseType, groupId: string, userId: string) =>

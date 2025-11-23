@@ -20,7 +20,7 @@ import { ApiErrorResponse, ApiSuccessResponse } from "@/types/api";
  * Get authenticated user ID from request
  * Returns null if user is not authenticated
  */
-export async function getAuthUserId(): Promise<string | null> {
+async function getAuthUserId(): Promise<string | null> {
     try {
         const { userId } = await auth();
         return userId;
@@ -138,17 +138,4 @@ export async function parseJsonBody<T>(request: NextRequest): Promise<T> {
 export function getQueryParams(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     return Object.fromEntries(searchParams.entries());
-}
-
-/**
- * Get path parameter from URL
- * Example: /api/v1/atld/preview/[groupId] -> returns groupId value
- * Note: In actual Next.js API routes, params come from the route context
- */
-export function getPathParam(request: NextRequest): string {
-    const url = new URL(request.url);
-    const segments = url.pathname.split("/").filter(Boolean);
-
-    // Return the last segment as a fallback
-    return segments[segments.length - 1];
 }

@@ -10,7 +10,7 @@
 // ============================================================================
 
 export type CourseType = "atld" | "hoc-nghe";
-export type SectionType = "theory" | "practice" | "exam";
+type SectionType = "theory" | "practice" | "exam";
 export type CaptureType = "start" | "learning" | "finish";
 
 // ============================================================================
@@ -108,7 +108,6 @@ export interface StartCourseRequest {
     userBirthDate: string;
     userCompanyName: string;
     userIdCard: string;
-    cccd: string;
 }
 
 export interface StartCourseResponse {
@@ -138,6 +137,7 @@ export interface CourseProgress {
     isCompleted: boolean;
     startedAt: number; // timestamp
     lastUpdatedAt: number; // timestamp
+    startImageUrl?: string; // Portrait image URL
     finishImageUrl?: string; // Auto-captured finish image URL
     examResult?: {
         score: number;
@@ -150,6 +150,7 @@ export interface CourseProgress {
     userFullname?: string;
     userBirthDate?: string;
     userCompanyName?: string;
+    userIdCard?: string;
 }
 
 export type GetProgressResponse = CourseProgress;
@@ -176,12 +177,6 @@ export interface UpdateProgressResponse {
 // 6. POST /api/v1/atld/upload-learning-capture - Upload capture image
 // ============================================================================
 
-export interface UploadCaptureRequest {
-    groupId: string;
-    type: CaptureType;
-    // file is sent as FormData
-}
-
 export interface UploadCaptureResponse {
     imageUrl: string;
     savedTo: string;
@@ -191,26 +186,20 @@ export interface UploadCaptureResponse {
 // 7. GET /api/v1/admin/atld/stats - Get student stats (admin)
 // ============================================================================
 
-export interface GetStatsQueryParams {
-    groupId: string;
-    pageSize?: number;
-    cursor?: string;
-}
-
 export interface StudentStats {
     userId: string;
     fullname: string;
     birthDate: string;
     companyName?: string;
     isCompleted: boolean;
-    startedAt: number;
-    lastUpdatedAt: number;
+    startedAt: number | string;
+    lastUpdatedAt: number | string;
     startImageUrl?: string;
     finishImageUrl?: string;
-    completedVideos: CompletedVideo[];
+    completedVideos?: CompletedVideo[];
     courseName: string;
     currentSection: SectionType;
-    currentVideoIndex: number;
+    currentVideoIndex?: number;
     examResult?: {
         score: number;
         totalQuestions: number;
@@ -294,7 +283,7 @@ export type GetCourseDetailResponse = CourseDetail;
 // 12. GET /api/v1/atld/exam/:groupId - Get exam questions
 // ============================================================================
 
-export interface ExamQuestionForUser {
+interface ExamQuestionForUser {
     id: string;
     content: string;
     options: {
@@ -304,7 +293,7 @@ export interface ExamQuestionForUser {
     // Note: answer field is removed for user-facing API
 }
 
-export interface ExamForUser {
+interface ExamForUser {
     title: string;
     description?: string;
     timeLimit: number; // in seconds
@@ -354,4 +343,66 @@ export interface ApiErrorResponse {
 export interface ApiSuccessResponse<T> {
     success: true;
     data: T;
+}
+
+export interface UserInfo {
+    id: string;
+    fullName: string;
+    birthDate: string;
+    cccd: string;
+    companyName: string;
+    jobTitle: string;
+    role: string;
+    /**
+     * progress?: Record<string, 'completed' | 'in-progress' | 'incomplete'>
+     *
+     * "progress" là một trường tuỳ chọn của UserInfo, dùng để lưu trạng thái học của user cho từng khoá học.
+     * Kiểu Record<string, 'completed' | 'in-progress' | 'incomplete'> nghĩa là:
+     *   - object này có các key là string (mỗi key thường là groupId hoặc courseId - tức ID của từng khoá học)
+     *   - mỗi value tương ứng là trạng thái của khóa học đó:
+     *     + 'completed': đã hoàn thành khóa học
+     *     + 'in-progress': đang học (có ít nhất 1 video đã xem)
+     *     + 'incomplete': đã bắt đầu nhưng chưa xem video nào
+     * Ví dụ:
+     *   progress = {
+     *     "abc123": "completed",
+     *     "xyz456": "in-progress"
+     *   }
+     */
+    progress?: Record<string, "completed" | "in-progress" | "incomplete">;
+}
+
+export type CourseStatus = "not-started" | "in-progress" | "incomplete" | "completed";
+
+export interface CategorizedCourse extends CourseListItem {
+    status: CourseStatus;
+    progress?: CourseProgress;
+}
+
+export interface UserCourseProgress {
+    inProgress: CategorizedCourse[];
+    notStarted: CategorizedCourse[];
+    incomplete: CategorizedCourse[];
+    completed: CategorizedCourse[];
+}
+
+export interface UserCourseCompleted {
+    id: string;
+    userIdCard: string;
+    startedAt: number;
+    lastUpdatedAt: number;
+    startImageUrl: string;
+    finishImageUrl: string;
+    groupId: string;
+    examResult?: {
+        score: number;
+        totalQuestions: number;
+        passed: boolean;
+        completedAt: number;
+        answers?: ExamAnswer[];
+    };
+    isCompleted: boolean;
+    currentSection: SectionType;
+    courseName: string;
+    objectID: string;
 }

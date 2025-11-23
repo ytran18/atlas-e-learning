@@ -12,6 +12,8 @@ export async function GET() {
         const courseList = await getCourseList("atld");
         return successResponse(courseList);
     } catch (error) {
+        console.log({ error });
+
         return handleApiError(error);
     }
 }

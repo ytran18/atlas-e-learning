@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext } from "react";
 
-import { useCourseForm } from "@/features/shared/hooks/useCourseForm";
+import { useCourseForm } from "@/features/course/hooks/useCourseForm";
 import { CourseDetail, Video } from "@/types/api";
 
 interface CourseFormContextType {

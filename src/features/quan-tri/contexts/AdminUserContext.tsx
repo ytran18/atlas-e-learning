@@ -4,7 +4,7 @@ import { FunctionComponent, PropsWithChildren, createContext, useContext } from 
 
 import { CourseListItem, StudentStats } from "@/types/api";
 
-export type AdminUserProviderProps = PropsWithChildren<{
+type AdminUserProviderProps = PropsWithChildren<{
     courseList: CourseListItem[];
     tableData: StudentStats[];
     totalDocs: number;

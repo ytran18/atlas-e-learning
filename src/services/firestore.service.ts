@@ -6,11 +6,14 @@
  */
 import { admin, adminDb } from "@/libs/firebase/firebaseAdmin.config";
 import {
+    CategorizedCourse,
     CompletedVideo,
     CourseDetail,
     CourseProgress,
     ExamAnswer,
     StudentStats,
+    UserCourseCompleted,
+    UserCourseProgress,
 } from "@/types/api";
 
 // ============================================================================
@@ -26,6 +29,7 @@ type FirestoreData = Record<string, any>;
 const COLLECTIONS = {
     GROUPS: "groups",
     USERS: "users",
+    SEARCH_INDEX: "search_index",
     PROGRESS: "progress",
 } as const;
 
@@ -75,14 +79,6 @@ export async function getGroupById(groupId: string): Promise<FirestoreData | nul
         id: doc.id,
         ...doc.data(),
     };
-}
-
-/**
- * Create a new group
- */
-export async function createGroup(groupId: string, data: FirestoreData) {
-    await adminDb.collection(COLLECTIONS.GROUPS).doc(groupId).set(data);
-    return groupId;
 }
 
 /**
@@ -198,10 +194,11 @@ export async function createUserProgress(
     userFullname: string,
     userBirthDate: string,
     userCompanyName: string,
-    userIdCard: string,
-    cccd: string
+    userIdCard: string
 ): Promise<CourseProgress> {
     const now = Date.now();
+
+    const objectId = `${userId}_${groupId}`;
 
     const progressData: CourseProgress = {
         groupId,
@@ -212,59 +209,36 @@ export async function createUserProgress(
         isCompleted: false,
         startedAt: now,
         lastUpdatedAt: now,
-    };
-
-    const userProgressData = {
-        ...progressData,
         startImageUrl: portraitUrl,
         courseName,
         userFullname,
         userBirthDate,
         userCompanyName,
         userIdCard,
-        cccd,
     };
 
-    const progressGroupRef = adminDb.collection(COLLECTIONS.PROGRESS).doc(groupId);
+    const progressGroupRef = adminDb.collection(COLLECTIONS.SEARCH_INDEX).doc(objectId);
+
+    const userRef = adminDb
+        .collection(COLLECTIONS.USERS)
+        .doc(userId)
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId);
+
     const docSnap = await progressGroupRef.get();
 
+    // set vào collection search_index để sync qua algolia
     if (!docSnap.exists) {
-        // Lấy thông tin group để có metadata đầy đủ
-        const groupData = await getGroupById(groupId);
-
-        // Tạo parent document với metadata
-        const parentData: FirestoreData = {
-            createdAt: now,
-            updatedAt: now,
-            courseName,
-        };
-
-        // Thêm type nếu có trong group data
-        if (groupData?.type) {
-            parentData.type = groupData.type;
-        }
-
-        // Quan trọng: chờ hoàn tất set này trước khi ghi xuống subcollection
-        await progressGroupRef.set(userProgressData);
-    } else {
-        // Cập nhật updatedAt và courseName nếu document đã tồn tại
-        await progressGroupRef.update({
-            updatedAt: now,
-            courseName,
+        await progressGroupRef.set({
+            objectID: objectId,
+            ...progressData,
         });
     }
 
-    // Ghi tuần tự để chắc chắn parent đã tồn tại
-    // await adminDb
-    //     .collection(COLLECTIONS.USERS)
-    //     .doc(userId)
-    //     .collection(COLLECTIONS.PROGRESS)
-    //     .doc(groupId)
-    //     .set(userProgressData);
+    // set thêm 1 document vào subcollection users
+    await userRef.set(progressData);
 
-    await progressGroupRef.collection(COLLECTIONS.USERS).doc(userId).set(userProgressData);
-
-    return userProgressData;
+    return progressData;
 }
 
 /**
@@ -298,11 +272,7 @@ export async function updateUserProgress(
         .collection(COLLECTIONS.PROGRESS)
         .doc(groupId);
 
-    const progressRefAdmin = adminDb
-        .collection(COLLECTIONS.PROGRESS)
-        .doc(groupId)
-        .collection(COLLECTIONS.USERS)
-        .doc(userId);
+    const searchIndexRef = adminDb.collection(COLLECTIONS.SEARCH_INDEX).doc(`${userId}_${groupId}`);
 
     const updateData: FirestoreData = {
         lastUpdatedAt: updates.lastUpdatedAt || now,
@@ -342,7 +312,7 @@ export async function updateUserProgress(
 
     await progressRef.update(updateData);
 
-    await progressRefAdmin.update(updateData);
+    await searchIndexRef.update(updateData);
 
     return { success: true, lastUpdatedAt: now };
 }
@@ -573,6 +543,13 @@ export async function getUserById(userId: string): Promise<FirestoreData | null>
 }
 
 /**
+ * Update user info
+ */
+export async function updateUserInfo(userId: string, updates: Partial<FirestoreData>) {
+    await adminDb.collection(COLLECTIONS.USERS).doc(userId).update(updates);
+}
+
+/**
  * Get user progress detail from progress/{groupId}/users/{userId}
  * Returns full user document with all fields
  */
@@ -580,12 +557,7 @@ export async function getUserProgressDetail(
     groupId: string,
     userId: string
 ): Promise<StudentStats | null> {
-    const doc = await adminDb
-        .collection(COLLECTIONS.PROGRESS)
-        .doc(groupId)
-        .collection(COLLECTIONS.USERS)
-        .doc(userId)
-        .get();
+    const doc = await adminDb.collection(COLLECTIONS.SEARCH_INDEX).doc(userId).get();
 
     if (!doc.exists) {
         return null;
@@ -594,7 +566,7 @@ export async function getUserProgressDetail(
     const d = doc.data();
 
     return {
-        userId: doc.id,
+        userId: (doc?.id as string).split("_").slice(0, 2).join("_"),
         fullname: d?.userFullname || "",
         birthDate: d?.userBirthDate || "",
         companyName: d?.userCompanyName || "",
@@ -635,9 +607,7 @@ export async function getGroupStatsByUserIds(
     // Fetch all batches in parallel
     const batchPromises = batches.map((batch) => {
         const queryRef = adminDb
-            .collection(COLLECTIONS.PROGRESS)
-            .doc(groupId)
-            .collection(COLLECTIONS.USERS)
+            .collection(COLLECTIONS.SEARCH_INDEX)
             .where(admin.firestore.FieldPath.documentId(), "in", batch);
 
         return queryRef.get();
@@ -655,19 +625,37 @@ export async function getGroupStatsByUserIds(
             allDocs.push({
                 userId: doc.id,
                 fullname: d.userFullname || "",
+                userIdCard: String(d.cccd ?? d.userIdCard ?? ""),
+                birthDate: d.userBirthDate || "",
                 companyName: d.userCompanyName || "",
                 isCompleted: d.isCompleted || false,
-                startedAt: d.startedAt || 0,
-                lastUpdatedAt: d.lastUpdatedAt || 0,
-                startImageUrl: d.startImageUrl,
-                finishImageUrl: d.finishImageUrl,
-                completedVideos: d.completedVideos || [],
+                startedAt: d.startedAt
+                    ? new Date(d.startedAt)
+                          .toLocaleString("vi-VN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                          })
+                          .replace(",", "")
+                    : "",
                 courseName: d.courseName || "",
+                lastUpdatedAt: d.lastUpdatedAt
+                    ? new Date(d.lastUpdatedAt)
+                          .toLocaleString("vi-VN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                          })
+                          .replace(",", "")
+                    : "",
                 currentSection: d.currentSection || "",
-                currentVideoIndex: d.currentVideoIndex || 0,
-                birthDate: d.userBirthDate || "",
-                examResult: d.examResult || {},
-                userIdCard: String(d.cccd ?? d.userIdCard ?? ""),
+                finishImageUrl: d.finishImageUrl,
             });
         });
     });
@@ -678,4 +666,150 @@ export async function getGroupStatsByUserIds(
         .filter((doc): doc is StudentStats => doc !== undefined);
 
     return orderedDocs;
+}
+
+export async function getUserCourseProgress(
+    userId: string,
+    type: "atld" | "hoc-nghe"
+): Promise<UserCourseProgress> {
+    const userCourseProgress = await adminDb
+        .collection(COLLECTIONS.USERS)
+        .doc(userId)
+        .collection(COLLECTIONS.PROGRESS)
+        .get();
+
+    const allCourses = await getAllGroups(type);
+
+    // Build list with proper CategorizedCourse props and logic for CourseStatus assignment
+    const allCourseProgressData: CategorizedCourse[] = allCourses.map((course: any) => {
+        const progressDoc = userCourseProgress.docs.find((doc) => doc.id === course.id);
+
+        const progressData = progressDoc?.data();
+
+        // Determine course status
+        let status: "not-started" | "in-progress" | "incomplete" | "completed" = "not-started";
+
+        if (progressData) {
+            if (progressData.isCompleted) {
+                status = "completed";
+            } else if (progressData.completedVideos && progressData.completedVideos.length > 0) {
+                status = "in-progress";
+            } else {
+                status = "incomplete";
+            }
+        }
+
+        return {
+            id: course?.id,
+            sortNo: course?.sortNo,
+            type: course?.type,
+            title: course?.title || "",
+            description: course?.description || "",
+            numberOfTheory: course?.theory?.videos?.length || 0,
+            numberOfPractice: course?.practice?.videos?.length || 0,
+            totalQuestionOfExam: course?.exam?.questions?.length || 0,
+            status,
+            progress: progressData as CourseProgress | undefined,
+        };
+    });
+
+    // sort by sortNo
+    allCourseProgressData?.sort((a, b) => {
+        const aHas = typeof a.sortNo === "number";
+
+        const bHas = typeof b.sortNo === "number";
+
+        if (aHas && bHas) return (a.sortNo as number) - (b.sortNo as number);
+
+        if (aHas) return -1; // a comes before b
+
+        if (bHas) return 1; // b comes before a
+
+        return 0; // both missing
+    });
+
+    const inProgress = allCourseProgressData.filter((course) => course.status === "in-progress");
+    const notStarted = allCourseProgressData.filter((course) => course.status === "not-started");
+    const incomplete = allCourseProgressData.filter((course) => course.status === "incomplete");
+    const completed = allCourseProgressData.filter((course) => course.status === "completed");
+
+    return {
+        inProgress,
+        notStarted,
+        incomplete,
+        completed,
+    };
+}
+
+// delete user progress
+export async function deleteUserProgress(userId: string, groupId: string): Promise<boolean> {
+    const userCollectionProgressRef = adminDb
+        .collection(COLLECTIONS.USERS)
+        .doc(userId)
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId);
+
+    const searchIndexCollectionRef = adminDb
+        .collection(COLLECTIONS.SEARCH_INDEX)
+        .doc(`${userId}_${groupId}`);
+
+    const [userCollectionProgressSnapshot, searchIndexCollectionSnapshot] = await Promise.all([
+        userCollectionProgressRef.get(),
+        searchIndexCollectionRef.get(),
+    ]);
+
+    if (!userCollectionProgressSnapshot.exists || !searchIndexCollectionSnapshot.exists) {
+        return false;
+    }
+
+    await userCollectionProgressRef.delete();
+    await searchIndexCollectionRef.delete();
+
+    return true;
+}
+
+// get user completed courses
+export async function getUserCourseCompleted(userId: string): Promise<UserCourseCompleted[]> {
+    const snapshot = await adminDb
+        .collection(COLLECTIONS.SEARCH_INDEX)
+        .where("userIdCard", "==", userId)
+        .get();
+
+    return snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            userIdCard: data.userIdCard || "",
+            startedAt: data.startedAt || 0,
+            lastUpdatedAt: data.lastUpdatedAt || 0,
+            startImageUrl: data.startImageUrl || "",
+            finishImageUrl: data.finishImageUrl || "",
+            groupId: data?.groupId ?? "",
+            examResult: data.examResult,
+            isCompleted: data.isCompleted || true,
+            currentSection: data.currentSection || "exam",
+            courseName: data.courseName || "",
+        } as UserCourseCompleted;
+    });
+}
+
+// retake the exam
+export async function retakeCourseExam(userId: string, groupId: string) {
+    const objectId = `${userId}_${groupId}`;
+
+    const userCollectionRef = adminDb
+        .collection(COLLECTIONS.USERS)
+        .doc(userId)
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId);
+
+    const searchIndexRef = adminDb.collection(COLLECTIONS.SEARCH_INDEX).doc(objectId);
+
+    const updateData = {
+        isCompleted: false,
+    };
+
+    await Promise.all([userCollectionRef.update(updateData), searchIndexRef.update(updateData)]);
+
+    return { success: true };
 }

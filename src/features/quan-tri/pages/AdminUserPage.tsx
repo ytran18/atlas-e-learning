@@ -73,6 +73,8 @@ const AdminUserPage = () => {
                         "groupId",
                         "userIdCard",
                         "currentSection",
+                        "userCompanyName",
+                        "userBirthDate",
                     ]}
                     attributesToHighlight={["userFullname"]}
                     hitsPerPage={hitsPerPage}
@@ -113,6 +115,8 @@ const AdminUserPage = () => {
                     "currentSection",
                     "isCompleted",
                     "lastUpdatedAt",
+                    "userCompanyName",
+                    "userBirthDate",
                 ]}
                 attributesToHighlight={["userFullname"]}
                 hitsPerPage={hitsPerPage}

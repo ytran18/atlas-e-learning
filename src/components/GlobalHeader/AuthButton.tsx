@@ -5,11 +5,15 @@ import { FunctionComponent } from "react";
 import { useRouter } from "next/navigation";
 
 import { useClerk, useUser } from "@clerk/nextjs";
-import { Avatar, Box, Button, Group, Loader, Text } from "@mantine/core";
-import { IconLogout } from "@tabler/icons-react";
+import { Avatar, Box, Button, Group, Select, Text } from "@mantine/core";
+import { IconLanguage, IconLogout } from "@tabler/icons-react";
+import { useCookies } from "react-cookie";
 
+import { useI18nContext } from "@/libs/i18n/provider";
+import { fallbackLng, i18nCookieName, listLanguages } from "@/libs/i18n/settings";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { trackUserSignedOut } from "@/libs/mixpanel";
-import { navigationPaths } from "@/utils/navigationPaths";
+import { USER_SLUG, navigationPaths } from "@/utils/navigationPaths";
 
 type AuthButtonProps = {
     className?: string;
@@ -27,6 +31,13 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
     onSignUp,
 }) => {
     const router = useRouter();
+
+    // eslint-disable-next-line
+    const [_, setCookie] = useCookies([i18nCookieName]);
+
+    const { lng } = useI18nContext();
+
+    const { t } = useI18nTranslate();
 
     const { signOut } = useClerk();
 
@@ -50,24 +61,39 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
         }
     };
 
+    const handleUserDetail = () => {
+        if (!user?.id) return;
+
+        router.push(navigationPaths.USER_DETAIL.replace(`[${USER_SLUG}]`, user.id));
+    };
+
+    const handleLanguageChange = (value: string | null) => {
+        setCookie(i18nCookieName, value);
+    };
+
     // Show loading state while checking authentication
-    if (!isLoaded) {
-        return (
-            <Group gap="xs">
-                <Loader size="sm" />
-                <Text size="sm" c="dimmed" hiddenFrom="sm">
-                    Loading...
-                </Text>
-            </Group>
-        );
-    }
+    if (!isLoaded) return null;
 
     if (!!userData) {
         return (
             <Group className="hover:cursor-pointer">
-                <Avatar src={user?.imageUrl || ""} radius="xl" size="sm" />
+                <Select
+                    leftSection={<IconLanguage className="size-5" />}
+                    value={lng ?? fallbackLng}
+                    data={listLanguages}
+                    onChange={handleLanguageChange}
+                    w={140}
+                    checkIconPosition="right"
+                />
 
-                <Box style={{ flex: 1 }}>
+                <Avatar
+                    src={user?.imageUrl || ""}
+                    radius="xl"
+                    size="sm"
+                    onClick={handleUserDetail}
+                />
+
+                <Box visibleFrom="xl" onClick={handleUserDetail}>
                     <Text size="sm" fw={500}>
                         {userData?.fullName as string}
                     </Text>
@@ -78,7 +104,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                 </Box>
 
                 <Button
-                    visibleFrom="sm"
+                    visibleFrom="md"
                     variant="default"
                     size="xs"
                     onClick={() => {
@@ -92,8 +118,8 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                 >
                     <div className="flex items-center gap-x-2">
                         <IconLogout className="text-gray-700" size={16} />
-                        <Text size="xs" visibleFrom="sm">
-                            Đăng xuất
+                        <Text size="xs" visibleFrom="xl">
+                            {t("dang_xuat")}
                         </Text>
                     </div>
                 </Button>
@@ -102,17 +128,17 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
     }
 
     return (
-        <Group gap="xs" className={className}>
+        <Group gap="xs" className={`${className} justify-end!`}>
             <Button
                 variant="default"
                 size="xs"
                 onClick={handleLogin}
                 className={signInButtonClassName}
             >
-                Đăng nhập
+                {t("dang_nhap")}
             </Button>
             <Button size="xs" onClick={handleSignUp} className={signUpButtonClassName}>
-                Đăng ký
+                {t("dang_ky_1")}
             </Button>
         </Group>
     );
