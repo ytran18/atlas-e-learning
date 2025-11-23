@@ -231,6 +231,7 @@ export async function createUserProgress(
     if (!docSnap.exists) {
         await progressGroupRef.set({
             objectID: objectId,
+            userId: userId,
             ...progressData,
         });
     }
