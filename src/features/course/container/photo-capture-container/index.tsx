@@ -5,7 +5,7 @@ import { redirect, useParams, useRouter, useSearchParams } from "next/navigation
 import { useUser } from "@clerk/nextjs";
 
 import { useStartCourse } from "@/api";
-import { trackCourseStartFailed } from "@/libs/mixpanel";
+import { trackCourseStartFailed, trackCourseStarted } from "@/libs/mixpanel";
 import { CourseType } from "@/types/api";
 import { navigationPaths } from "@/utils/navigationPaths";
 
@@ -49,11 +49,7 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
         retakePhoto,
     } = useCameraCapture();
 
-    const { mutateAsync: startCourse, isPending: isStarting } = useStartCourse(courseType, {
-        onSuccess: () => {
-            router.push(learnPath.replace(`[${paramKey}]`, courseId));
-        },
-    });
+    const { mutateAsync: startCourse, isPending: isStarting } = useStartCourse(courseType);
 
     const handleUploadAndContinue = async () => {
         if (!capturedPhoto || !courseId || !user?.unsafeMetadata) return;
@@ -68,6 +64,18 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
                 userCompanyName: user?.unsafeMetadata?.companyName as string,
                 userIdCard: user?.unsafeMetadata?.cccd as string,
             });
+
+            // Track course started BEFORE navigation (similar to sign in/sign up flow)
+            trackCourseStarted({
+                course_type: courseType,
+                course_id: courseId,
+                course_name: courseName as string,
+                user_fullname: user?.unsafeMetadata?.fullName as string,
+                user_has_company: !!user?.unsafeMetadata?.companyName,
+            });
+
+            // Navigate AFTER tracking
+            router.push(learnPath.replace(`[${paramKey}]`, courseId));
         } catch (err) {
             trackCourseStartFailed({
                 course_type: courseType,

@@ -6,7 +6,6 @@
  */
 import { UseMutationOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { trackCourseStarted } from "@/libs/mixpanel";
 import { startCourse } from "@/services/api.client";
 import { CourseType, StartCourseRequest, StartCourseResponse } from "@/types/api";
 
@@ -29,16 +28,7 @@ export function useStartCourse(
 
     return useMutation({
         mutationFn: (data: StartCourseRequest) => startCourse(type, data),
-        onSuccess: (data, variables, context, mutation) => {
-            // Track course started
-            trackCourseStarted({
-                course_type: type,
-                course_id: variables.groupId,
-                course_name: variables.courseName,
-                user_fullname: variables.userFullname,
-                user_has_company: !!variables.userCompanyName,
-            });
-
+        onSuccess: (data, variables, context) => {
             // Invalidate progress query để fetch lại data mới
             void queryClient.invalidateQueries({
                 queryKey: courseProgressKeys.progress(type, variables.groupId),
@@ -46,7 +36,8 @@ export function useStartCourse(
 
             // Gọi onSuccess callback nếu có
             if (options?.onSuccess) {
-                options.onSuccess(data, variables, context, mutation);
+                // Pass all 4 arguments as expected by the type signature
+                options.onSuccess(data, variables, context, null as any);
             }
         },
         ...options,
