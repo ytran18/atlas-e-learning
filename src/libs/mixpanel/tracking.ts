@@ -11,6 +11,7 @@ import { useUser } from "@clerk/nextjs";
 import type {
     AuthErrorEvent,
     CoursePreviewStartClickedEvent,
+    CourseStartFailedEvent,
     CourseStartedEvent,
     ExamSubmittedEvent,
     MixpanelEvent,
@@ -90,6 +91,13 @@ export const trackCoursePreviewStartClicked = (
 export const trackCourseStarted = (properties: CourseStartedEvent["properties"]) => {
     trackEvent<CourseStartedEvent>({
         event: "course_started",
+        properties,
+    });
+};
+
+export const trackCourseStartFailed = (properties: CourseStartFailedEvent["properties"]) => {
+    trackEvent<CourseStartFailedEvent>({
+        event: "course_start_failed",
         properties,
     });
 };

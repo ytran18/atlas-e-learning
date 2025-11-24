@@ -5,6 +5,7 @@ import { redirect, useParams, useRouter, useSearchParams } from "next/navigation
 import { useUser } from "@clerk/nextjs";
 
 import { useStartCourse } from "@/api";
+import { trackCourseStartFailed } from "@/libs/mixpanel";
 import { CourseType } from "@/types/api";
 import { navigationPaths } from "@/utils/navigationPaths";
 
@@ -68,6 +69,13 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
                 userIdCard: user?.unsafeMetadata?.cccd as string,
             });
         } catch (err) {
+            trackCourseStartFailed({
+                course_type: courseType,
+                course_id: courseId,
+                error_type: "upload_failed",
+                error_message: err,
+                timestamp: Date.now(),
+            });
             console.error("Error preparing photo upload:", err);
         }
     };
