@@ -77,11 +77,13 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
             // Navigate AFTER tracking
             router.push(learnPath.replace(`[${paramKey}]`, courseId));
         } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
+
             trackCourseStartFailed({
                 course_type: courseType,
                 course_id: courseId,
                 error_type: "upload_failed",
-                error_message: err,
+                error_message: errorMessage,
                 timestamp: Date.now(),
             });
             console.error("Error preparing photo upload:", err);

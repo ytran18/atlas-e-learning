@@ -85,7 +85,7 @@ export interface CourseStartFailedEvent {
         course_type: CourseType;
         course_id: string;
         error_type: "upload_failed" | "api_error" | "validation_error";
-        error_message: any;
+        error_message: string;
         timestamp: number;
     };
 }
