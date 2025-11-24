@@ -30,19 +30,13 @@ export async function POST(request: NextRequest) {
             "courseName",
             "userFullname",
             "userBirthDate",
-            "userCompanyName",
             "userIdCard",
         ]);
 
-        const {
-            groupId,
-            portraitUrl,
-            courseName,
-            userFullname,
-            userBirthDate,
-            userCompanyName,
-            userIdCard,
-        } = body;
+        const { groupId, portraitUrl, courseName, userFullname, userBirthDate, userIdCard } = body;
+
+        // userCompanyName is optional - default to empty string if not provided
+        const userCompanyName = body.userCompanyName || "";
 
         // Create initial progress
         const progress = await createUserProgress(

@@ -61,7 +61,7 @@ const PhotoCaptureContainer = ({ courseType, paramKey, learnPath }: PhotoCapture
                 courseName: courseName as string,
                 userFullname: user?.unsafeMetadata?.fullName as string,
                 userBirthDate: user?.unsafeMetadata?.birthDate as string,
-                userCompanyName: user?.unsafeMetadata?.companyName as string,
+                userCompanyName: (user?.unsafeMetadata?.companyName as string) || "", // Optional field
                 userIdCard: user?.unsafeMetadata?.cccd as string,
             });
 

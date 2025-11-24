@@ -106,7 +106,7 @@ export interface StartCourseRequest {
     courseName: string;
     userFullname: string;
     userBirthDate: string;
-    userCompanyName: string;
+    userCompanyName?: string; // Optional - not all users have a company
     userIdCard: string;
 }
 
