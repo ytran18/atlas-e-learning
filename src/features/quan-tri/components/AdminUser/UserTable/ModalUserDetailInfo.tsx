@@ -2,6 +2,7 @@ import { FunctionComponent } from "react";
 
 import { useSearchParams } from "next/navigation";
 
+import { useClerk } from "@clerk/nextjs";
 import { Button, Card, Text, Tooltip } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
@@ -36,7 +37,11 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
     const { mutate: deleteUserProgress, isPending: isDeletingUserProgress } =
         useDeleteUserProgress();
 
+    const { user: clerkUser } = useClerk();
+
     const groupId = useSearchParams().get("courseId");
+
+    const isAdmin = clerkUser?.unsafeMetadata?.role === "admin";
 
     const handleExamTabClick = () => {
         if (!isCompleted) return;
@@ -226,15 +231,17 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                 </Card>
             </div>
 
-            <div className="w-full flex items-center justify-end">
-                <Button
-                    color="red"
-                    onClick={handleDeleteUserProgress}
-                    loading={isDeletingUserProgress}
-                >
-                    Xóa kết học tập
-                </Button>
-            </div>
+            {isAdmin && (
+                <div className="w-full flex items-center justify-end">
+                    <Button
+                        color="red"
+                        onClick={handleDeleteUserProgress}
+                        loading={isDeletingUserProgress}
+                    >
+                        Xóa kết học tập
+                    </Button>
+                </div>
+            )}
         </div>
     );
 };
