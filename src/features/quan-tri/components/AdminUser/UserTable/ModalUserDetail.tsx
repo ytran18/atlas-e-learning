@@ -47,8 +47,6 @@ const ModalUserDetail: FunctionComponent<ModalUserDetailProps> = ({
         onClose();
     };
 
-    console.log({ user });
-
     return (
         <Modal
             opened={opened}

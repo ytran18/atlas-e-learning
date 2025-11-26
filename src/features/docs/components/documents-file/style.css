@@ -1,0 +1,42 @@
+.user-filter-search-box {
+    flex: 1;
+}
+
+.ais-SearchBox-form {
+    display: flex;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 0 10px;
+}
+
+.ais-SearchBox-input {
+    width: 100%;
+    height: 34px;
+    font-size: 14px;
+}
+
+.ais-SearchBox-input:focus {
+    outline: none;
+}
+
+.ais-SearchBox-submit {
+    display: none;
+}
+
+.ais-SearchBox-resetIcon {
+    display: none;
+}
+
+.ais-Pagination-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+@media (max-width: 640px) {
+    .user-filter-search-box {
+        flex: none;
+        width: 100%;
+    }
+}
