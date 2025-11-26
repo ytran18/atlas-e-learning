@@ -88,8 +88,14 @@ export const useSignInForm = () => {
                     router.push(navigationPaths.ATLD);
                     return;
                 }
-            } catch {
+            } catch (err) {
                 // Will try alternative prefix below
+                trackAuthError({
+                    error_type: "signin_attempt_failed_first_prefix",
+                    error_message:
+                        (err as Error).message || "Unknown error during first sign-in attempt",
+                    user_input: identifier,
+                });
             }
 
             // If failed, try with the alternative prefix (for backward compatibility)
@@ -112,8 +118,13 @@ export const useSignInForm = () => {
                     router.push(navigationPaths.ATLD);
                     return;
                 }
-            } catch {
-                // Ignore alternative attempt error, use original error
+            } catch (err) {
+                trackAuthError({
+                    error_type: "signin_attempt_failed_seconds_prefix",
+                    error_message:
+                        (err as Error).message || "Unknown error during seconds sign-in attempt",
+                    user_input: identifier,
+                });
             }
 
             // If both attempts failed, show error

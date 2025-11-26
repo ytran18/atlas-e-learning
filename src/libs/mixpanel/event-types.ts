@@ -45,7 +45,12 @@ export interface UserSignedOutEvent {
 export interface AuthErrorEvent {
     event: "auth_error";
     properties: {
-        error_type: "signin_failed" | "signup_failed" | "captcha_failed";
+        error_type:
+            | "signin_failed"
+            | "signup_failed"
+            | "captcha_failed"
+            | "signin_attempt_failed_first_prefix"
+            | "signin_attempt_failed_seconds_prefix";
         error_message: string;
         user_input?: string; // masked
     };
