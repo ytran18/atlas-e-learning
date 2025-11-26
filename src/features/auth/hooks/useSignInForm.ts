@@ -125,7 +125,7 @@ export const useSignInForm = () => {
             trackAuthError({
                 error_type: "signin_failed",
                 error_message: errorMessage,
-                user_input: identifier ? `${identifier.substring(0, 3)}***` : undefined,
+                user_input: identifier,
             });
         } catch (err: unknown) {
             console.error("Sign in error:", err);
@@ -137,7 +137,7 @@ export const useSignInForm = () => {
             trackAuthError({
                 error_type: "signin_failed",
                 error_message: errorMessage,
-                user_input: data.cccd ? `${data.cccd.substring(0, 3)}***` : undefined,
+                user_input: data.cccd,
             });
         } finally {
             setIsLoading(false);
