@@ -8,10 +8,11 @@ import { useSignIn } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { trackAuthError, trackUserSignedIn } from "@/libs/mixpanel";
 import { navigationPaths } from "@/utils/navigationPaths";
 
-import { SignInFormData, signInSchema } from "../validations/signInSchema";
+import { SignInFormData, getSignInSchema } from "../validations/signInSchema";
 
 // Raw form inputs: birthDate is entered as string in dd/mm/yyyy
 type SignInFormInputs = {
@@ -21,13 +22,17 @@ type SignInFormInputs = {
 
 export const useSignInForm = () => {
     const { isLoaded, signIn, setActive } = useSignIn();
+
     const router = useRouter();
 
+    const { t } = useI18nTranslate();
+
     const [isLoading, setIsLoading] = useState(false);
+
     const [error, setError] = useState("");
 
     const form = useForm<SignInFormInputs, unknown, SignInFormData>({
-        resolver: zodResolver(signInSchema),
+        resolver: zodResolver(getSignInSchema(t)),
         mode: "onChange",
         defaultValues: {
             cccd: "",
@@ -44,7 +49,7 @@ export const useSignInForm = () => {
 
         // If validation passed, birthDate is guaranteed to be a Date
         if (!data.birthDate) {
-            setError("Vui lòng chọn ngày sinh");
+            setError(t("vui_long_chon_ngay_sinh"));
             return;
         }
 
@@ -128,8 +133,7 @@ export const useSignInForm = () => {
             }
 
             // If both attempts failed, show error
-            const errorMessage =
-                "CCCD/Hộ chiếu hoặc ngày sinh không đúng. Vui lòng thử lại hoặc đăng ký mới.";
+            const errorMessage = t("cccdho_chieu_hoac_ngay_sinh_khong_dung_vui_long_th");
             setError(errorMessage);
 
             // Track sign-in error
@@ -140,8 +144,7 @@ export const useSignInForm = () => {
             });
         } catch (err: unknown) {
             console.error("Sign in error:", err);
-            const errorMessage =
-                "CCCD/Hộ chiếu hoặc ngày sinh không đúng. Vui lòng thử lại hoặc đăng ký mới.";
+            const errorMessage = t("cccdho_chieu_hoac_ngay_sinh_khong_dung_vui_long_th");
             setError(errorMessage);
 
             // Track sign-in error

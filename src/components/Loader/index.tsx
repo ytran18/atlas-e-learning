@@ -3,11 +3,15 @@
 import { Text } from "@mantine/core";
 import { IconLoader } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 type LoaderProps = {
     className?: string;
 };
 
 const Loader = ({ className }: LoaderProps) => {
+    const { t } = useI18nTranslate();
+
     return (
         <div className={`flex flex-col gap-y-2 ${className ? className : ""}`}>
             <div className={`relative flex justify-center`}>
@@ -17,7 +21,7 @@ const Loader = ({ className }: LoaderProps) => {
             </div>
 
             <Text fw={400} size="sm">
-                Đang tải...
+                {t("dang_tai")}
             </Text>
         </div>
     );

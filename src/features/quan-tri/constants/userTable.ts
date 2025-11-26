@@ -1,54 +1,54 @@
 export const tableHeader = [
     {
-        label: "Họ tên",
+        label: "ho_ten",
         key: "fullname",
     },
     {
-        label: "ID Card",
+        label: "cccd_hoac_ho_chieu",
         key: "userIdCard",
     },
     {
-        label: "Ngày sinh",
+        label: "ngay_sinh",
         key: "birthDate",
     },
     // {
-    //     label: "Ngày sinh",
+    //     label: "ngay_sinh",
     //     key: "birthDate",
     // },
     {
-        label: "Công ty",
+        label: "cong_ty",
         key: "companyName",
     },
     {
-        label: "Thời gian học",
+        label: "thoi_gian_hoc",
         key: "lastUpdatedAt",
     },
     {
-        label: "Lý thuyết",
+        label: "ly_thuyet",
         key: "theory",
     },
     {
-        label: "Thực hành",
+        label: "thuc_hanh",
         key: "practice",
     },
     {
-        label: "Bài kiểm tra",
+        label: "bai_kiem_tra",
         key: "exam",
     },
     // {
-    //     label: "Khóa học",
+    //     label: "khoa_hoc",
     //     key: "course",
     // },
     // {
-    //     label: "Hình trước khi học",
+    //     label: "hinh_truoc_khi_hoc",
     //     key: "startImageUrl",
     // },
     // {
-    //     label: "Hình sau khi học",
+    //     label: "hinh_sau_khi_hoc",
     //     key: "finishImageUrl",
     // },
     {
-        label: "Hoàn thành",
+        label: "hoan_thanh",
         key: "isCompleted",
     },
 ];

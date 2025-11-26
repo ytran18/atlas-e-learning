@@ -7,24 +7,14 @@ import { nanoid } from "nanoid";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { ExamQuestion } from "@/types/api";
 
-// Form validation schema
-const questionFormSchema = z.object({
-    content: z.string().min(1, "Câu hỏi không được để trống"),
-    options: z
-        .array(
-            z.object({
-                id: z.string(),
-                content: z.string().min(1, "Đáp án không được để trống"),
-            })
-        )
-        .min(2, "Cần ít nhất 2 đáp án")
-        .max(6, "Tối đa 6 đáp án"),
-    correctAnswer: z.string().min(1, "Vui lòng chọn đáp án đúng"),
-});
-
-type QuestionFormData = z.infer<typeof questionFormSchema>;
+type QuestionFormData = {
+    content: string;
+    options: { id: string; content: string }[];
+    correctAnswer: string;
+};
 
 type ModalQuestionProps = {
     opened: boolean;
@@ -41,6 +31,23 @@ const ModalQuestion = ({
     editQuestion,
     mode = "add",
 }: ModalQuestionProps) => {
+    const { t } = useI18nTranslate();
+
+    // Form validation schema
+    const questionFormSchema = z.object({
+        content: z.string().min(1, t("cau_hoi_khong_duoc_de_trong")),
+        options: z
+            .array(
+                z.object({
+                    id: z.string(),
+                    content: z.string().min(1, t("dap_an_khong_duoc_de_trong")),
+                })
+            )
+            .min(2, t("can_it_nhat_2_dap_an"))
+            .max(6, t("toi_da_6_dap_an")),
+        correctAnswer: z.string().min(1, t("vui_long_chon_dap_an_dung")),
+    });
+
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<QuestionFormData>({
@@ -139,14 +146,14 @@ const ModalQuestion = ({
         <Modal
             opened={opened}
             onClose={handleClose}
-            title={mode === "edit" ? "Chỉnh sửa câu hỏi" : "Thêm câu hỏi"}
+            title={mode === "edit" ? t("chinh_sua_cau_hoi") : t("them_cau_hoi")}
             centered
             size="lg"
         >
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
                 <Textarea
-                    label="Câu hỏi"
-                    placeholder="Nhập nội dung câu hỏi"
+                    label={t("cau_hoi")}
+                    placeholder={t("nhap_noi_dung_cau_hoi")}
                     autosize
                     minRows={3}
                     maxRows={10}
@@ -156,7 +163,7 @@ const ModalQuestion = ({
 
                 <div>
                     <Text size="sm" fw={500} mb="xs">
-                        Các đáp án (chọn đáp án đúng) <span className="text-red-500">*</span>
+                        {t("cac_dap_an_chon_dap_an_dung")} <span className="text-red-500">*</span>
                     </Text>
 
                     <Radio.Group
@@ -170,7 +177,7 @@ const ModalQuestion = ({
                                     <Radio value={watchedOptions[index]?.id} />
 
                                     <Input
-                                        placeholder={`Đáp án ${index + 1}`}
+                                        placeholder={`${t("dap_an")} ${index + 1}`}
                                         className="flex-1"
                                         error={errors.options?.[index]?.content?.message}
                                         {...form.register(`options.${index}.content`)}
@@ -200,17 +207,17 @@ const ModalQuestion = ({
                             onClick={handleAddOption}
                             className="mt-2"
                         >
-                            Thêm đáp án
+                            {t("them_dap_an")}
                         </Button>
                     )}
                 </div>
 
                 <Group justify="flex-end" mt="md">
                     <Button variant="outline" onClick={handleClose} disabled={isSubmitting}>
-                        Hủy
+                        {t("huy")}
                     </Button>
                     <Button type="submit" loading={isSubmitting}>
-                        {mode === "edit" ? "Cập nhật câu hỏi" : "Lưu câu hỏi"}
+                        {mode === "edit" ? t("cap_nhat_cau_hoi") : t("luu_cau_hoi")}
                     </Button>
                 </Group>
             </form>

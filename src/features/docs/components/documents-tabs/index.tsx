@@ -3,22 +3,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Tabs, ThemeIcon } from "@mantine/core";
 import { IconBrandYoutube, IconFileTypePdf, ReactNode } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { navigationPaths } from "@/utils/navigationPaths";
-
-const DocsNavItems = [
-    {
-        value: "file",
-        label: "Tài liệu",
-        icon: IconFileTypePdf,
-        color: "blue",
-    },
-    {
-        value: "video",
-        label: "Video",
-        icon: IconBrandYoutube,
-        color: "teal",
-    },
-];
 
 type DocumentTabsSlot = {
     File: () => ReactNode;
@@ -30,11 +16,28 @@ type DocumentsTabsProps = {
 };
 
 const DocumentsTabs = ({ slots }: DocumentsTabsProps) => {
+    const { t } = useI18nTranslate();
+
     const router = useRouter();
 
     const searchParams = useSearchParams();
 
     const currentTab = searchParams.get("tab") || "file";
+
+    const DocsNavItems = [
+        {
+            value: "file",
+            label: t("tai_lieu"),
+            icon: IconFileTypePdf,
+            color: "blue",
+        },
+        {
+            value: "video",
+            label: "Video",
+            icon: IconBrandYoutube,
+            color: "teal",
+        },
+    ];
 
     const handleChangeTab = (tab: string) => {
         router.push(`${navigationPaths.DOCUMENTS}?tab=${tab}`);

@@ -15,6 +15,7 @@ import { SearchBox, useInstantSearch } from "react-instantsearch-hooks-web";
 
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
 import { formatXLSXData } from "@/features/quan-tri/utils/format-xlsx-data";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { exportToXLSX } from "@/libs/xlsx/export-to-xlsx";
 import { getStudentStatsByUserIds } from "@/services/api.client";
 import { CourseType } from "@/types/api";
@@ -23,6 +24,7 @@ import { navigationPaths } from "@/utils/navigationPaths";
 import "./style.css";
 
 const UserFilter: FunctionComponent = () => {
+    const { t } = useI18nTranslate();
     const router = useRouter();
 
     const searchParams = useSearchParams();
@@ -77,8 +79,8 @@ const UserFilter: FunctionComponent = () => {
     const handleExportPDF = async () => {
         if (!type || !courseId) {
             notifications.show({
-                title: "Lỗi",
-                message: "Vui lòng chọn khóa học trước khi xuất file",
+                title: t("loi"),
+                message: t("vui_long_chon_khoa_hoc_truoc_khi_xuat_file"),
                 color: "red",
             });
             return;
@@ -89,8 +91,8 @@ const UserFilter: FunctionComponent = () => {
 
         if (objectIDs.length === 0) {
             notifications.show({
-                title: "Lỗi",
-                message: "Không có dữ liệu để xuất file",
+                title: t("loi"),
+                message: t("khong_co_du_lieu_de_xuat_file"),
                 color: "red",
             });
             return;
@@ -109,20 +111,20 @@ const UserFilter: FunctionComponent = () => {
             const formattedData = data.map((item) => formatXLSXData(item));
 
             // Get course name from first student or use default
-            const courseName = data[0]?.courseName || "Khóa học";
+            const courseName = data[0]?.courseName || t("khoa_hoc");
 
             await exportToXLSX(formattedData, courseName);
 
             notifications.show({
-                title: "Thành công",
-                message: "Xuất file XLSX thành công",
+                title: t("thanh_cong"),
+                message: t("xuat_file_xlsx_thanh_cong"),
                 color: "green",
             });
         } catch (error) {
             console.error("Error exporting XLSX:", error);
             notifications.show({
-                title: "Lỗi",
-                message: "Không thể xuất file XLSX. Vui lòng thử lại.",
+                title: t("loi"),
+                message: t("khong_the_xuat_file_xlsx_vui_long_thu_lai"),
                 color: "red",
             });
         } finally {
@@ -197,7 +199,7 @@ const UserFilter: FunctionComponent = () => {
         <div className="w-full flex flex-col sm:flex-row items-center gap-y-2 sm:gap-x-2 flex-wrap">
             <SearchBox
                 className="user-filter-search-box"
-                placeholder="Tìm kiếm theo tên..."
+                placeholder={t("tim_kiem_theo_ten")}
                 queryHook={queryHook}
             />
 
@@ -206,8 +208,8 @@ const UserFilter: FunctionComponent = () => {
                     searchable
                     defaultValue={courseId}
                     w={"200px"}
-                    placeholder="Chọn khóa học"
-                    nothingFoundMessage="Chưa có khóa học nào!"
+                    placeholder={t("chon_khoa_hoc")}
+                    nothingFoundMessage={t("chua_co_khoa_hoc_nao")}
                     data={courseList.map((item) => ({
                         value: item.id,
                         label: item.title,
@@ -219,7 +221,7 @@ const UserFilter: FunctionComponent = () => {
 
             <DatePickerInput
                 type="range"
-                placeholder="Từ ngày - Đến ngày"
+                placeholder={t("tu_ngay_den_ngay")}
                 value={dateRange}
                 onChange={handleDateRangeChange}
                 clearable
@@ -231,7 +233,7 @@ const UserFilter: FunctionComponent = () => {
                 }}
             />
 
-            <Tooltip label="Xuất file XLSX" withArrow>
+            <Tooltip label={t("xuat_file_xlsx")} withArrow>
                 <Button onClick={handleExportPDF} loading={isExporting} disabled={isExporting}>
                     <div className="flex items-center gap-x-2">
                         <IconFileExcel className="size-5" />

@@ -11,6 +11,7 @@ import { Configure } from "react-instantsearch-hooks-web";
 import { InstantSearch } from "react-instantsearch-hooks-web";
 
 import { useGetAllCourseLists } from "@/api/user/useGetAllCourseLists";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 import UserFilter from "../components/AdminUser/UserFilter";
 import UserTable from "../components/AdminUser/UserTable";
@@ -22,6 +23,8 @@ const searchClient = algoliasearch(
 );
 
 const AdminUserPage = () => {
+    const { t } = useI18nTranslate();
+
     const indexName = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME!;
 
     const searchParams = useSearchParams();
@@ -91,7 +94,7 @@ const AdminUserPage = () => {
                             <UserFilter />
 
                             <div className="flex justify-center w-full h-full min-h-[250px] text-lg text-gray-700 font-semibold">
-                                <Empty description="Vui lòng chọn khóa học để xem dữ liệu" />
+                                <Empty description={t("vui_long_chon_khoa_hoc_de_xem_du_lieu")} />
                             </div>
                         </Card>
                     </div>

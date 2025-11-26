@@ -2,6 +2,8 @@ import { Button, Group, Tooltip } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconDeviceFloppy, IconEdit, IconTrash, IconX } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 interface EditModeButtonsProps {
     isEditMode: boolean;
     onEdit: () => void;
@@ -22,15 +24,17 @@ const EditModeButtons = ({
     onCancel,
     onDelete,
     saveDisabled = false,
-    editText = "Chỉnh sửa",
+    editText,
 }: EditModeButtonsProps) => {
+    const { t } = useI18nTranslate();
+
     const isMobile = useMediaQuery("(max-width: 640px)");
 
     return (
         <Group gap="sm">
             {isEditMode ? (
                 <div className="flex flex-col sm:flex-row items-center gap-x-2 gap-y-2">
-                    <Tooltip label="Lưu" withArrow>
+                    <Tooltip label={t("luu")} withArrow>
                         <Button
                             size="xs"
                             variant="filled"
@@ -44,7 +48,7 @@ const EditModeButtons = ({
                         </Button>
                     </Tooltip>
 
-                    <Tooltip label="Xóa khóa học" withArrow>
+                    <Tooltip label={t("xoa_khoa_hoc")} withArrow>
                         <Button
                             size="xs"
                             variant="filled"
@@ -59,7 +63,7 @@ const EditModeButtons = ({
                         </Button>
                     </Tooltip>
 
-                    <Tooltip label="Huỷ bỏ" withArrow>
+                    <Tooltip label={t("huy_bo")} withArrow>
                         <Button
                             size="xs"
                             color="red"
@@ -78,7 +82,7 @@ const EditModeButtons = ({
                     <div className="flex items-center gap-x-2">
                         <IconEdit size={16} />
 
-                        {!isMobile && editText}
+                        {!isMobile && (editText || t("chinh_sua"))}
                     </div>
                 </Button>
             )}

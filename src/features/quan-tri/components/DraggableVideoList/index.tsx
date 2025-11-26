@@ -7,6 +7,7 @@ import { modals } from "@mantine/modals";
 import { IconEdit, IconGripVertical, IconTrash } from "@tabler/icons-react";
 import { Empty } from "antd";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { Video } from "@/types/api";
 
 import ModalEditVideo from "./ModalEditVideo";
@@ -36,6 +37,8 @@ const DraggableVideoList = ({
     onUpdateVideo,
     onDeleteVideo,
 }: DraggableVideoListProps) => {
+    const { t } = useI18nTranslate();
+
     const [isEditVideoModalOpen, setIsEditVideoModalOpen] = useState<boolean>(false);
 
     const isMobile = useMediaQuery("(max-width: 640px)");
@@ -52,10 +55,10 @@ const DraggableVideoList = ({
     const handleDeleteVideo = (video: Video) => {
         if (onDeleteVideo && video.id) {
             modals.openConfirmModal({
-                title: "Xác nhận xóa video",
+                title: t("xac_nhan_xoa_video"),
                 centered: true,
-                children: <Text size="sm">Bạn có chắc chắn muốn xóa video này?</Text>,
-                labels: { confirm: "Xóa", cancel: "Huỷ" },
+                children: <Text size="sm">{t("ban_co_chac_chan_muon_xoa_video_nay")}</Text>,
+                labels: { confirm: t("xoa"), cancel: t("huy") },
                 confirmProps: { color: "red" },
                 onCancel: () => {},
                 onConfirm: () => onDeleteVideo(video.id),
@@ -85,7 +88,7 @@ const DraggableVideoList = ({
     const renderEditButtons = (video: Video) => {
         return (
             <div className="flex items-center gap-x-2">
-                <Tooltip label="Xóa video" withArrow>
+                <Tooltip label={t("xoa_video")} withArrow>
                     <ThemeIcon
                         color="red"
                         className="cursor-pointer"
@@ -96,7 +99,7 @@ const DraggableVideoList = ({
                     </ThemeIcon>
                 </Tooltip>
 
-                <Tooltip label="Chỉnh sửa" withArrow>
+                <Tooltip label={t("chinh_sua")} withArrow>
                     <ThemeIcon
                         color="blue"
                         className="cursor-pointer"
@@ -113,7 +116,7 @@ const DraggableVideoList = ({
     if (noData) {
         return (
             <div className="flex flex-col gap-y-3 w-full mt-3">
-                <Empty description="Không có video" />
+                <Empty description={t("khong_co_video")} />
             </div>
         );
     }
@@ -206,7 +209,7 @@ const DraggableVideoList = ({
         <div className="flex flex-col gap-y-3">
             {videos.map((video, index) => (
                 <Tooltip
-                    label="Nhấn vào đây để xem video"
+                    label={t("nhan_vao_day_de_xem_video")}
                     withArrow
                     key={`video-${video.sortNo}-${index}`}
                 >

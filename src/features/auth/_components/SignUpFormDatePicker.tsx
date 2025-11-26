@@ -4,6 +4,8 @@ import { Input } from "@mantine/core";
 import { IconCalendar } from "@tabler/icons-react";
 import { Control, Controller, FieldValues } from "react-hook-form";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 interface SignUpFormDatePickerProps<T extends FieldValues = FieldValues> {
     label: string;
     name: string;
@@ -21,6 +23,8 @@ function SignUpFormDatePicker<T extends FieldValues = FieldValues>({
     control,
     error,
 }: SignUpFormDatePickerProps<T>) {
+    const { t } = useI18nTranslate();
+
     const formatToDDMMYYYY = (value: string) => {
         const digits = value.replace(/\D/g, "").slice(0, 8);
         const parts = [digits.slice(0, 2), digits.slice(2, 4), digits.slice(4, 8)].filter(Boolean);
@@ -53,7 +57,7 @@ function SignUpFormDatePicker<T extends FieldValues = FieldValues>({
                     return (
                         <Input
                             id={name}
-                            placeholder={placeholder || "Chọn ngày sinh"}
+                            placeholder={placeholder || t("chon_ngay_sinh")}
                             value={stringValue}
                             onChange={(e) => {
                                 const formatted = formatToDDMMYYYY(e.currentTarget.value);

@@ -9,43 +9,15 @@ import { useClerk } from "@clerk/nextjs";
 import { Card, Loader, Tabs, ThemeIcon } from "@mantine/core";
 import { IconFile, IconHammer, IconShield, IconUsers } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { navigationPaths } from "@/utils/navigationPaths";
 
 import { getCurrentAdminPathname } from "../../utils/get-current-admin-pathname";
 
-const adminNavItems = [
-    {
-        value: "atld",
-        label: "An toàn lao động",
-        icon: IconShield,
-        color: "blue",
-        href: navigationPaths.QUAN_TRI_ATLD,
-    },
-    {
-        value: "hoc-nghe",
-        label: "Học nghề",
-        icon: IconHammer,
-        color: "orange",
-        href: navigationPaths.QUAN_TRI_HOC_NGHE,
-    },
-    {
-        value: "user",
-        label: "Người dùng",
-        icon: IconUsers,
-        color: "teal",
-        href: navigationPaths.QUAN_TRI_USER,
-    },
-    {
-        value: "docs",
-        label: "Tài liệu",
-        icon: IconFile,
-        color: "grape",
-        href: navigationPaths.QUAN_TRI_DOCS,
-    },
-];
-
 const AdminTabs = () => {
     const pathname = usePathname();
+
+    const { t } = useI18nTranslate();
 
     const { user } = useClerk();
 
@@ -56,6 +28,37 @@ const AdminTabs = () => {
     const isAdmin = user?.unsafeMetadata?.role === "admin" ? true : false;
 
     const currentTab = getCurrentAdminPathname(pathname, !isAdmin);
+
+    const adminNavItems = [
+        {
+            value: "atld",
+            label: t("an_toan_lao_dong"),
+            icon: IconShield,
+            color: "blue",
+            href: navigationPaths.QUAN_TRI_ATLD,
+        },
+        {
+            value: "hoc-nghe",
+            label: t("hoc_nghe"),
+            icon: IconHammer,
+            color: "orange",
+            href: navigationPaths.QUAN_TRI_HOC_NGHE,
+        },
+        {
+            value: "user",
+            label: t("nguoi_dung"),
+            icon: IconUsers,
+            color: "teal",
+            href: navigationPaths.QUAN_TRI_USER,
+        },
+        {
+            value: "docs",
+            label: t("tai_lieu"),
+            icon: IconFile,
+            color: "grape",
+            href: navigationPaths.QUAN_TRI_DOCS,
+        },
+    ];
 
     useEffect(() => {
         // clear navigating state when route changes

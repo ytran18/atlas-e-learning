@@ -5,6 +5,7 @@ import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { FormProvider, useForm } from "react-hook-form";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { Video } from "@/types/api";
 
 import VideoBlock from "./VideoBlock";
@@ -35,6 +36,8 @@ type ModalEditVideoFormData = {
 };
 
 const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProps) => {
+    const { t } = useI18nTranslate();
+
     const [newVideoUrl, setNewVideoUrl] = useState<string | null>(null);
 
     const [newThumbnailUrl, setNewThumbnailUrl] = useState<string | null>(null);
@@ -95,8 +98,8 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
             await onSubmit(value);
 
             notifications.show({
-                title: "Thành công",
-                message: "Video đã được cập nhật thành công",
+                title: t("thanh_cong"),
+                message: t("video_da_duoc_cap_nhat_thanh_cong"),
                 color: "green",
                 position: "top-right",
             });
@@ -105,8 +108,8 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
         } catch (error) {
             console.error("Error updating video:", error);
             notifications.show({
-                title: "Lỗi",
-                message: "Có lỗi xảy ra khi cập nhật video. Vui lòng thử lại.",
+                title: t("loi"),
+                message: t("co_loi_xay_ra_khi_cap_nhat_video_vui_long_thu_lai"),
                 color: "red",
                 position: "top-right",
             });
@@ -125,10 +128,10 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
     const handleClose = () => {
         if (form.formState.isDirty || newVideoUrl || isUploading || hasSelectedFile) {
             modals.openConfirmModal({
-                title: <p className="font-bold">Bạn có chắc chắn muốn thoát?</p>,
+                title: <p className="font-bold">{t("ban_co_chac_chan_muon_thoat")}</p>,
                 centered: true,
-                children: <p>Các thay đổi chưa lưu sẽ bị mất.</p>,
-                labels: { confirm: "Thoát", cancel: "Huỷ" },
+                children: <p>{t("cac_thay_doi_chua_luu_se_bi_mat")}</p>,
+                labels: { confirm: t("thoat"), cancel: t("huy") },
                 confirmProps: { color: "red" },
                 onCancel: () => {},
                 onConfirm: () => {
@@ -152,7 +155,7 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
     return (
         <Modal
             size="lg"
-            title="Chỉnh sửa video"
+            title={t("chinh_sua_video")}
             opened={opened}
             onClose={handleClose}
             closeOnClickOutside={false}
@@ -160,19 +163,21 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
         >
             <FormProvider {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-y-4">
-                    <Input.Wrapper label="Tiêu đề video" withAsterisk>
+                    <Input.Wrapper label={t("tieu_de_video")} withAsterisk>
                         <Input
-                            placeholder="Tiêu đề video"
-                            {...form.register("title", { required: "Tiêu đề video là bắt buộc" })}
+                            placeholder={t("tieu_de_video")}
+                            {...form.register("title", {
+                                required: t("tieu_de_video_la_bat_buoc"),
+                            })}
                             error={form.formState.errors.title?.message}
                         />
                     </Input.Wrapper>
 
-                    <Input.Wrapper label="Mô tả video" withAsterisk>
+                    <Input.Wrapper label={t("mo_ta_video")} withAsterisk>
                         <Textarea
-                            placeholder="Mô tả video"
+                            placeholder={t("mo_ta_video")}
                             {...form.register("description", {
-                                required: "Mô tả video là bắt buộc",
+                                required: t("mo_ta_video_la_bat_buoc"),
                             })}
                             error={form.formState.errors.description?.message}
                         />
@@ -189,23 +194,23 @@ const ModalEditVideo = ({ opened, video, onClose, onSubmit }: ModalEditVideoProp
                         }}
                     />
 
-                    <Checkbox label="Cho phép tua" {...form.register("canSeek")} />
+                    <Checkbox label={t("cho_phep_tua")} {...form.register("canSeek")} />
 
                     <Checkbox
-                        label="Xem hết để hoàn thành"
+                        label={t("xem_het_de_hoan_thanh")}
                         {...form.register("shouldCompleteToPassed")}
                     />
 
                     <div className="flex justify-end gap-x-2 mt-4">
                         <Button variant="outline" onClick={handleClose} type="button">
-                            Hủy
+                            {t("huy")}
                         </Button>
                         <Button
                             type="submit"
                             loading={isSubmitting}
                             disabled={(!form.formState.isDirty && !newVideoUrl) || isUploading}
                         >
-                            Cập nhật
+                            {t("cap_nhat")}
                         </Button>
                     </div>
                 </form>

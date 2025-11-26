@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { courseListKeys, useCreateCourse } from "@/api";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { CourseType, CreateCourseRequest } from "@/types/api";
 
 type ModalCreateNewCourseProps = {
@@ -16,27 +17,29 @@ type ModalCreateNewCourseProps = {
     onClose: () => void;
 };
 
-// Zod schema cho form validation
-const createCourseSchema = z.object({
-    title: z
-        .string()
-        .min(1, "Tiêu đề khóa học là bắt buộc")
-        .min(3, "Tiêu đề phải có ít nhất 3 ký tự"),
-    description: z
-        .string()
-        .min(1, "Mô tả khóa học là bắt buộc")
-        .min(10, "Mô tả phải có ít nhất 10 ký tự"),
-});
-
-// Form data type chỉ chứa title và description
-type CreateCourseFormData = z.infer<typeof createCourseSchema>;
-
 const ModalCreateNewCourse: FunctionComponent<ModalCreateNewCourseProps> = ({
     opened,
     title,
     onClose,
     type,
 }) => {
+    const { t } = useI18nTranslate();
+
+    // Zod schema cho form validation
+    const createCourseSchema = z.object({
+        title: z
+            .string()
+            .min(1, t("tieu_de_khoa_hoc_la_bat_buoc"))
+            .min(3, t("tieu_de_phai_co_it_nhat_3_ky_tu")),
+        description: z
+            .string()
+            .min(1, t("mo_ta_khoa_hoc_la_bat_buoc"))
+            .min(10, t("mo_ta_phai_co_it_nhat_10_ky_tu")),
+    });
+
+    // Form data type chỉ chứa title và description
+    type CreateCourseFormData = z.infer<typeof createCourseSchema>;
+
     const queryClient = useQueryClient();
 
     const { mutate: createCourseMutation, isPending } = useCreateCourse(type, {
@@ -67,18 +70,18 @@ const ModalCreateNewCourse: FunctionComponent<ModalCreateNewCourseProps> = ({
             type: type,
             description: data.description,
             theory: {
-                title: "Lý thuyết",
-                description: "Phần lý thuyết sẽ được cập nhật sau",
+                title: t("ly_thuyet"),
+                description: t("phan_ly_thuyet_se_duoc_cap_nhat_sau"),
                 videos: [],
             },
             practice: {
-                title: "Thực hành",
-                description: "Phần thực hành sẽ được cập nhật sau",
+                title: t("thuc_hanh"),
+                description: t("phan_thuc_hanh_se_duoc_cap_nhat_sau"),
                 videos: [],
             },
             exam: {
-                title: "Thi cuối khóa",
-                description: "Bài thi sẽ được cập nhật sau",
+                title: t("thi_cuoi_khoa"),
+                description: t("bai_thi_se_duoc_cap_nhat_sau"),
                 timeLimit: 1800, // 30 phút
                 questions: [],
             },
@@ -93,23 +96,23 @@ const ModalCreateNewCourse: FunctionComponent<ModalCreateNewCourseProps> = ({
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-y-4">
                         <Input.Wrapper
-                            label="Tiêu đề khóa học"
+                            label={t("tieu_de_khoa_hoc")}
                             withAsterisk
                             error={form.formState.errors.title?.message}
                         >
                             <Input
-                                placeholder="Nhập tiêu đề khóa học"
+                                placeholder={t("nhap_tieu_de_khoa_hoc")}
                                 {...form.register("title")}
                             />
                         </Input.Wrapper>
 
                         <Input.Wrapper
-                            label="Mô tả khóa học"
+                            label={t("mo_ta_khoa_hoc")}
                             withAsterisk
                             error={form.formState.errors.description?.message}
                         >
                             <Input
-                                placeholder="Nhập mô tả khóa học"
+                                placeholder={t("nhap_mo_ta_khoa_hoc")}
                                 {...form.register("description")}
                             />
                         </Input.Wrapper>
@@ -117,7 +120,7 @@ const ModalCreateNewCourse: FunctionComponent<ModalCreateNewCourseProps> = ({
 
                     <div className="flex justify-end items-center gap-x-4 mt-6">
                         <Button variant="outline" onClick={onClose} disabled={isPending}>
-                            Hủy
+                            {t("huy")}
                         </Button>
 
                         <Button
@@ -125,7 +128,7 @@ const ModalCreateNewCourse: FunctionComponent<ModalCreateNewCourseProps> = ({
                             loading={isPending}
                             disabled={!form.formState.isValid}
                         >
-                            Thêm
+                            {t("them")}
                         </Button>
                     </div>
                 </form>

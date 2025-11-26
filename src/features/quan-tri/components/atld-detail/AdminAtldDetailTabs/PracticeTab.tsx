@@ -6,12 +6,14 @@ import { Controller } from "react-hook-form";
 
 import { useAtldAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
 import { useCourseFormContext } from "@/features/quan-tri/contexts/CourseFormContext";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 import DraggableVideoList from "../../DraggableVideoList";
 import EditableField from "../../EditableField";
 import VideoUploadModal from "../../VideoUploadModal";
 
 const PracticeTab = () => {
+    const { t } = useI18nTranslate();
     const { courseDetail, isEditMode } = useAtldAdminDetailContext();
 
     const { practice } = courseDetail;
@@ -66,7 +68,7 @@ const PracticeTab = () => {
             </div>
 
             <div className="flex flex-col gap-y-3">
-                <Text fw={500}>Video Thực Hành</Text>
+                <Text fw={500}>{t("video_thuc_hanh")}</Text>
 
                 <DraggableVideoList
                     videos={isEditMode ? editPractice.videos : practice.videos}
@@ -83,7 +85,7 @@ const PracticeTab = () => {
                         className="mt-2 w-fit!"
                         disabled={isLoading}
                     >
-                        Thêm video
+                        {t("them_video")}
                     </Button>
                 )}
             </div>
@@ -93,7 +95,7 @@ const PracticeTab = () => {
                 opened={isAddVideoModalOpen}
                 onClose={() => setIsAddVideoModalOpen(false)}
                 onSubmit={(video) => handleAddVideo({ video, section: "practice" })}
-                title="Thêm video mới"
+                title={t("them_video_moi")}
             />
         </div>
     );

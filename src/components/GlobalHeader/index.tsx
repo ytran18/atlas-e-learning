@@ -83,7 +83,7 @@ const GlobalHeader = () => {
                     <div className="col-span-4 md:col-span-2 xl:col-span-3">
                         <Image
                             src="/images/atld-logo.webp"
-                            alt="ATLD Logo"
+                            alt={t("atld_logo")}
                             width={120}
                             height={40}
                             onClick={() => router.push(navigationPaths.LANDING_PAGE)}

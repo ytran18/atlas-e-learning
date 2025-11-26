@@ -8,7 +8,7 @@ import { Configure, InstantSearch } from "react-instantsearch-hooks-web";
 import DocumentsFile from "../components/documents-file";
 import DocumentsHeroSection from "../components/documents-hero-section";
 import DocumentsTabs from "../components/documents-tabs";
-import DocumentsVideo from "../components/documents-video/inde";
+import DocumentsVideo from "../components/documents-video";
 
 const searchClient = algoliasearch(
     process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,

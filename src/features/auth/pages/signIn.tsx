@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { navigationPaths } from "@/utils/navigationPaths";
 
 import SignInFormDatePicker from "../_components/SignInFormDatePicker";
@@ -8,6 +9,8 @@ import SignInFormLayout from "../_components/SignInFormLayout";
 import { useSignInForm } from "../hooks/useSignInForm";
 
 const SignInPage = () => {
+    const { t } = useI18nTranslate();
+
     const {
         form: {
             register,
@@ -21,30 +24,30 @@ const SignInPage = () => {
 
     return (
         <SignInFormLayout
-            title="Đăng nhập"
-            subtitle="Nhập thông tin để truy cập khóa học"
+            title={t("dang_nhap")}
+            subtitle={t("nhap_thong_tin_de_truy_cap_khoa_hoc")}
             onSubmit={onSubmit}
-            submitButtonText="Đăng nhập"
-            footerText="Chưa có tài khoản?"
-            footerLinkText="Đăng ký ngay"
+            submitButtonText={t("dang_nhap")}
+            footerText={t("chua_co_tai_khoan")}
+            footerLinkText={t("dang_ky_ngay")}
             footerLinkHref={navigationPaths.SIGN_UP}
             isLoading={isLoading}
             error={error}
         >
             <SignInFormField
-                label="CCCD hoặc Hộ chiếu"
+                label={t("cccd_hoac_ho_chieu")}
                 name="cccd"
                 type="text"
-                placeholder="Nhập CCCD hoặc Hộ chiếu"
+                placeholder={t("nhap_cccd_hoac_ho_chieu")}
                 required
                 register={register}
                 error={errors.cccd?.message}
             />
 
             <SignInFormDatePicker
-                label="Ngày sinh"
+                label={t("ngay_sinh")}
                 name="birthDate"
-                placeholder="Nhập ngày sinh (dd/mm/yyyy)"
+                placeholder={t("nhap_ngay_sinh_ddmmyyyy")}
                 required
                 control={control}
                 error={errors.birthDate?.message}

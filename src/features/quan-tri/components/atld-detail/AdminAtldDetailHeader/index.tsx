@@ -9,11 +9,14 @@ import { Controller } from "react-hook-form";
 import { useDeleteCourse } from "@/api";
 import { useAtldAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
 import { useCourseFormContext } from "@/features/quan-tri/contexts/CourseFormContext";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 import EditModeButtons from "../../EditModeButtons";
 import EditableField from "../../EditableField";
 
 const AdminAtldDetailHeader = () => {
+    const { t } = useI18nTranslate();
+
     const { atldId } = useParams();
 
     const router = useRouter();
@@ -41,17 +44,17 @@ const AdminAtldDetailHeader = () => {
 
     const handleDeleteCourse = () => {
         modals.openConfirmModal({
-            title: "Xác nhận xóa khóa học",
+            title: t("xac_nhan_xoa_khoa_hoc"),
             centered: true,
-            children: <p>Bạn có chắc chắn muốn xóa khóa học này?</p>,
-            labels: { confirm: "Xóa", cancel: "Huỷ" },
+            children: <p>{t("ban_co_chac_chan_muon_xoa_khoa_hoc_nay")}</p>,
+            labels: { confirm: t("xoa"), cancel: t("huy") },
             onConfirm: async () => {
                 try {
                     await deleteCourse({ groupId: atldId as string });
 
                     notifications.show({
-                        title: "Thành công",
-                        message: "Khóa học đã được xóa thành công",
+                        title: t("thanh_cong"),
+                        message: t("khoa_hoc_da_duoc_xoa_thanh_cong"),
                         color: "green",
                         position: "top-right",
                     });

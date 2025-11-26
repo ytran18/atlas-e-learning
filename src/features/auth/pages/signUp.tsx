@@ -5,12 +5,16 @@ import { useEffect, useRef } from "react";
 import { Checkbox } from "@mantine/core";
 import { Controller } from "react-hook-form";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 import SignUpFormDatePicker from "../_components/SignUpFormDatePicker";
 import SignUpFormField from "../_components/SignUpFormField";
 import SignUpFormLayout from "../_components/SignUpFormLayout";
 import { useSignUpForm } from "../hooks/useSignUpForm";
 
 const SignUpPage = () => {
+    const { t } = useI18nTranslate();
+
     const {
         form: {
             register,
@@ -37,29 +41,29 @@ const SignUpPage = () => {
 
     return (
         <SignUpFormLayout
-            title="Đăng ký tài khoản"
-            subtitle="Tạo tài khoản để bắt đầu học tập"
+            title={t("dang_ky_tai_khoan")}
+            subtitle={t("tao_tai_khoan_de_bat_dau_hoc_tap")}
             onSubmit={onSubmit}
-            submitButtonText="Đăng ký"
-            footerText="Đã có tài khoản?"
-            footerLinkText="Đăng nhập ngay"
+            submitButtonText={t("dang_ky")}
+            footerText={t("da_co_tai_khoan")}
+            footerLinkText={t("dang_nhap_ngay")}
             footerLinkHref="/sign-in"
             isLoading={isLoading}
             error={error}
         >
             <SignUpFormField
-                label="Họ và tên"
+                label={t("ho_va_ten")}
                 name="fullName"
-                placeholder="Nhập họ và tên"
+                placeholder={t("nhap_ho_va_ten")}
                 required
                 register={register}
                 error={errors.fullName?.message}
             />
 
             <SignUpFormDatePicker
-                label="Ngày sinh"
+                label={t("ngay_sinh")}
                 name="birthDate"
-                placeholder="Chọn ngày sinh của bạn"
+                placeholder={t("chon_ngay_sinh_cua_ban")}
                 required
                 control={control}
                 error={errors.birthDate?.message}
@@ -71,7 +75,7 @@ const SignUpPage = () => {
                 defaultValue={true}
                 render={({ field }) => (
                     <Checkbox
-                        label="Tôi là công dân Việt Nam"
+                        label={t("toi_la_cong_dan_viet_nam")}
                         checked={field.value}
                         onChange={(event) => field.onChange(event.currentTarget.checked)}
                     />
@@ -79,27 +83,27 @@ const SignUpPage = () => {
             />
 
             <SignUpFormField
-                label={isVietnamese ? "CCCD" : "Hộ chiếu"}
+                label={isVietnamese ? "CCCD" : t("ho_chieu")}
                 name="cccd"
                 type="text"
-                placeholder={isVietnamese ? "Nhập số CCCD" : "Nhập số hộ chiếu"}
+                placeholder={isVietnamese ? t("nhap_so_cccd") : t("nhap_so_ho_chieu")}
                 required
                 register={register}
                 error={errors.cccd?.message}
             />
 
             <SignUpFormField
-                label="Tên công ty"
+                label={t("ten_cong_ty")}
                 name="companyName"
-                placeholder="Nhập tên công ty (không bắt buộc)"
+                placeholder={t("nhap_ten_cong_ty_khong_bat_buoc")}
                 register={register}
                 error={errors.companyName?.message}
             />
 
             <SignUpFormField
-                label="Chức danh công việc"
+                label={t("chuc_danh_cong_viec")}
                 name="jobTitle"
-                placeholder="Nhập chức danh công việc"
+                placeholder={t("nhap_chuc_danh_cong_viec")}
                 register={register}
                 required
                 error={errors.jobTitle?.message}

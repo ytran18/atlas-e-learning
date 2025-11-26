@@ -11,6 +11,7 @@ import { Image } from "antd";
 
 import { useDeleteUserProgress } from "@/api/admin/useDeleteUserProgress";
 import { DEFAULT_IMAGE_URL } from "@/constants";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { StudentStats } from "@/types/api";
 
 import { UserDetailTabs } from "./ModalUserDetail";
@@ -34,6 +35,8 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
     onClose,
     onDeleteSuccess,
 }) => {
+    const { t } = useI18nTranslate();
+
     const { mutate: deleteUserProgress, isPending: isDeletingUserProgress } =
         useDeleteUserProgress();
 
@@ -50,27 +53,25 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
     };
 
     const renderLabel = isCompleted
-        ? "Nhấn vào để xem chi tiết bài kiểm tra"
-        : "Chưa hoàn thành khóa học";
+        ? t("nhan_vao_de_xem_chi_tiet_bai_kiem_tra")
+        : t("chua_hoan_thanh_khoa_hoc");
 
     const handleDeleteUserProgress = () => {
         modals.openConfirmModal({
-            title: "Xác nhận xóa kết học tập",
+            title: t("xac_nhan_xoa_ket_hoc_tap"),
             centered: true,
             children: (
-                <Text size="xs">
-                    Kết học tập sẽ được xóa khỏi hệ thống và không thể khôi phục lại.
-                </Text>
+                <Text size="xs">{t("ket_hoc_tap_se_duoc_xoa_khoi_he_thong_va_khong_the")}</Text>
             ),
-            labels: { confirm: "Xóa", cancel: "Huỷ" },
+            labels: { confirm: t("xoa"), cancel: t("huy") },
             onConfirm: async () => {
                 deleteUserProgress(
                     { userId: user.userId, groupId: groupId as string },
                     {
                         onSuccess: async () => {
                             notifications.show({
-                                title: "Thành công",
-                                message: "Kết học tập đã được xóa thành công",
+                                title: t("thanh_cong"),
+                                message: t("ket_hoc_tap_da_duoc_xoa_thanh_cong"),
                                 color: "green",
                                 position: "top-right",
                             });
@@ -98,7 +99,7 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
             <div className="w-full flex items-center justify-between gap-x-2">
                 <Card withBorder className="w-full py-1!">
                     <Text size="xs" fw={500} c="dimmed">
-                        Ngày sinh
+                        {t("ngay_sinh")}
                     </Text>
                     <Text size="sm" fw={500}>
                         {user.birthDate}
@@ -107,7 +108,7 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
 
                 <Card withBorder className="w-full py-1!">
                     <Text size="xs" fw={500} c="dimmed">
-                        Công ty
+                        {t("cong_ty")}
                     </Text>
                     <Text size="sm" fw={500}>
                         {user.companyName}
@@ -118,7 +119,7 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
             <div className="w-full flex items-center justify-between gap-x-2">
                 <div className="w-full flex flex-col items-start justify-between gap-y-1">
                     <Text size="xs" fw={500}>
-                        Ảnh lúc đầu
+                        {t("anh_luc_dau")}
                     </Text>
 
                     <Image
@@ -131,7 +132,7 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
 
                 <div className="w-full flex flex-col items-start justify-between gap-y-1">
                     <Text size="xs" fw={500}>
-                        Ảnh lúc đang học
+                        {t("anh_luc_dang_hoc")}
                     </Text>
 
                     <Image
@@ -151,17 +152,17 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                 >
                     <div className="flex items-center justify-between gap-x-2">
                         <Text size="sm" fw={600}>
-                            Kết quả bài kiểm tra
+                            {t("ket_qua_bai_kiem_tra")}
                         </Text>
 
                         <div className="flex items-center gap-x-3">
                             <Text size="sm" fw={600} c={user.examResult?.passed ? "green" : "red"}>
                                 {!isCompleted ? (
-                                    <>Chưa làm bài kiểm tra</>
+                                    <>{t("chua_lam_bai_kiem_tra")}</>
                                 ) : (
                                     <>
                                         {user.examResult?.score} / {user.examResult?.totalQuestions}{" "}
-                                        ({user.examResult?.passed ? "Đạt" : "Không đạt"})
+                                        ({user.examResult?.passed ? t("dat") : t("khong_dat")})
                                     </>
                                 )}
                             </Text>
@@ -182,12 +183,12 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                             />
 
                             <Text size="sm" fw={600}>
-                                Lý thuyết
+                                {t("ly_thuyet")}
                             </Text>
                         </div>
 
                         <Text size="sm" fw={600}>
-                            {isTheoryCompleted ? "Đã hoàn thành" : "Chưa hoàn thành"}
+                            {isTheoryCompleted ? t("da_hoan_thanh") : t("chua_hoan_thanh")}
                         </Text>
                     </div>
                 </Card>
@@ -201,12 +202,12 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                             />
 
                             <Text size="sm" fw={600}>
-                                Thực hành
+                                {t("thuc_hanh")}
                             </Text>
                         </div>
 
                         <Text size="sm" fw={600}>
-                            {isPracticeCompleted ? "Đã hoàn thành" : "Chưa hoàn thành"}
+                            {isPracticeCompleted ? t("da_hoan_thanh") : t("chua_hoan_thanh")}
                         </Text>
                     </div>
                 </Card>
@@ -220,12 +221,12 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                             />
 
                             <Text size="sm" fw={600}>
-                                Chứng chỉ
+                                {t("chung_chi")}
                             </Text>
                         </div>
 
                         <Text size="sm" fw={600}>
-                            {isCompleted ? "Đã hoàn thành" : "Chưa hoàn thành"}
+                            {isCompleted ? t("da_hoan_thanh") : t("chua_hoan_thanh")}
                         </Text>
                     </div>
                 </Card>
@@ -238,7 +239,7 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                         onClick={handleDeleteUserProgress}
                         loading={isDeletingUserProgress}
                     >
-                        Xóa kết học tập
+                        {t("xoa_ket_hoc_tap")}
                     </Button>
                 </div>
             )}

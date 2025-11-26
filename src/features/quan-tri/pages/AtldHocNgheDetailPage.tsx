@@ -6,6 +6,7 @@ import { Card, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
 import { useCourseDetail } from "@/api";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 import AdminHocNgheDetailHeader from "../components/hoc-nghe-detail/AdminHocNgheDetailHeader";
 import AdminHocNgheDetailTabs from "../components/hoc-nghe-detail/AdminHocNgheDetailTabs";
@@ -13,6 +14,8 @@ import { AdminDetailProvider } from "../contexts/AdminDetailContext";
 import { CourseFormProvider } from "../contexts/CourseFormContext";
 
 const AtldHocNgheDetailPage = () => {
+    const { t } = useI18nTranslate();
+
     const { hocNgheId } = useParams();
 
     const isMobile = useMediaQuery("(max-width: 640px)");
@@ -24,7 +27,7 @@ const AtldHocNgheDetailPage = () => {
             <div className="flex-1">
                 <Card withBorder className="w-full h-full">
                     <div className="w-full h-full flex justify-center">
-                        <Text>Hãy chọn khóa học để xem chi tiết</Text>
+                        <Text>{t("hay_chon_khoa_hoc_de_xem_chi_tiet")}</Text>
                     </div>
                 </Card>
             </div>

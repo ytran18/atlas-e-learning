@@ -3,6 +3,8 @@ import React from "react";
 import { Alert, Group, Progress, Text } from "@mantine/core";
 import { IconAlertCircle, IconClock } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 import { ProgressData } from "../../types/video";
 
 interface VideoProgressComponentProps {
@@ -16,11 +18,13 @@ export const VideoProgressComponent: React.FC<VideoProgressComponentProps> = ({
     isConnected,
     error,
 }) => {
+    const { t } = useI18nTranslate();
+
     if (!progress) {
         return (
             <Alert
                 icon={<IconClock size={16} />}
-                title="Đang kết nối..."
+                title={t("dang_ket_noi")}
                 color="blue"
                 variant="light"
             >
@@ -31,12 +35,12 @@ export const VideoProgressComponent: React.FC<VideoProgressComponentProps> = ({
                         }`}
                     />
                     <Text size="sm">
-                        {isConnected ? "WebSocket đã kết nối" : "WebSocket chưa kết nối"}
+                        {isConnected ? t("websocket_da_ket_noi") : t("websocket_chua_ket_noi")}
                     </Text>
                 </div>
                 {error && (
                     <Text size="sm" c="red" mt="xs">
-                        Lỗi: {error}
+                        {t("loi")}: {error}
                     </Text>
                 )}
             </Alert>
@@ -61,13 +65,13 @@ export const VideoProgressComponent: React.FC<VideoProgressComponentProps> = ({
     const getStatusText = (status: string) => {
         switch (status) {
             case "pending":
-                return "Đang chờ xử lý";
+                return t("dang_cho_xu_ly");
             case "processing":
-                return "Đang xử lý";
+                return t("dang_xu_ly");
             case "completed":
-                return "Hoàn thành";
+                return t("hoan_thanh");
             case "failed":
-                return "Thất bại";
+                return t("that_bai");
             default:
                 return status;
         }
@@ -79,7 +83,7 @@ export const VideoProgressComponent: React.FC<VideoProgressComponentProps> = ({
             <div>
                 <Group gap="xs" mb="xs">
                     <Text size="sm" fw={500}>
-                        Trạng thái:
+                        {t("trang_thai")}:
                     </Text>
                     <Alert
                         color={getStatusColor(progress.status)}
@@ -96,7 +100,7 @@ export const VideoProgressComponent: React.FC<VideoProgressComponentProps> = ({
             {/* Progress Bar */}
             <div>
                 <div className="flex justify-between items-center mb-2">
-                    <Text size="sm">Tiến trình</Text>
+                    <Text size="sm">{t("tien_trinh")}</Text>
                     <Text size="sm" fw={500}>
                         {Number(progress?.progress).toFixed(0)}%
                     </Text>
@@ -112,7 +116,7 @@ export const VideoProgressComponent: React.FC<VideoProgressComponentProps> = ({
             {progress.status === "failed" && progress.error && (
                 <Alert
                     icon={<IconAlertCircle size={16} />}
-                    title="Lỗi xử lý"
+                    title={t("loi_xu_ly")}
                     color="red"
                     variant="light"
                 >
@@ -124,7 +128,7 @@ export const VideoProgressComponent: React.FC<VideoProgressComponentProps> = ({
             {error && (
                 <Alert
                     icon={<IconAlertCircle size={16} />}
-                    title="Lỗi kết nối"
+                    title={t("loi_ket_noi")}
                     color="red"
                     variant="light"
                 >

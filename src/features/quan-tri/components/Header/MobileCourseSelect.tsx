@@ -7,6 +7,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 
 import { useCourseList } from "@/api";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { CourseType } from "@/types/api";
 import { navigationPaths } from "@/utils/navigationPaths";
 
@@ -23,6 +24,8 @@ const MobileCourseSelect = ({
     currentAdminPathname,
     isAdminUser,
 }: MobileCourseSelectProps) => {
+    const { t } = useI18nTranslate();
+
     const router = useRouter();
 
     const isMobile = useMediaQuery("(max-width: 640px)");
@@ -78,7 +81,7 @@ const MobileCourseSelect = ({
             <div className="flex items-center w-full gap-x-2">
                 <div className="flex-1">
                     <Select
-                        placeholder="Chọn khóa học"
+                        placeholder={t("chon_khoa_hoc")}
                         data={courseList.map((item) => ({
                             value: item.id,
                             label: item.title,
@@ -86,7 +89,7 @@ const MobileCourseSelect = ({
                         }))}
                         defaultValue={defaultCourseId}
                         searchable
-                        nothingFoundMessage="Chưa có khóa học nào!"
+                        nothingFoundMessage={t("chua_co_khoa_hoc_nao_1")}
                         value={value}
                         onChange={(value, option: any) =>
                             handleSelectCourse(value as string, option)
@@ -101,7 +104,7 @@ const MobileCourseSelect = ({
 
             <ModalCreateNewCourse
                 type={currentAdminPathname}
-                title="Thêm khóa học"
+                title={t("them_khoa_hoc")}
                 opened={openedModalCreateNewCourse}
                 onClose={() => setOpenedModalCreateNewCourse(false)}
             />

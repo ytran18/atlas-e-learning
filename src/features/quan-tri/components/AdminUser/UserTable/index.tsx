@@ -11,6 +11,7 @@ import { useInstantSearch } from "react-instantsearch-hooks-web";
 import { useCourseDetail, useGetUserDetail } from "@/api";
 import Loader from "@/components/Loader";
 import { tableHeader } from "@/features/quan-tri/constants/userTable";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { CourseType } from "@/types/api";
 
 const ModalUserDetail = dynamic(() => import("./ModalUserDetail"), {
@@ -26,6 +27,8 @@ type UserTableProps = {
 };
 
 const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref) => {
+    const { t } = useI18nTranslate();
+
     const searchParams = useSearchParams();
 
     const type = searchParams.get("type");
@@ -63,7 +66,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
 
     const isTableDataEmpty = results?.hits?.length === 0;
 
-    if (isTableDataEmpty) return <Empty description="Không có dữ liệu" />;
+    if (isTableDataEmpty) return <Empty description={t("khong_co_du_lieu")} />;
 
     const rows = results?.hits?.map((element: any) => {
         const isCompleted = Boolean(element.isCompleted);
@@ -88,7 +91,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
         };
 
         return (
-            <Tooltip key={element?.objectID} label="Nhấn vào để xem chi tiết" withArrow>
+            <Tooltip key={element?.objectID} label={t("nhan_vao_de_xem_chi_tiet")} withArrow>
                 <Table.Tr onClick={handleRowClick}>
                     <Table.Td>{element?.userFullname ?? ""}</Table.Td>
 
@@ -131,7 +134,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
                     <Table.Thead>
                         <Table.Tr>
                             {tableHeader.map((header) => (
-                                <Table.Th key={header.key}>{header.label}</Table.Th>
+                                <Table.Th key={header.key}>{t(header.label)}</Table.Th>
                             ))}
                         </Table.Tr>
                     </Table.Thead>
@@ -157,7 +160,7 @@ const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref
                         setOpenedModalUserDetail(false);
                         setSelectedUserId(null);
                     }}
-                    title="Đang tải..."
+                    title={t("dang_tai")}
                     closeOnEscape={false}
                     centered
                     size="lg"
