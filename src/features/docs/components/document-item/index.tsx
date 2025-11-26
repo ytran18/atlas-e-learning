@@ -3,6 +3,7 @@ import { notifications } from "@mantine/notifications";
 import { IconBrandYoutube, IconDownload, IconFileTypePdf, IconVideo } from "@tabler/icons-react";
 import dayjs from "dayjs";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { DocumentResponse } from "@/types/documents";
 
 type DocumentItemProps = {
@@ -10,12 +11,14 @@ type DocumentItemProps = {
 };
 
 const DocumentItem = ({ doc }: DocumentItemProps) => {
+    const { t } = useI18nTranslate();
+
     const handleAction = (e: React.MouseEvent) => {
         e.stopPropagation();
         if (!doc.url) {
             notifications.show({
-                title: "Lỗi",
-                message: "Tài liệu này không có link đính kèm, vui lòng liên hệ hỗ trợ",
+                title: t("loi"),
+                message: t("tai_lieu_khong_co_link"),
                 color: "yellow",
                 position: "top-right",
             });
@@ -58,7 +61,7 @@ const DocumentItem = ({ doc }: DocumentItemProps) => {
             </Text>
 
             <Text size="sm" c="dimmed" lineClamp={2} className="mb-6 grow">
-                {doc.description || "Không có mô tả"}
+                {doc.description || t("khong_co_mo_ta")}
             </Text>
 
             <Button
@@ -69,7 +72,7 @@ const DocumentItem = ({ doc }: DocumentItemProps) => {
                 onClick={handleAction}
                 leftSection={isPdf ? <IconDownload size={18} /> : <IconBrandYoutube size={18} />}
             >
-                {isPdf ? "Tải về tài liệu" : "Xem video bài giảng"}
+                {isPdf ? t("tai_ve_tai_lieu") : t("xem_video_bai_giang")}
             </Button>
         </Card>
     );

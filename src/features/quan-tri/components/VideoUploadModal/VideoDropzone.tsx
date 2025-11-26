@@ -4,6 +4,7 @@ import { Button } from "@mantine/core";
 import { DropzoneProps, FileWithPath } from "@mantine/dropzone";
 
 import { useVideoUpload } from "@/api/video/useVideoUpload";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 import { useVideoProgress } from "../../hooks/useVideoProgress";
 import { FinalResult, UploadResult } from "../../types/video";
@@ -30,6 +31,8 @@ export interface VideoDropzoneRef {
 
 const VideoDropzone = forwardRef<VideoDropzoneRef, VideoDropzoneProps>(
     ({ onFileSelect, onUploadComplete, maxSize = 90, ...props }, ref) => {
+        const { t } = useI18nTranslate();
+
         const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
         const [uploadProgress, setUploadProgress] = useState(0);
@@ -147,7 +150,7 @@ const VideoDropzone = forwardRef<VideoDropzoneRef, VideoDropzoneProps>(
                 {/* Reset Button */}
                 {(selectedFile || uploadError) && !isUploading && !progress && (
                     <div className="flex justify-end">
-                        <Button onClick={handleResetUpload}>Chọn file khác</Button>
+                        <Button onClick={handleResetUpload}>{t("chon_file_khac")}</Button>
                     </div>
                 )}
             </div>

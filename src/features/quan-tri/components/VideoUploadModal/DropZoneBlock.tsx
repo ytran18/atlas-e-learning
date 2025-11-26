@@ -4,6 +4,8 @@ import { Group } from "@mantine/core";
 import { Dropzone, DropzoneProps } from "@mantine/dropzone";
 import { IconUpload, IconVideoPlus, IconX } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 type DropZoneBlockProps = Partial<DropzoneProps> & {
     onDrop: (files: File[]) => void;
     isUploading: boolean;
@@ -14,6 +16,8 @@ const DropZoneBlock: FunctionComponent<DropZoneBlockProps> = ({
     isUploading,
     ...props
 }) => {
+    const { t } = useI18nTranslate();
+
     return (
         <Dropzone
             onDrop={onDrop}
@@ -37,11 +41,10 @@ const DropZoneBlock: FunctionComponent<DropZoneBlockProps> = ({
                 </Dropzone.Idle>
 
                 <div className="text-center flex flex-col">
-                    <p>Kéo thả video vào đây hoặc nhấn để chọn file</p>
+                    <p>{t("keo_tha_video_vao_day_hoac_nhan_de_chon_file")}</p>
 
                     <p className="text-gray-500 text-sm">
-                        Kéo thả video vào đây hoặc nhấn để chọn file, mỗi file không được vượt quá
-                        90MB
+                        {t("keo_tha_video_vao_day_hoac_nhan_de_chon_file_moi_f")}
                     </p>
                 </div>
             </Group>

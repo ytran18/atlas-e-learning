@@ -5,11 +5,14 @@ import { SearchBox, useInstantSearch } from "react-instantsearch-hooks-web";
 
 import Loader from "@/components/Loader";
 import CustomPagination from "@/features/quan-tri/components/AdminUser/UserTable/CustomPagination";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { DocumentResponse } from "@/types/documents";
 
 import DocumentItem from "../document-item";
 
 const DocumentsVideo = () => {
+    const { t } = useI18nTranslate();
+
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const { results } = useInstantSearch();
@@ -52,11 +55,11 @@ const DocumentsVideo = () => {
         <div className="flex flex-col gap-y-4">
             <SearchBox
                 className="user-filter-search-box"
-                placeholder="Tìm kiếm..."
+                placeholder={t("tim_kiem")}
                 queryHook={queryHook}
             />
 
-            {isTableDataEmpty && <Empty description="Không có dữ liệu" />}
+            {isTableDataEmpty && <Empty description={t("khong_co_du_lieu")} />}
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {data.map((file) => {

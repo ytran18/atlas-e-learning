@@ -6,6 +6,8 @@ import Link from "next/link";
 
 import { Button, Card } from "@mantine/core";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 interface SignUpFormLayoutProps {
     title: string;
     subtitle: string;
@@ -31,6 +33,8 @@ const SignUpFormLayout = ({
     isLoading = false,
     error,
 }: SignUpFormLayoutProps) => {
+    const { t } = useI18nTranslate();
+
     return (
         <div className="h-[calc(100vh-70px)] w-full flex items-center justify-center bg-linear-to-br from-blue-50 to-gray-50 px-4 py-8">
             <div className="w-full max-w-md">
@@ -53,7 +57,7 @@ const SignUpFormLayout = ({
                         )}
 
                         <Button type="submit" disabled={isLoading} className="w-full!">
-                            {isLoading ? "Đang xử lý..." : submitButtonText}
+                            {isLoading ? t("dang_xu_ly_1") : submitButtonText}
                         </Button>
                     </form>
 

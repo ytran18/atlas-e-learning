@@ -1,6 +1,8 @@
 import { Button, List, Text, ThemeIcon } from "@mantine/core";
 import { IconCheck, IconCircleDashed, IconLock } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 interface VideoItemProps {
     id: string;
     label: string;
@@ -26,6 +28,8 @@ const VideoItem = ({
     onViewAgain,
     onViewExam,
 }: VideoItemProps) => {
+    const { t } = useI18nTranslate();
+
     const getIcon = () => {
         if (isActive) return <IconCircleDashed size={16} />;
 
@@ -93,7 +97,7 @@ const VideoItem = ({
                     <div className="flex gap-x-2">
                         {section === "exam" ? (
                             <Button size="xs" variant="light" color="green" onClick={onViewExam}>
-                                Xem lại bài thi
+                                {t("xem_lai_bai_thi")}
                             </Button>
                         ) : (
                             <Button
@@ -102,7 +106,7 @@ const VideoItem = ({
                                 color="green"
                                 onClick={() => onViewAgain(section, index)}
                             >
-                                Xem lại video
+                                {t("xem_lai_video")}
                             </Button>
                         )}
                     </div>

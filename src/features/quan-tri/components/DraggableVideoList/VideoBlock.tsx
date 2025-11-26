@@ -5,6 +5,7 @@ import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useFormContext, useWatch } from "react-hook-form";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { Video } from "@/types/api";
 
 import { UploadResult } from "../../types/video";
@@ -24,6 +25,7 @@ const VideoBlock = ({
     newThumbnailUrl,
     onUploadStateChange,
 }: VideoBlockProps) => {
+    const { t } = useI18nTranslate();
     const [isUploading, setIsUploading] = useState(false);
 
     const [showUploadArea, setShowUploadArea] = useState(false);
@@ -50,8 +52,8 @@ const VideoBlock = ({
             onVideoReplace?.(result.data.publicUrl, result.data.thumbnailUrl);
 
             notifications.show({
-                title: "Thành công",
-                message: "Video mới đã được tải lên và chuyển đổi thành công",
+                title: t("thanh_cong"),
+                message: t("video_moi_da_duoc_tai_len_va_chuyen_doi_thanh_cong"),
                 color: "green",
                 position: "top-right",
             });
@@ -64,8 +66,8 @@ const VideoBlock = ({
             }, 0);
         } else {
             notifications.show({
-                title: "Lỗi",
-                message: "Có lỗi xảy ra khi tải lên video. Vui lòng thử lại.",
+                title: t("loi"),
+                message: t("co_loi_xay_ra_khi_tai_len_video_vui_long_thu_lai"),
                 color: "red",
             });
 
@@ -83,8 +85,8 @@ const VideoBlock = ({
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 notifications.show({
-                    title: "Lỗi",
-                    message: "Có lỗi xảy ra khi tải lên video. Vui lòng thử lại.",
+                    title: t("loi"),
+                    message: t("co_loi_xay_ra_khi_tai_len_video_vui_long_thu_lai"),
                     color: "red",
                 });
 
@@ -131,7 +133,7 @@ const VideoBlock = ({
                             disabled={isUploading}
                             color="blue"
                         >
-                            Thay đổi video
+                            {t("thay_doi_video")}
                         </Button>
                     )}
 
@@ -140,14 +142,16 @@ const VideoBlock = ({
                             <Button
                                 onClick={() => {
                                     modals.openConfirmModal({
-                                        title: "Bạn có chắc chắn muốn hủy không?",
+                                        title: t("ban_co_chac_chan_muon_huy_khong"),
                                         centered: true,
                                         children: (
                                             <p>
-                                                Hủy sẽ mất toàn bộ dữ liệu đã nhập và file đã chọn
+                                                {t(
+                                                    "huy_se_mat_toan_bo_du_lieu_da_nhap_va_file_da_chon"
+                                                )}
                                             </p>
                                         ),
-                                        labels: { confirm: "Hủy", cancel: "Không" },
+                                        labels: { confirm: t("huy"), cancel: t("khong") },
                                         confirmProps: { color: "red" },
                                         onCancel: () => {},
                                         onConfirm: handleResetUpload,
@@ -157,7 +161,7 @@ const VideoBlock = ({
                                 color="red"
                                 variant="outline"
                             >
-                                Hủy thay đổi
+                                {t("huy_thay_doi")}
                             </Button>
                             <Button
                                 onClick={() => setShowUploadArea(false)}
@@ -165,7 +169,7 @@ const VideoBlock = ({
                                 color="gray"
                                 variant="default"
                             >
-                                Đóng
+                                {t("dong")}
                             </Button>
                         </div>
                     )}
@@ -177,7 +181,7 @@ const VideoBlock = ({
                             color="gray"
                             variant="default"
                         >
-                            Đóng
+                            {t("dong")}
                         </Button>
                     )}
                 </div>
@@ -186,7 +190,7 @@ const VideoBlock = ({
             {showUploadArea && (
                 <>
                     <Checkbox
-                        label="Sử dụng link video"
+                        label={t("su_dung_link_video")}
                         checked={isUsingLink}
                         {...register("isUsingLink")}
                         error={errors.isUsingLink?.message as string}
@@ -194,7 +198,7 @@ const VideoBlock = ({
 
                     {isUsingLink ? (
                         <Input
-                            placeholder="Nhập link video"
+                            placeholder={t("nhap_link_video")}
                             {...register("url")}
                             error={errors.url?.message as string}
                         />
@@ -216,7 +220,7 @@ const VideoBlock = ({
                                         disabled={isUploading}
                                         onClick={handleUploadVideo}
                                     >
-                                        {isUploading ? "Đang tải lên..." : "Tải lên video"}
+                                        {isUploading ? t("dang_tai_len") : t("tai_len_video")}
                                     </Button>
                                 </div>
                             )}

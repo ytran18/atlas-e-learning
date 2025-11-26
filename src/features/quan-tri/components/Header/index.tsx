@@ -7,6 +7,7 @@ import { Card, Drawer, Group, Stack, Text } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconMenu2 } from "@tabler/icons-react";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { CourseType } from "@/types/api";
 import { navigationPaths } from "@/utils/navigationPaths";
 
@@ -14,6 +15,8 @@ import { getCurrentAdminPathname } from "../../utils/get-current-admin-pathname"
 import MobileCourseSelect from "./MobileCourseSelect";
 
 const Header = () => {
+    const { t } = useI18nTranslate();
+
     const [opened, { toggle, close }] = useDisclosure(false);
 
     const pathname = usePathname();
@@ -27,9 +30,9 @@ const Header = () => {
     const isMobile = useMediaQuery("(max-width: 640px)");
 
     const navigationItems = [
-        { href: navigationPaths.QUAN_TRI_ATLD, label: "An toàn lao động" },
-        { href: navigationPaths.QUAN_TRI_HOC_NGHE, label: "Học nghề" },
-        { href: navigationPaths.QUAN_TRI_USER, label: "Người dùng" },
+        { href: navigationPaths.QUAN_TRI_ATLD, label: t("an_toan_lao_dong") },
+        { href: navigationPaths.QUAN_TRI_HOC_NGHE, label: t("hoc_nghe") },
+        { href: navigationPaths.QUAN_TRI_USER, label: t("nguoi_dung") },
     ];
 
     return (
@@ -53,13 +56,13 @@ const Header = () => {
                                     isAdminUser={isAdminUser}
                                 />
                             ) : (
-                                "Quản trị hệ thống"
+                                t("quan_tri_he_thong")
                             )}
                         </div>
 
                         <div>
                             <Text visibleFrom="sm" className="text-xs! opacity-70!">
-                                Quản lý khóa học, video và người dùng
+                                {t("quan_ly_khoa_hoc_video_va_nguoi_dung")}
                             </Text>
 
                             <IconMenu2
@@ -79,7 +82,7 @@ const Header = () => {
                 size="sm"
                 title={
                     <Text fw={600} size="lg">
-                        Quản trị hệ thống
+                        {t("quan_tri_he_thong")}
                     </Text>
                 }
                 hiddenFrom="sm"

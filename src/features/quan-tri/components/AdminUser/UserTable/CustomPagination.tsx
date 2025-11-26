@@ -6,6 +6,8 @@ import { Select } from "@mantine/core";
 import { useInstantSearch } from "react-instantsearch-hooks-web";
 import { Pagination } from "react-instantsearch-hooks-web";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 type CustomPaginationProps = {
     onHitsPerPageChange?: (hitsPerPage: number) => void;
     allowChooseHitsPerPage?: boolean;
@@ -15,14 +17,21 @@ const CustomPagination = ({
     onHitsPerPageChange,
     allowChooseHitsPerPage = true,
 }: CustomPaginationProps) => {
+    const { t } = useI18nTranslate();
+
     const router = useRouter();
+
     const searchParams = useSearchParams();
+
     const { results } = useInstantSearch();
 
     // Get current hitsPerPage from URL or use default from results
     const currentHitsPerPage = results?.hitsPerPage || 20;
+
     const currentPage = results?.page || 0; // Algolia uses 0-indexed pages
+
     const totalPages = results?.nbPages || 0;
+
     const totalHits = results?.nbHits || 0;
 
     // Options for hitsPerPage selector (max 50)
@@ -44,8 +53,11 @@ const CustomPagination = ({
 
         // Update URL params
         const params = new URLSearchParams(searchParams.toString());
+
         params.set("hitsPerPage", value);
+
         params.set("page", "1"); // Reset to first page when changing hitsPerPage
+
         router.push(`?${params.toString()}`);
     };
 
@@ -54,7 +66,7 @@ const CustomPagination = ({
             <div className="flex items-center gap-2">
                 {allowChooseHitsPerPage && (
                     <>
-                        <span className="text-sm text-gray-600">Hiển thị:</span>
+                        <span className="text-sm text-gray-600">{t("hien_thi")}</span>
                         <Select
                             value={currentHitsPerPage.toString()}
                             onChange={handleHitsPerPageChange}
@@ -62,14 +74,18 @@ const CustomPagination = ({
                             w={80}
                             size="sm"
                         />
-                        <span className="text-sm text-gray-600">bản ghi/trang</span>
+                        <span className="text-sm text-gray-600">{t("ban_ghitrang")}</span>
                     </>
                 )}
             </div>
 
             <div className="flex items-center gap-4">
                 <span className="text-sm text-gray-600">
-                    Trang {currentPage + 1} / {totalPages} ({totalHits} bản ghi)
+                    {t("thong_tin_phan_trang", {
+                        currentPage: currentPage + 1,
+                        totalPages,
+                        totalHits,
+                    })}
                 </span>
                 <Pagination />
             </div>

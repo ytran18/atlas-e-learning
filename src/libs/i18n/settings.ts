@@ -1,5 +1,5 @@
 export const fallbackLng = "vi";
-export const languages = [fallbackLng, "en", "kr"];
+export const languages = [fallbackLng, "en", "kr", "cn"];
 export const defaultNS = "translation";
 export const i18nCookieName = "Atld.Locale";
 
@@ -19,6 +19,7 @@ export enum Language {
     VIETNAM = "vi",
     ENGLISH = "en",
     KOREAN = "kr",
+    CHINESE = "cn",
 }
 
 export type ListLanguaeType = {
@@ -30,4 +31,5 @@ export const listLanguages: ListLanguaeType[] = [
     { value: Language.VIETNAM, label: "Tiếng Việt" },
     { value: Language.ENGLISH, label: "English" },
     { value: Language.KOREAN, label: "한국어" },
+    { value: Language.CHINESE, label: "简体中文" },
 ];

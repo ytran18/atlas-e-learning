@@ -5,6 +5,7 @@ import { Button, Checkbox, Group, Input, Modal, Text, Textarea } from "@mantine/
 import { modals } from "@mantine/modals";
 import { useForm } from "react-hook-form";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { Video } from "@/types/api";
 
 import { UploadResult } from "../../types/video";
@@ -18,12 +19,8 @@ interface VideoUploadModalProps {
     title?: string;
 }
 
-const VideoUploadModal = ({
-    opened,
-    onClose,
-    onSubmit,
-    title = "Thêm video mới",
-}: VideoUploadModalProps) => {
+const VideoUploadModal = ({ opened, onClose, onSubmit, title }: VideoUploadModalProps) => {
+    const { t } = useI18nTranslate();
     const videoDropzoneRef = useRef<VideoDropzoneRef>(null);
 
     const [isUsingLink, setIsUsingLink] = useState<boolean>(false);
@@ -68,7 +65,7 @@ const VideoUploadModal = ({
 
             event.preventDefault();
 
-            event.returnValue = "Dữ liệu đã nhập sẽ bị mất";
+            event.returnValue = t("du_lieu_da_nhap_se_bi_mat");
         }
 
         window.addEventListener("beforeunload", handleBeforeUnload);
@@ -76,7 +73,7 @@ const VideoUploadModal = ({
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
-    }, [opened]);
+    }, [opened, t]);
 
     const handleFormSubmit = async (data: VideoUploadFormData) => {
         try {
@@ -113,10 +110,10 @@ const VideoUploadModal = ({
 
     const handleClose = () => {
         modals.openConfirmModal({
-            title: "Bạn có chắc chắn muốn thoát không?",
+            title: t("ban_co_chac_chan_muon_thoat_khong"),
             centered: true,
-            children: <Text size="sm">Thoát sẽ mất toàn bộ dữ liệu đã nhập</Text>,
-            labels: { confirm: "Thoát", cancel: "Huỷ" },
+            children: <Text size="sm">{t("thoat_se_mat_toan_bo_du_lieu_da_nhap")}</Text>,
+            labels: { confirm: t("thoat"), cancel: t("huy") },
             confirmProps: { color: "red" },
             onCancel: () => {},
             onConfirm: () => handleResetForm(),
@@ -161,7 +158,7 @@ const VideoUploadModal = ({
         <Modal
             opened={opened}
             onClose={handleClose}
-            title={title}
+            title={title || t("them_video_moi")}
             size="lg"
             centered
             closeOnClickOutside={false}
@@ -169,10 +166,10 @@ const VideoUploadModal = ({
             <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-y-4">
                 <div>
                     <Text size="sm" fw={500} mb="xs">
-                        Tiêu đề video
+                        {t("tieu_de_video")}
                     </Text>
                     <Input
-                        placeholder="Nhập tiêu đề video"
+                        placeholder={t("nhap_tieu_de_video")}
                         {...register("title")}
                         error={errors.title?.message}
                     />
@@ -180,10 +177,10 @@ const VideoUploadModal = ({
 
                 <div>
                     <Text size="sm" fw={500} mb="xs">
-                        Mô tả video
+                        {t("mo_ta_video")}
                     </Text>
                     <Textarea
-                        placeholder="Nhập mô tả video"
+                        placeholder={t("nhap_mo_ta_video")}
                         {...register("description")}
                         error={errors.description?.message}
                         minRows={3}
@@ -191,14 +188,14 @@ const VideoUploadModal = ({
                 </div>
 
                 <Checkbox
-                    label="Sử dụng link video"
+                    label={t("su_dung_link_video")}
                     checked={isUsingLink}
                     onChange={(event) => setIsUsingLink(event.currentTarget.checked)}
                 />
 
                 {isUsingLink ? (
                     <Input
-                        placeholder="Nhập link video"
+                        placeholder={t("nhap_link_video")}
                         {...register("url")}
                         error={errors.url?.message}
                     />
@@ -218,9 +215,9 @@ const VideoUploadModal = ({
 
                 {((watchedFile && !isSubmitting) || isUsingLink) && (
                     <>
-                        <Checkbox label="Cho phép tua" {...register("canSeek")} />
+                        <Checkbox label={t("cho_phep_tua")} {...register("canSeek")} />
                         <Checkbox
-                            label="Xem hết để hoàn thành"
+                            label={t("xem_het_de_hoan_thanh")}
                             {...register("shouldCompleteToPassed")}
                         />
                     </>
@@ -228,7 +225,7 @@ const VideoUploadModal = ({
 
                 <Group justify="flex-end" gap="sm">
                     <Button variant="outline" onClick={handleClose} type="button">
-                        Hủy
+                        {t("huy")}
                     </Button>
 
                     <Button
@@ -240,7 +237,9 @@ const VideoUploadModal = ({
                                 : !watchedFile || videoDropzoneRef.current?.isUploading
                         }
                     >
-                        {videoDropzoneRef.current?.isUploading ? "Đang tải lên..." : "Upload Video"}
+                        {videoDropzoneRef.current?.isUploading
+                            ? t("dang_tai_len")
+                            : t("upload_video")}
                     </Button>
                 </Group>
             </form>

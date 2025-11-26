@@ -5,6 +5,8 @@ import { IconCalendar } from "@tabler/icons-react";
 import "dayjs/locale/vi";
 import { Control, Controller, FieldValues } from "react-hook-form";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+
 interface SignInFormDatePickerProps<T extends FieldValues = FieldValues> {
     label: string;
     name: string;
@@ -22,6 +24,8 @@ function SignInFormDatePicker<T extends FieldValues = FieldValues>({
     control,
     error,
 }: SignInFormDatePickerProps<T>) {
+    const { t } = useI18nTranslate();
+
     // Auto-format numeric input to DD/MM/YYYY as user types
     const formatToDDMMYYYY = (value: string) => {
         const digits = value.replace(/\D/g, "").slice(0, 8); // max 8 digits
@@ -55,7 +59,7 @@ function SignInFormDatePicker<T extends FieldValues = FieldValues>({
                     return (
                         <Input
                             id={name}
-                            placeholder={placeholder || "Nhập ngày sinh (dd/mm/yyyy)"}
+                            placeholder={placeholder || t("nhap_ngay_sinh_ddmmyyyy")}
                             value={stringValue}
                             onChange={(e) => {
                                 const formatted = formatToDDMMYYYY(e.currentTarget.value);

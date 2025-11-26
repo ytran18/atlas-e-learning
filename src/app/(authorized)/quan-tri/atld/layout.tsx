@@ -13,6 +13,7 @@ import { IconPlus } from "@tabler/icons-react";
 import { useCourseList } from "@/api";
 import Loader from "@/components/Loader";
 import AdminSidebar from "@/features/quan-tri/components/AdminSidebar";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { CourseListItem } from "@/types/api";
 import { navigationPaths } from "@/utils/navigationPaths";
 
@@ -25,6 +26,8 @@ const ModalCreateNewCourse = dynamic(
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
+
+    const { t } = useI18nTranslate();
 
     const { atldId } = useParams();
 
@@ -68,7 +71,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex gap-x-4">
             <AdminSidebar
-                title="An toàn lao động"
+                title={t("an_toan_lao_dong")}
                 courseList={courseList}
                 onSelectCourse={handleSelectCourse}
             >
@@ -77,7 +80,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     size="xs"
                     onClick={() => setOpenedModalCreateNewCourse(true)}
                 >
-                    Thêm
+                    {t("them")}
                 </Button>
             </AdminSidebar>
 
@@ -85,7 +88,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             <ModalCreateNewCourse
                 type="atld"
-                title="Thêm khóa học"
+                title={t("them_khoa_hoc")}
                 opened={openedModalCreateNewCourse}
                 onClose={() => setOpenedModalCreateNewCourse(false)}
             />

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Card, Group, Loader, Stack, Text, Title } from "@mantine/core";
 import { Empty } from "antd";
 
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { CourseListItem, GetCourseListResponse } from "@/types/api";
 
 type AdminSidebarProps = PropsWithChildren<{
@@ -19,7 +20,10 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
     onSelectCourse,
     children,
 }) => {
+    const { t } = useI18nTranslate();
+
     const { atldId, hocNgheId } = useParams();
+
     const router = useRouter();
 
     const [navigatingId, setNavigatingId] = useState<string | null>(null);
@@ -46,7 +50,7 @@ const AdminSidebar: FunctionComponent<AdminSidebarProps> = ({
 
                 {courseList.length === 0 ? (
                     <div className="flex flex-col gap-y-2 items-center">
-                        <Empty description="Chưa có khóa học nào" />
+                        <Empty description={t("chua_co_khoa_hoc_nao")} />
                     </div>
                 ) : (
                     <Stack gap="sm">

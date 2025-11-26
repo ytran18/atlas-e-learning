@@ -18,37 +18,38 @@ const parseDDMMYYYYToDate = (value: string): Date | null => {
     return date;
 };
 
-export const signInSchema = z
-    .object({
-        cccd: z.string().min(1, "Vui lòng nhập CCCD hoặc Hộ chiếu"),
-        birthDate: z
-            .preprocess(
-                (val) => {
-                    if (val instanceof Date) return val;
-                    if (typeof val === "string") {
-                        const parsed = parseDDMMYYYYToDate(val);
-                        return parsed ?? null;
-                    }
-                    return null;
-                },
-                z.union([z.date(), z.null()])
-            )
-            .refine((date) => date !== null, {
-                message: "Vui lòng nhập ngày sinh (định dạng dd/mm/yyyy)",
-            }),
-    })
-    .superRefine((data, ctx) => {
-        const cccdUpper = data.cccd.toUpperCase().trim();
-        const isCCCD = /^\d{12}$/u.test(data.cccd);
-        const isPassport = /^[A-Z0-9]{6,9}$/u.test(cccdUpper);
+export const getSignInSchema = (t: (key: string) => string) =>
+    z
+        .object({
+            cccd: z.string().min(1, t("vui_long_nhap_cccd_hoac_ho_chieu")),
+            birthDate: z
+                .preprocess(
+                    (val) => {
+                        if (val instanceof Date) return val;
+                        if (typeof val === "string") {
+                            const parsed = parseDDMMYYYYToDate(val);
+                            return parsed ?? null;
+                        }
+                        return null;
+                    },
+                    z.union([z.date(), z.null()])
+                )
+                .refine((date) => date !== null, {
+                    message: t("vui_long_nhap_ngay_sinh_dinh_dang_ddmmyyyy"),
+                }),
+        })
+        .superRefine((data, ctx) => {
+            const cccdUpper = data.cccd.toUpperCase().trim();
+            const isCCCD = /^\d{12}$/u.test(data.cccd);
+            const isPassport = /^[A-Z0-9]{6,9}$/u.test(cccdUpper);
 
-        if (!isCCCD && !isPassport) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: "CCCD phải là 12 số hoặc Hộ chiếu phải từ 6-9 ký tự chữ và số",
-                path: ["cccd"],
-            });
-        }
-    });
+            if (!isCCCD && !isPassport) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: t("cccd_phai_la_12_so_hoac_ho_chieu_phai_tu_69_ky_tu_"),
+                    path: ["cccd"],
+                });
+            }
+        });
 
-export type SignInFormData = z.infer<typeof signInSchema>;
+export type SignInFormData = z.infer<ReturnType<typeof getSignInSchema>>;

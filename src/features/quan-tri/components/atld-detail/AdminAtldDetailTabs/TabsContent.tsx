@@ -3,24 +3,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconBook, IconCertificate, IconFileText, ReactNode } from "@tabler/icons-react";
 
 import { AdminAtldDetailTabs } from "@/features/quan-tri/constants/tabs";
-
-const adminAtldDetailTabs = [
-    {
-        value: AdminAtldDetailTabs.THEORY,
-        label: "Lý thuyết",
-        icon: <IconBook size={20} className="text-blue-600" />,
-    },
-    {
-        value: AdminAtldDetailTabs.PRACTICE,
-        label: "Ôn tập thực hành",
-        icon: <IconCertificate size={20} className="text-green-600" />,
-    },
-    {
-        value: AdminAtldDetailTabs.EXAM,
-        label: "Kiểm tra",
-        icon: <IconFileText size={20} className="text-orange-600" />,
-    },
-];
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 type AdminAtldDetailTabsSlots = {
     Theory: () => ReactNode;
@@ -33,7 +16,27 @@ type TabsContentProps = {
 };
 
 const TabsContent = ({ slots }: TabsContentProps) => {
+    const { t } = useI18nTranslate();
+
     const isMobile = useMediaQuery("(max-width: 640px)");
+
+    const adminAtldDetailTabs = [
+        {
+            value: AdminAtldDetailTabs.THEORY,
+            label: t("ly_thuyet"),
+            icon: <IconBook size={20} className="text-blue-600" />,
+        },
+        {
+            value: AdminAtldDetailTabs.PRACTICE,
+            label: t("on_tap_thuc_hanh"),
+            icon: <IconCertificate size={20} className="text-green-600" />,
+        },
+        {
+            value: AdminAtldDetailTabs.EXAM,
+            label: t("kiem_tra"),
+            icon: <IconFileText size={20} className="text-orange-600" />,
+        },
+    ];
 
     return (
         <Tabs

@@ -18,53 +18,54 @@ const parseDDMMYYYYToDate = (value: string): Date | null => {
     return date;
 };
 
-export const signUpSchema = z
-    .object({
-        fullName: z
-            .string()
-            .min(1, "Vui lòng nhập họ và tên")
-            .min(3, "Họ và tên phải có ít nhất 3 ký tự")
-            .regex(/^[\p{L}\s]+$/u, "Họ và tên chỉ được chứa chữ cái"),
-        birthDate: z
-            .preprocess(
-                (val) => {
-                    if (val instanceof Date) return val;
-                    if (typeof val === "string") {
-                        const parsed = parseDDMMYYYYToDate(val);
-                        return parsed ?? null;
-                    }
-                    return null;
-                },
-                z.union([z.date(), z.null()])
-            )
-            .refine((date) => date !== null, {
-                message: "Vui lòng nhập ngày sinh (định dạng dd/mm/yyyy)",
-            }),
-        isVietnamese: z.boolean(),
-        cccd: z.string().min(1, "Vui lòng nhập CCCD hoặc Hộ chiếu"),
-        companyName: z.string().optional(),
-        jobTitle: z.string(),
-    })
-    .superRefine((data, ctx) => {
-        if (data.isVietnamese) {
-            // CCCD validation: 12 digits
-            if (!/^\d{12}$/u.test(data.cccd)) {
-                ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: "CCCD phải là 12 số",
-                    path: ["cccd"],
-                });
+export const getSignUpSchema = (t: (key: string) => string) =>
+    z
+        .object({
+            fullName: z
+                .string()
+                .min(1, t("vui_long_nhap_ho_va_ten"))
+                .min(3, t("ho_va_ten_phai_co_it_nhat_3_ky_tu"))
+                .regex(/^[\p{L}\s]+$/u, t("ho_va_ten_chi_duoc_chua_chu_cai")),
+            birthDate: z
+                .preprocess(
+                    (val) => {
+                        if (val instanceof Date) return val;
+                        if (typeof val === "string") {
+                            const parsed = parseDDMMYYYYToDate(val);
+                            return parsed ?? null;
+                        }
+                        return null;
+                    },
+                    z.union([z.date(), z.null()])
+                )
+                .refine((date) => date !== null, {
+                    message: t("vui_long_nhap_ngay_sinh_dinh_dang_ddmmyyyy"),
+                }),
+            isVietnamese: z.boolean(),
+            cccd: z.string().min(1, t("vui_long_nhap_cccd_hoac_ho_chieu")),
+            companyName: z.string().optional(),
+            jobTitle: z.string(),
+        })
+        .superRefine((data, ctx) => {
+            if (data.isVietnamese) {
+                // CCCD validation: 12 digits
+                if (!/^\d{12}$/u.test(data.cccd)) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: t("cccd_phai_la_12_so"),
+                        path: ["cccd"],
+                    });
+                }
+            } else {
+                // Passport validation: alphanumeric, 6-9 characters
+                if (!/^[A-Z0-9]{6,9}$/u.test(data.cccd.toUpperCase())) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: t("so_ho_chieu_phai_tu_69_ky_tu_chu_va_so"),
+                        path: ["cccd"],
+                    });
+                }
             }
-        } else {
-            // Passport validation: alphanumeric, 6-9 characters
-            if (!/^[A-Z0-9]{6,9}$/u.test(data.cccd.toUpperCase())) {
-                ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: "Số hộ chiếu phải từ 6-9 ký tự chữ và số",
-                    path: ["cccd"],
-                });
-            }
-        }
-    });
+        });
 
-export type SignUpFormData = z.infer<typeof signUpSchema>;
+export type SignUpFormData = z.infer<ReturnType<typeof getSignUpSchema>>;

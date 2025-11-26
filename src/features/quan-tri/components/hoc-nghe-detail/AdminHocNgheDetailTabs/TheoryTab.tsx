@@ -6,12 +6,14 @@ import { Controller } from "react-hook-form";
 
 import { useHocNgheAdminDetailContext } from "@/features/quan-tri/contexts/AdminDetailContext";
 import { useCourseFormContext } from "@/features/quan-tri/contexts/CourseFormContext";
+import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 
 import DraggableVideoList from "../../DraggableVideoList";
 import EditableField from "../../EditableField";
 import VideoUploadModal from "../../VideoUploadModal";
 
 const TheoryTab = () => {
+    const { t } = useI18nTranslate();
     const { courseDetail, isEditMode } = useHocNgheAdminDetailContext();
 
     const { theory } = courseDetail;
@@ -68,7 +70,7 @@ const TheoryTab = () => {
                 </div>
 
                 <div className="flex flex-col gap-y-3">
-                    <Text fw={500}>Video Lý Thuyết</Text>
+                    <Text fw={500}>{t("video_ly_thuyet")}</Text>
 
                     <DraggableVideoList
                         videos={isEditMode ? editVideos : theory.videos}
@@ -86,7 +88,7 @@ const TheoryTab = () => {
                             className="mt-2 w-fit!"
                             disabled={isLoading}
                         >
-                            Thêm video
+                            {t("them_video")}
                         </Button>
                     )}
                 </div>
@@ -96,7 +98,7 @@ const TheoryTab = () => {
                     opened={isAddVideoModalOpen}
                     onClose={() => setIsAddVideoModalOpen(false)}
                     onSubmit={(video) => handleAddVideo({ video, section: "theory" })}
-                    title="Thêm video mới"
+                    title={t("them_video_moi")}
                 />
             </div>
         </div>
