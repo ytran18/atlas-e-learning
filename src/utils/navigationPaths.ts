@@ -19,6 +19,8 @@ export const navigationPaths = {
     QUAN_TRI_HOC_NGHE: `/quan-tri/hoc-nghe`,
     QUAN_TRI_USER: `/quan-tri/user`,
     USER_DETAIL: `/user/[${USER_SLUG}]`,
+    DOCUMENTS: "/docs",
+    QUAN_TRI_DOCS: `/quan-tri/docs`,
 };
 
 export const publicPaths = [

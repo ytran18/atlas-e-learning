@@ -8,9 +8,13 @@ import { Pagination } from "react-instantsearch-hooks-web";
 
 type CustomPaginationProps = {
     onHitsPerPageChange?: (hitsPerPage: number) => void;
+    allowChooseHitsPerPage?: boolean;
 };
 
-const CustomPagination = ({ onHitsPerPageChange }: CustomPaginationProps) => {
+const CustomPagination = ({
+    onHitsPerPageChange,
+    allowChooseHitsPerPage = true,
+}: CustomPaginationProps) => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { results } = useInstantSearch();
@@ -48,15 +52,19 @@ const CustomPagination = ({ onHitsPerPageChange }: CustomPaginationProps) => {
     return (
         <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Hiển thị:</span>
-                <Select
-                    value={currentHitsPerPage.toString()}
-                    onChange={handleHitsPerPageChange}
-                    data={hitsPerPageOptions}
-                    w={80}
-                    size="sm"
-                />
-                <span className="text-sm text-gray-600">bản ghi/trang</span>
+                {allowChooseHitsPerPage && (
+                    <>
+                        <span className="text-sm text-gray-600">Hiển thị:</span>
+                        <Select
+                            value={currentHitsPerPage.toString()}
+                            onChange={handleHitsPerPageChange}
+                            data={hitsPerPageOptions}
+                            w={80}
+                            size="sm"
+                        />
+                        <span className="text-sm text-gray-600">bản ghi/trang</span>
+                    </>
+                )}
             </div>
 
             <div className="flex items-center gap-4">

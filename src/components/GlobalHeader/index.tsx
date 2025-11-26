@@ -55,6 +55,7 @@ const GlobalHeader = () => {
         { href: navigationPaths.LANDING_PAGE, label: t("trang_chu"), isVisible: true },
         { href: navigationPaths.ATLD, label: t("dao_tao_atld"), isVisible: true },
         { href: navigationPaths.HOC_NGHE, label: t("hoc_nghe_1"), isVisible: true },
+        { href: navigationPaths.DOCUMENTS, label: t("tai_lieu"), isVisible: true },
         { href: navigationPaths.QUAN_TRI_ATLD, label: t("quan_tri"), isVisible: isAdmin },
     ];
 
