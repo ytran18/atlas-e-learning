@@ -45,18 +45,18 @@ const AdminTabs = () => {
             href: navigationPaths.QUAN_TRI_HOC_NGHE,
         },
         {
-            value: "user",
-            label: t("nguoi_dung"),
-            icon: IconUsers,
-            color: "teal",
-            href: navigationPaths.QUAN_TRI_USER,
-        },
-        {
             value: "docs",
             label: t("tai_lieu"),
             icon: IconFile,
             color: "grape",
             href: navigationPaths.QUAN_TRI_DOCS,
+        },
+        {
+            value: "user",
+            label: t("nguoi_dung"),
+            icon: IconUsers,
+            color: "teal",
+            href: navigationPaths.QUAN_TRI_USER,
         },
     ];
 
