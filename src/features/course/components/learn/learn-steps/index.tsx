@@ -60,7 +60,7 @@ const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots }) => {
 
         return (
             <div className="w-full h-full">
-                <CompletedContent />
+                <CompletedContent completedTime={progress?.lastUpdatedAt} />
             </div>
         );
     }

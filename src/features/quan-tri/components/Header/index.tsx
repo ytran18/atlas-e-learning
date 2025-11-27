@@ -32,6 +32,7 @@ const Header = () => {
     const navigationItems = [
         { href: navigationPaths.QUAN_TRI_ATLD, label: t("an_toan_lao_dong") },
         { href: navigationPaths.QUAN_TRI_HOC_NGHE, label: t("hoc_nghe") },
+        { href: navigationPaths.QUAN_TRI_DOCS, label: t("tai_lieu") },
         { href: navigationPaths.QUAN_TRI_USER, label: t("nguoi_dung") },
     ];
 
