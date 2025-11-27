@@ -67,9 +67,25 @@ export const useCameraCapture = () => {
 
         if (!ctx) return;
 
-        ctx.drawImage(video, 0, 0);
+        // Chỉ cần width khoảng 640px (SD) là đủ để verify/log, không cần HD 1280px
+        const MAX_WIDTH = 640;
 
-        const photoDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+        const scale = MAX_WIDTH / video.videoWidth;
+
+        const targetWidth = MAX_WIDTH;
+
+        const targetHeight = video.videoHeight * scale;
+
+        // Set kích thước canvas nhỏ lại theo tỷ lệ
+        canvas.width = targetWidth;
+
+        canvas.height = targetHeight;
+
+        // Vẽ ảnh đã resize lên canvas
+        ctx.drawImage(video, 0, 0, targetWidth, targetHeight);
+
+        // Giảm từ 0.8 xuống 0.6 (mắt thường khó phân biệt nhưng dung lượng giảm mạnh)
+        const photoDataUrl = canvas.toDataURL("image/jpeg", 0.6);
 
         setCapturedPhoto(photoDataUrl);
 
