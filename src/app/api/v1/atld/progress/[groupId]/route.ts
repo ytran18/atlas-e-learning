@@ -48,6 +48,7 @@ export async function GET(
             startedAt: progress.startedAt,
             lastUpdatedAt: progress.lastUpdatedAt,
             finishImageUrl: progress.finishImageUrl,
+            captureAfterLearningImageUrl: progress.captureAfterLearningImageUrl,
             examResult: progress.examResult,
         };
 
@@ -80,6 +81,7 @@ export async function PATCH(
             isCompleted: body.isCompleted,
             completedVideo: body.completedVideo,
             finishImageUrl: body.finishImageUrl,
+            captureAfterLearningImageUrl: body.captureAfterLearningImageUrl,
         });
 
         // Map to response format

@@ -79,7 +79,7 @@ const LearnExam = ({ courseType }: LearnExamProps) => {
                             section: "exam",
                             videoIndex: 0,
                             currentTime: 0,
-                            isCompleted: true,
+                            // isCompleted: true,
                         },
                         {
                             onSuccess: () => {

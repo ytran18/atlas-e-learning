@@ -29,8 +29,10 @@ export async function POST(request: NextRequest) {
             throw new Error("VALIDATION: groupId and type are required");
         }
 
-        if (!["start", "learning", "finish"].includes(type)) {
-            throw new Error('VALIDATION: type must be "start", "learning", or "finish"');
+        if (!["start", "learning", "finish", "capture-after-learning"].includes(type)) {
+            throw new Error(
+                'VALIDATION: type must be "start", "learning", "finish", or "capture-after-learning"'
+            );
         }
 
         // Upload file to storage

@@ -19,7 +19,7 @@ const CompletedContent = ({ completedTime }: CompletedContentProps) => {
 
     const userName = user?.unsafeMetadata?.fullName ?? "";
 
-    const time = dayjs(Number(completedTime)).format("HH:mm DD-MM-YYYY");
+    const time = dayjs(Number(completedTime)).format("DD-MM-YYYY");
 
     return (
         <div className="flex flex-col items-center justify-center h-full text-center p-4">

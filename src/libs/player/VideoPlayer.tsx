@@ -156,6 +156,7 @@ const VideoPlayer = ({
                     height: "100%",
                     aspectRatio: "16/9",
                 }}
+                hotkeys={canSeek ? undefined : "noarrowleft noarrowright"}
             >
                 <Player
                     ref={videoRef}

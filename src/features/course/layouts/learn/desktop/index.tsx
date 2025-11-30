@@ -18,6 +18,7 @@ const DesktopLearnLayout = ({ courseType }: DesktopLearnLayoutProps) => {
 
             <div className="flex-1 h-full">
                 <LearnSteps
+                    courseType={courseType}
                     slots={{
                         Theory: () => <LearnTheory courseType={courseType} />,
                         Practice: () => <LearnPractice courseType={courseType} />,

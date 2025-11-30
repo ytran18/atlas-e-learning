@@ -11,7 +11,7 @@
 
 export type CourseType = "atld" | "hoc-nghe";
 type SectionType = "theory" | "practice" | "exam";
-export type CaptureType = "start" | "learning" | "finish";
+export type CaptureType = "start" | "learning" | "finish" | "capture-after-learning";
 
 // ============================================================================
 // Video Types
@@ -139,6 +139,7 @@ export interface CourseProgress {
     lastUpdatedAt: number; // timestamp
     startImageUrl?: string; // Portrait image URL
     finishImageUrl?: string; // Auto-captured finish image URL
+    captureAfterLearningImageUrl?: string; // capture after learning image URL
     examResult?: {
         score: number;
         totalQuestions: number;
@@ -166,6 +167,7 @@ export interface UpdateProgressRequest {
     isCompleted?: boolean;
     completedVideo?: CompletedVideo; // Mark a video as completed
     finishImageUrl?: string; // Auto-captured finish image URL
+    captureAfterLearningImageUrl?: string; // capture after learning image URL
 }
 
 export interface UpdateProgressResponse {
@@ -208,6 +210,7 @@ export interface StudentStats {
         answers?: ExamAnswer[];
     };
     userIdCard: string;
+    captureAfterLearningImageUrl?: string;
 }
 
 export interface GetStatsResponse {

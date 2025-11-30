@@ -79,6 +79,7 @@ export async function PATCH(
             isCompleted: body.isCompleted,
             completedVideo: body.completedVideo,
             finishImageUrl: body.finishImageUrl,
+            captureAfterLearningImageUrl: body.captureAfterLearningImageUrl,
         });
 
         // Map to response format

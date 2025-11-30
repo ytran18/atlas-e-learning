@@ -7,7 +7,9 @@ import { useSearchParams } from "next/navigation";
 import { Stepper } from "@mantine/core";
 
 import { useLearnContext } from "@/contexts/LearnContext";
+import { CourseType } from "@/types/api";
 
+import CaptureAfterLearning from "./capture-after-learning";
 import CompletedContent from "./completed-content";
 import ExamNotPassed from "./exam-not-passed";
 import MobileTabNavigation from "./mobile-tab-navigation";
@@ -20,6 +22,7 @@ type LearnStepSlots = {
 
 type LearnStepsProps = {
     slots: LearnStepSlots;
+    courseType: CourseType;
 };
 
 const sectionToIndex = {
@@ -28,7 +31,7 @@ const sectionToIndex = {
     exam: 2,
 } as const;
 
-const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots }) => {
+const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots, courseType }) => {
     const searchParams = useSearchParams();
 
     const viewAgain = searchParams.get("viewAgain");
@@ -54,6 +57,10 @@ const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots }) => {
             setActive(newIndex);
         }
     };
+
+    if (!isCompleted && progress?.examResult?.answers) {
+        return <CaptureAfterLearning courseType={courseType} />;
+    }
 
     if (isCompleted && !viewAgain) {
         if (isExamNotPassed) return <ExamNotPassed />;

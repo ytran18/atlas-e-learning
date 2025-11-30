@@ -34,6 +34,7 @@ const MobileLearnLayout = ({
 
             <div className="flex-1 min-h-0 overflow-hidden p-4">
                 <LearnSteps
+                    courseType={courseType}
                     slots={{
                         Theory: () => <LearnTheory courseType={courseType} />,
                         Practice: () => <LearnPractice courseType={courseType} />,

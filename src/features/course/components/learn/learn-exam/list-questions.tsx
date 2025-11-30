@@ -43,7 +43,8 @@ const ListQuestions: FunctionComponent<ListQuestionsProps> = ({ questions, isFin
                                             <div className="flex flex-col gap-y-2">
                                                 {question.options.map((option) => {
                                                     const isCorrectAnswer =
-                                                        option.id === question.answer;
+                                                        option.id === question.answer &&
+                                                        userAnswer?.answer === option.id;
 
                                                     const isUserAnswer =
                                                         userAnswer?.answer === option.id;

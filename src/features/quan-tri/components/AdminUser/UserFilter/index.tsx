@@ -36,6 +36,7 @@ const UserFilter: FunctionComponent = () => {
     const search = searchParams.get("search");
 
     const startDateParam = searchParams.get("startDate");
+
     const endDateParam = searchParams.get("endDate");
 
     const { courseList } = useAdminUserContext();

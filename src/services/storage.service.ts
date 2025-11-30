@@ -37,7 +37,7 @@ async function uploadLearningCapture(
     file: Buffer,
     userId: string,
     groupId: string,
-    type: "start" | "learning" | "finish"
+    type: "start" | "learning" | "finish" | "capture-after-learning"
 ): Promise<string> {
     const timestamp = Date.now();
 
@@ -75,7 +75,7 @@ export async function uploadFromFormData(
     formData: FormData,
     userId: string,
     groupId: string,
-    type: "start" | "learning" | "finish"
+    type: "start" | "learning" | "finish" | "capture-after-learning"
 ): Promise<string> {
     const file = formData.get("file") as File;
 

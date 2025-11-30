@@ -263,6 +263,7 @@ export async function updateUserProgress(
             answers?: ExamAnswer[];
         };
         lastUpdatedAt?: number;
+        captureAfterLearningImageUrl?: string;
     }
 ) {
     const now = Date.now();
@@ -306,6 +307,11 @@ export async function updateUserProgress(
         updateData.finishImageUrl = updates.finishImageUrl;
     }
 
+    // If capture after learning image URL is provided, save it
+    if (updates.captureAfterLearningImageUrl !== undefined) {
+        updateData.captureAfterLearningImageUrl = updates.captureAfterLearningImageUrl;
+    }
+
     // If exam result is provided, save it
     if (updates.examResult) {
         updateData.examResult = updates.examResult;
@@ -325,7 +331,7 @@ export async function saveLearningCapture(
     userId: string,
     groupId: string,
     imageUrl: string,
-    type: "start" | "learning" | "finish"
+    type: "start" | "learning" | "finish" | "capture-after-learning"
 ) {
     const progressRef = adminDb
         .collection(COLLECTIONS.USERS)
@@ -352,6 +358,15 @@ export async function saveLearningCapture(
         );
 
         return "finishImageUrl";
+    } else if (type === "capture-after-learning") {
+        await progressRef.set(
+            {
+                captureAfterLearningImageUrl: imageUrl,
+            },
+            { merge: true }
+        );
+
+        return "captureAfterLearningImageUrl";
     } else {
         // learning captures go to an array
         await progressRef.set(
@@ -582,6 +597,7 @@ export async function getUserProgressDetail(
         currentVideoIndex: d?.currentVideoIndex || 0,
         examResult: d?.examResult || undefined,
         userIdCard: String(d?.cccd ?? d?.userIdCard ?? ""),
+        captureAfterLearningImageUrl: d?.captureAfterLearningImageUrl,
     };
 }
 
@@ -808,6 +824,7 @@ export async function retakeCourseExam(userId: string, groupId: string) {
 
     const updateData = {
         isCompleted: false,
+        examResult: {},
     };
 
     await Promise.all([userCollectionRef.update(updateData), searchIndexRef.update(updateData)]);

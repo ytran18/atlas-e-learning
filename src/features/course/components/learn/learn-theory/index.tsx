@@ -147,6 +147,13 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
         }
 
         if (learnDetail?.exam?.questions?.length > 0) {
+            updateProgress({
+                groupId: learnDetail.id,
+                section: "exam",
+                videoIndex: 0,
+                currentTime: 0,
+            });
+
             navigateToExam();
 
             return;

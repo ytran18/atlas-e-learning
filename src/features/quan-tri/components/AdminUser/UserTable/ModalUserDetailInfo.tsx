@@ -101,7 +101,7 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                     <Text size="xs" fw={500} c="dimmed">
                         {t("ngay_sinh")}
                     </Text>
-                    <Text size="sm" fw={500}>
+                    <Text size="sm" fw={500} lineClamp={1}>
                         {user.birthDate}
                     </Text>
                 </Card>
@@ -110,9 +110,11 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                     <Text size="xs" fw={500} c="dimmed">
                         {t("cong_ty")}
                     </Text>
-                    <Text size="sm" fw={500}>
-                        {user.companyName}
-                    </Text>
+                    <Tooltip label={user.companyName} withArrow withinPortal>
+                        <Text size="sm" fw={500} lineClamp={1}>
+                            {user.companyName}
+                        </Text>
+                    </Tooltip>
                 </Card>
             </div>
 
@@ -125,7 +127,8 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                     <Image
                         src={user.startImageUrl}
                         alt={user.fullname}
-                        className="w-full max-h-[165px] object-cover"
+                        className="w-full! max-h-[107px] object-cover"
+                        rootClassName="w-full"
                         fallback={DEFAULT_IMAGE_URL}
                     />
                 </div>
@@ -138,7 +141,19 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                     <Image
                         src={user.finishImageUrl}
                         alt={user.fullname}
-                        className="w-full max-h-[165px] object-cover"
+                        className="w-full max-h-[107px] object-cover"
+                        fallback={DEFAULT_IMAGE_URL}
+                    />
+                </div>
+                <div className="w-full flex flex-col items-start justify-between gap-y-1">
+                    <Text size="xs" fw={500}>
+                        Ảnh sau khi học
+                    </Text>
+
+                    <Image
+                        src={user.captureAfterLearningImageUrl}
+                        alt={user.fullname}
+                        className="w-full max-h-[107px] object-cover"
                         fallback={DEFAULT_IMAGE_URL}
                     />
                 </div>
@@ -217,7 +232,9 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                         <div className="flex items-center gap-x-1">
                             <IconCircleCheck
                                 size={20}
-                                className={isCompleted ? "text-green-500" : "text-red-500"}
+                                className={
+                                    user.examResult?.passed ? "text-green-500" : "text-red-500"
+                                }
                             />
 
                             <Text size="sm" fw={600}>
@@ -226,7 +243,7 @@ const ModalUserDetailInfo: FunctionComponent<ModalUserDetailInfoProps> = ({
                         </div>
 
                         <Text size="sm" fw={600}>
-                            {isCompleted ? t("da_hoan_thanh") : t("chua_hoan_thanh")}
+                            {user.examResult?.passed ? t("da_hoan_thanh") : t("chua_hoan_thanh")}
                         </Text>
                     </div>
                 </Card>

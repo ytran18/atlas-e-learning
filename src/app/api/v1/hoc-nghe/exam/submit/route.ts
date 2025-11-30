@@ -65,7 +65,6 @@ export async function POST(request: NextRequest) {
         // Update user progress to mark course as completed
         const completedAt = Date.now();
         await updateUserProgress(userId, groupId, {
-            isCompleted: true,
             examResult: {
                 score: correctAnswers,
                 totalQuestions,
