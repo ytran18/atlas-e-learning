@@ -59,6 +59,8 @@ const LearnSteps: FunctionComponent<LearnStepsProps> = ({ slots, courseType }) =
     };
 
     if (!isCompleted && progress?.examResult?.answers) {
+        if (!progress?.examResult?.passed) return <ExamNotPassed />;
+
         return <CaptureAfterLearning courseType={courseType} />;
     }
 
