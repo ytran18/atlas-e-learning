@@ -7,6 +7,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import GlobalHeader from "@/components/GlobalHeader";
 import MaintenanceWrapper from "@/components/Mantainace/MantainaceWrapper";
+import MicrosoftClarity from "@/components/MicrosoftClarity";
 import { StructuredData } from "@/components/SEO";
 import {
     baseSeoConfig,
@@ -75,6 +76,8 @@ export default async function RootLayout({
                 <SpeedInsights />
 
                 <Analytics />
+
+                <MicrosoftClarity />
 
                 <Provider growthBookPayload={growthBookPayload}>
                     <MaintenanceWrapper>
