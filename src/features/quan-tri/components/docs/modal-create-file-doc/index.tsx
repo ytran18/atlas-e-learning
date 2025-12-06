@@ -10,7 +10,6 @@ import { z } from "zod";
 import { useCreateDoc } from "@/api/docs/useCreateDoc";
 import { documentKeys } from "@/api/docs/useGetDocsList";
 import { useUpdateDoc } from "@/api/docs/useUpdateDoc";
-import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { DocumentResponse, DocumentType } from "@/types/documents";
 
 type ModalCreateFileDocProps = ModalProps & {
@@ -18,6 +17,14 @@ type ModalCreateFileDocProps = ModalProps & {
     fileData?: DocumentResponse;
     type?: DocumentType;
 };
+
+const schema = z.object({
+    title: z.string().min(1, "Vui lòng nhập tiêu đề"),
+    description: z.string().min(1, "Vui lòng nhập mô tả"),
+    url: z.string().min(1, "Vui lòng nhập url"),
+});
+
+type FormValues = z.infer<typeof schema>;
 
 const ModalCreateFileDoc = ({
     opened,
@@ -27,16 +34,6 @@ const ModalCreateFileDoc = ({
     type = "file",
     ...props
 }: ModalCreateFileDocProps) => {
-    const { t } = useI18nTranslate();
-
-    const schema = z.object({
-        title: z.string().min(1, t("vui_long_nhap_tieu_de")),
-        description: z.string().min(1, t("vui_long_nhap_mo_ta")),
-        url: z.string().min(1, t("vui_long_nhap_url")),
-    });
-
-    type FormValues = z.infer<typeof schema>;
-
     const queryClient = useQueryClient();
 
     const { mutate: createDoc, isPending: isCreating } = useCreateDoc();
@@ -71,7 +68,7 @@ const ModalCreateFileDoc = ({
         }
     }, [isEditMode, fileData, setValue, reset]);
 
-    const typeName = type === "file" ? t("tai_lieu") : t("video");
+    const typeName = type === "file" ? "tài liệu" : "video";
 
     const handleClose = () => {
         reset();
@@ -98,8 +95,8 @@ const ModalCreateFileDoc = ({
                         });
 
                         notifications.show({
-                            title: t("thanh_cong"),
-                            message: t("cap_nhat_thanh_cong_dynamic", { name: typeName }),
+                            title: "Thành công",
+                            message: `Cập nhật ${typeName} thành công`,
                             color: "green",
                         });
 
@@ -107,8 +104,8 @@ const ModalCreateFileDoc = ({
                     },
                     onError: () => {
                         notifications.show({
-                            title: t("that_bai"),
-                            message: t("cap_nhat_that_bai_dynamic", { name: typeName }),
+                            title: "Thất bại",
+                            message: `Cập nhật ${typeName} thất bại`,
                             color: "red",
                         });
                     },
@@ -127,8 +124,8 @@ const ModalCreateFileDoc = ({
                         });
 
                         notifications.show({
-                            title: t("thanh_cong"),
-                            message: t("them_thanh_cong_dynamic", { name: typeName }),
+                            title: "Thành công",
+                            message: `Thêm ${typeName} thành công`,
                             color: "green",
                         });
 
@@ -136,8 +133,8 @@ const ModalCreateFileDoc = ({
                     },
                     onError: () => {
                         notifications.show({
-                            title: t("that_bai"),
-                            message: t("them_that_bai_dynamic", { name: typeName }),
+                            title: "Thất bại",
+                            message: `Thêm ${typeName} thất bại`,
                             color: "red",
                         });
                     },
@@ -152,7 +149,7 @@ const ModalCreateFileDoc = ({
             onClose={handleClose}
             centered
             size="lg"
-            title={isEditMode ? `${t("sua")} ${typeName}` : `${t("them")} ${typeName}`}
+            title={isEditMode ? `Sửa ${typeName}` : `Thêm ${typeName}`}
             {...props}
         >
             <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col gap-y-4">
@@ -161,8 +158,8 @@ const ModalCreateFileDoc = ({
                     control={control}
                     render={({ field }) => (
                         <TextInput
-                            label={`${t("tieu_de")} ${typeName}`}
-                            placeholder={t("nhap_tieu_de")}
+                            label={`Tiêu đề ${typeName}`}
+                            placeholder="Nhập tiêu đề"
                             error={errors.title?.message}
                             {...field}
                         />
@@ -174,8 +171,8 @@ const ModalCreateFileDoc = ({
                     control={control}
                     render={({ field }) => (
                         <Textarea
-                            label={`${t("mo_ta")} ${typeName}`}
-                            placeholder={t("nhap_mo_ta")}
+                            label={`Mô tả ${typeName}`}
+                            placeholder="Nhập mô tả"
                             error={errors.description?.message}
                             minRows={3}
                             {...field}
@@ -188,8 +185,8 @@ const ModalCreateFileDoc = ({
                     control={control}
                     render={({ field }) => (
                         <Textarea
-                            label={t("url_cua_url_public_cua_google_drive", { name: typeName })}
-                            placeholder={t("nhap_url")}
+                            label={`Url của ${typeName} (url public của ${type === "file" ? "google drive" : "youtube"})`}
+                            placeholder="Nhập url"
                             error={errors.url?.message}
                             minRows={2}
                             {...field}
@@ -199,7 +196,7 @@ const ModalCreateFileDoc = ({
 
                 <div className="flex justify-end mt-4">
                     <Button type="submit" disabled={!isValid} loading={isCreating || isUpdating}>
-                        {isEditMode ? t("luu_thay_doi") : t("them_moi")}
+                        {isEditMode ? "Lưu thay đổi" : "Thêm mới"}
                     </Button>
                 </div>
             </form>
