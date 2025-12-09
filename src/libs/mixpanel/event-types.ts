@@ -126,6 +126,20 @@ interface ApiErrorEvent {
     };
 }
 
+// track retake course error
+export interface RetakeCourseErrorEvent {
+    event: "retake_course_error";
+    properties: {
+        course_type: CourseType;
+        course_id: string;
+        courseName: string;
+        error: string;
+        timestamp: number;
+        userId: string;
+        userName: string;
+    };
+}
+
 // ============================================================================
 // Union Type for All Events
 // ============================================================================
@@ -139,4 +153,5 @@ export type MixpanelEvent =
     | CourseStartedEvent
     | CourseStartFailedEvent
     | ExamSubmittedEvent
-    | ApiErrorEvent;
+    | ApiErrorEvent
+    | RetakeCourseErrorEvent;

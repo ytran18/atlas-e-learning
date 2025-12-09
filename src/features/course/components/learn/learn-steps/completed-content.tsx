@@ -13,6 +13,7 @@ import { courseProgressKeys } from "@/api";
 import { useRetakeCourse } from "@/api/user/useRetakeCourse";
 import { useLearnContext } from "@/contexts/LearnContext";
 import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+import { trackRetakeCourseError } from "@/libs/mixpanel";
 import { navigationPaths } from "@/utils/navigationPaths";
 
 type CompletedContentProps = {
@@ -59,6 +60,18 @@ const CompletedContent = ({ completedTime }: CompletedContentProps) => {
             setShowConfirmModal(false);
         } catch (error) {
             console.error("Error retaking course:", error);
+
+            const errorMessage = error instanceof Error ? error.message : String(error);
+
+            trackRetakeCourseError({
+                course_type: learnDetail.type,
+                course_id: learnDetail.id,
+                userId: user.id,
+                courseName: learnDetail.title,
+                error: errorMessage,
+                timestamp: Date.now(),
+                userName: user?.unsafeMetadata?.fullName as string,
+            });
             notifications.show({
                 title: t("loi"),
                 message: t("khong_the_hoc_lai_khoa_hoc_vui_long_thu_lai"),

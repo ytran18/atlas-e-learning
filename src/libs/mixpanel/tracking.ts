@@ -15,6 +15,7 @@ import type {
     CourseStartedEvent,
     ExamSubmittedEvent,
     MixpanelEvent,
+    RetakeCourseErrorEvent,
     UserSignedInEvent,
     UserSignedOutEvent,
     UserSignedUpEvent,
@@ -67,6 +68,14 @@ export const trackUserSignedOut = (properties: UserSignedOutEvent["properties"])
 export const trackAuthError = (properties: AuthErrorEvent["properties"]) => {
     trackEvent<AuthErrorEvent>({
         event: "auth_error",
+        properties,
+    });
+};
+
+// track retake course error
+export const trackRetakeCourseError = (properties: RetakeCourseErrorEvent["properties"]) => {
+    trackEvent<RetakeCourseErrorEvent>({
+        event: "retake_course_error",
         properties,
     });
 };
