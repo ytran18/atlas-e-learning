@@ -427,5 +427,11 @@
     "upload_video": "비디오 업로드",
     "them_video": "비디오 추가",
     "xem_lai_video": "동영상 다시 보기",
-    "lam_moi_trang": "새로 고침"
+    "lam_moi_trang": "새로 고침",
+    "hoc_lai_khoa_hoc": "강좌 재수강",
+    "xac_nhan_hoc_lai_khoa_hoc": "재수강 확인",
+    "ban_co_chac_chan_muon_hoc_lai_khoa_hoc_nay": "이 강좌를 다시 수강하시겠습니까?",
+    "ket_qua_hoc_cu_cua_ban_se_duoc_luu_vao_lich_su": "이전 학습 기록은 히스토리에 저장되며, 처음부터 다시 시작합니다.",
+    "ban_da_bat_dau_hoc_lai_khoa_hoc": "강좌 재수강을 시작했습니다.",
+    "khong_the_hoc_lai_khoa_hoc_vui_long_thu_lai": "강좌를 재수강할 수 없습니다. 잠시 후 다시 시도해 주세요."
 }

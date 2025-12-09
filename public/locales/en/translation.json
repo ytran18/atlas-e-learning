@@ -427,5 +427,11 @@
     "upload_video": "Upload Video",
     "them_video": "Add Video",
     "xem_lai_video": "Review Video",
-    "lam_moi_trang": "Refresh Page"
+    "lam_moi_trang": "Refresh Page",
+    "hoc_lai_khoa_hoc": "Retake Course",
+    "xac_nhan_hoc_lai_khoa_hoc": "Confirm Retake Course",
+    "ban_co_chac_chan_muon_hoc_lai_khoa_hoc_nay": "Are you sure you want to retake this course?",
+    "ket_qua_hoc_cu_cua_ban_se_duoc_luu_vao_lich_su": "Your old results will be saved to history and you will start learning from the beginning.",
+    "ban_da_bat_dau_hoc_lai_khoa_hoc": "You have started retaking the course",
+    "khong_the_hoc_lai_khoa_hoc_vui_long_thu_lai": "Cannot retake course. Please try again."
 }

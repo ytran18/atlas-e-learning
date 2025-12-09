@@ -427,5 +427,11 @@
     "upload_video": "上传视频",
     "them_video": "添加视频",
     "xem_lai_video": "回看视频",
-    "lam_moi_trang": "刷新页面"
+    "lam_moi_trang": "刷新页面",
+    "hoc_lai_khoa_hoc": "重新学习课程",
+    "xac_nhan_hoc_lai_khoa_hoc": "确认重新学习",
+    "ban_co_chac_chan_muon_hoc_lai_khoa_hoc_nay": "您确定要重新学习这门课程吗？",
+    "ket_qua_hoc_cu_cua_ban_se_duoc_luu_vao_lich_su": "之前的学习进度将被保存到历史记录中，您将从头开始学习。",
+    "ban_da_bat_dau_hoc_lai_khoa_hoc": "您已开始重新学习课程",
+    "khong_the_hoc_lai_khoa_hoc_vui_long_thu_lai": "无法重新学习课程。请重试。"
 }

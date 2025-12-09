@@ -427,5 +427,11 @@
     "upload_video": "Tải lên video",
     "them_video": "Thêm video",
     "xem_lai_video": "Xem lại video",
-    "lam_moi_trang": "Làm mới trang"
+    "lam_moi_trang": "Làm mới trang",
+    "hoc_lai_khoa_hoc": "Học lại khóa học",
+    "xac_nhan_hoc_lai_khoa_hoc": "Xác nhận học lại khóa học",
+    "ban_co_chac_chan_muon_hoc_lai_khoa_hoc_nay": "Bạn có chắc chắn muốn học lại khóa học này?",
+    "ket_qua_hoc_cu_cua_ban_se_duoc_luu_vao_lich_su": "Kết quả học cũ của bạn sẽ được lưu vào lịch sử và bạn sẽ bắt đầu học lại từ đầu.",
+    "ban_da_bat_dau_hoc_lai_khoa_hoc": "Bạn đã bắt đầu học lại khóa học",
+    "khong_the_hoc_lai_khoa_hoc_vui_long_thu_lai": "Không thể học lại khóa học. Vui lòng thử lại."
 }
