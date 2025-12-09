@@ -232,6 +232,16 @@ export async function createUserProgress(
         await progressGroupRef.set({
             objectID: objectId,
             userId: userId,
+            isArchived: false,
+            isCurrent: true,
+            ...progressData,
+        });
+    } else {
+        await progressGroupRef.update({
+            objectID: objectId,
+            userId: userId,
+            isArchived: false,
+            isCurrent: true,
             ...progressData,
         });
     }
@@ -813,4 +823,175 @@ export async function retakeCourseExam(userId: string, groupId: string) {
     await Promise.all([userCollectionRef.update(updateData), searchIndexRef.update(updateData)]);
 
     return { success: true };
+}
+
+// ============================================================================
+// Retake Course Feature (New)
+// ============================================================================
+
+/**
+ * Archive current progress to BOTH Firestore history AND search_index
+ * This ensures we have history in Firestore, not just in Algolia
+ */
+export async function archiveCurrentProgress(
+    userId: string,
+    groupId: string
+): Promise<{ attemptNumber: number; attemptId: string } | null> {
+    const objectId = `${userId}_${groupId}`;
+
+    // Get current progress from users/{userId}/progress/{groupId}
+    const currentProgressRef = adminDb
+        .collection(COLLECTIONS.USERS)
+        .doc(userId)
+        .collection(COLLECTIONS.PROGRESS)
+        .doc(groupId);
+
+    const currentProgressDoc = await currentProgressRef.get();
+
+    if (!currentProgressDoc.exists) {
+        console.log(`No current progress found for ${objectId}`);
+        return null;
+    }
+
+    const currentProgressData = currentProgressDoc.data();
+
+    // Only archive if course is completed
+    if (!currentProgressData?.isCompleted) {
+        console.log(`Course not completed for ${objectId}, skipping archive`);
+        return null;
+    }
+
+    // Count existing attempts in Firestore history
+    const historyRef = adminDb
+        .collection(COLLECTIONS.USERS)
+        .doc(userId)
+        .collection("progress_history");
+
+    const historySnapshot = await historyRef.where("groupId", "==", groupId).get();
+
+    const attemptNumber = historySnapshot.size + 1;
+    const attemptDocId = `${groupId}_attempt_${attemptNumber}`;
+    const searchIndexAttemptId = `${userId}_${groupId}_attempt_${attemptNumber}`;
+
+    const now = Date.now();
+
+    // Prepare archived data
+    const archivedData = {
+        ...currentProgressData,
+        attemptNumber,
+        archivedAt: now,
+        groupId, // Ensure for querying
+        userId, // Ensure for querying
+    };
+
+    // STEP 1: Save to Firestore history (users/{userId}/progress_history/{attemptDocId})
+    await historyRef.doc(attemptDocId).set(archivedData);
+
+    // STEP 2: Save to search_index for Algolia
+    const searchIndexAttemptData = {
+        ...archivedData,
+        objectID: searchIndexAttemptId,
+        isArchived: true,
+        isCurrent: false,
+    };
+
+    await adminDb
+        .collection(COLLECTIONS.SEARCH_INDEX)
+        .doc(searchIndexAttemptId)
+        .set(searchIndexAttemptData);
+
+    console.log(`Archived progress to Firestore: ${attemptDocId}`);
+    console.log(`Archived progress to search_index: ${searchIndexAttemptId}`);
+
+    return { attemptNumber, attemptId: attemptDocId };
+}
+
+/**
+ * Reset progress for retaking course while preserving history
+ * This is different from retakeCourseExam - it's a full course reset
+ */
+export async function retakeCourse(
+    userId: string,
+    groupId: string
+): Promise<{ success: boolean; attemptNumber?: number; message: string }> {
+    const objectId = `${userId}_${groupId}`;
+
+    try {
+        // STEP 1: Archive current progress to BOTH Firestore and search_index
+        const archiveResult = await archiveCurrentProgress(userId, groupId);
+
+        if (!archiveResult) {
+            return {
+                success: false,
+                message: "Cannot retake course. Course is not completed yet.",
+            };
+        }
+
+        // STEP 2: Get current progress data (for user metadata)
+        const progressRef = adminDb
+            .collection(COLLECTIONS.USERS)
+            .doc(userId)
+            .collection(COLLECTIONS.PROGRESS)
+            .doc(groupId);
+
+        const progressDoc = await progressRef.get();
+
+        if (!progressDoc.exists) {
+            throw new Error("Progress not found");
+        }
+
+        const currentData = progressDoc.data();
+
+        // STEP 3: Prepare reset data
+        const resetData = {
+            currentSection: "theory",
+            currentVideoIndex: 0,
+            currentTime: 0,
+            completedVideos: [],
+            isCompleted: false,
+            startedAt: Date.now(),
+            lastUpdatedAt: Date.now(),
+            examResult: admin.firestore.FieldValue.delete(),
+            finishImageUrl: admin.firestore.FieldValue.delete(),
+            startImageUrl: admin.firestore.FieldValue.delete(), // Delete to force recapture
+            // Preserve user metadata
+            groupId: groupId,
+            courseName: currentData?.courseName ?? "",
+            userFullname: currentData?.userFullname ?? "",
+            userBirthDate: currentData?.userBirthDate ?? "",
+            userCompanyName: currentData?.userCompanyName ?? "",
+            userIdCard: currentData?.userIdCard ?? "",
+        };
+
+        // STEP 4: Reset current progress in Firestore
+        await progressRef.update(resetData);
+
+        // STEP 5: Reset current progress in search_index (for Algolia)
+        const searchIndexRef = adminDb.collection(COLLECTIONS.SEARCH_INDEX).doc(objectId);
+
+        const searchIndexResetData = {
+            ...resetData,
+            userId: userId,
+            objectID: objectId,
+            cccd: currentData?.userIdCard || currentData?.cccd || "",
+            isArchived: false,
+            isCurrent: true,
+        };
+
+        await searchIndexRef.update(searchIndexResetData);
+
+        console.log(`Reset progress for ${objectId}`);
+
+        return {
+            success: true,
+            attemptNumber: archiveResult.attemptNumber,
+            message: `Successfully archived as attempt ${archiveResult.attemptNumber} and reset progress`,
+        };
+    } catch (error) {
+        console.error("Error in retakeCourse:", error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : "Unknown error occurred",
+        };
+    }
 }

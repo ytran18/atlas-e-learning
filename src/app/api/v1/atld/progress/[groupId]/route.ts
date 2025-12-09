@@ -48,7 +48,9 @@ export async function GET(
             startedAt: progress.startedAt,
             lastUpdatedAt: progress.lastUpdatedAt,
             finishImageUrl: progress.finishImageUrl,
+            startImageUrl: progress.startImageUrl,
             examResult: progress.examResult,
+            courseName: progress.courseName,
         };
 
         return successResponse(response);

@@ -208,6 +208,12 @@ export interface StudentStats {
         answers?: ExamAnswer[];
     };
     userIdCard: string;
+    // Fields for retake course feature
+    attemptNumber?: number;
+    isArchived?: boolean;
+    isCurrent?: boolean;
+    archivedAt?: number;
+    objectID?: string;
 }
 
 export interface GetStatsResponse {
@@ -405,4 +411,48 @@ export interface UserCourseCompleted {
     currentSection: SectionType;
     courseName: string;
     objectID: string;
+}
+
+// ============================================================================
+// Retake Course Types
+// ============================================================================
+
+export interface CourseAttempt {
+    attemptId: string;
+    attemptNumber: number;
+    groupId: string;
+    userId?: string;
+    startedAt: number;
+    completedAt?: number;
+    archivedAt: number;
+    isCompleted: boolean;
+    completedVideos: CompletedVideo[];
+    examResult?: {
+        score: number;
+        totalQuestions: number;
+        passed: boolean;
+        completedAt: number;
+        answers?: ExamAnswer[];
+    };
+    startImageUrl?: string;
+    finishImageUrl?: string;
+    courseName?: string;
+    userFullname?: string;
+    userBirthDate?: string;
+    userCompanyName?: string;
+    userIdCard?: string;
+    currentSection: SectionType;
+    currentVideoIndex?: number;
+    currentTime?: number;
+}
+
+export interface RetakeCourseResponse {
+    success: boolean;
+    attemptNumber?: number;
+    message: string;
+}
+
+export interface GetCourseHistoryResponse {
+    attempts: CourseAttempt[];
+    totalAttempts: number;
 }

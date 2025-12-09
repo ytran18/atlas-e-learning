@@ -390,3 +390,14 @@ export async function retakeCourseExam(userId: string, groupId: string) {
 
     return response;
 }
+
+// retake course (full course reset with archive)
+export async function retakeCourse(userId: string, groupId: string) {
+    const endpoint = `/api/v1/user/${userId}/course/retake/${groupId}`;
+
+    const response = await apiFetch(endpoint, {
+        method: "POST",
+    });
+
+    return response.data;
+}

@@ -36,6 +36,15 @@ const AtldLearnPage = () => {
 
     useEffect(() => {
         if (progressData) {
+            // Check if startImageUrl is missing (e.g., after retaking course)
+            // User must capture start image before learning
+            if (!progressData.startImageUrl) {
+                router.replace(
+                    `${navigationPaths.ATLD_VERIFY.replace(`[${ATLD_SLUG}]`, atldId as string)}?name=${progressData?.courseName}`
+                );
+                return;
+            }
+
             if (progressData.isCompleted) {
                 router.replace(
                     `${navigationPaths.ATLD_LEARN.replace(`[${ATLD_SLUG}]`, atldId as string)}`

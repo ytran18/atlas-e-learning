@@ -29,7 +29,26 @@ export function useStartCourse(
     return useMutation({
         mutationFn: (data: StartCourseRequest) => startCourse(type, data),
         onSuccess: (data, variables, context) => {
-            // Invalidate progress query để fetch lại data mới
+            // Manually update cache to prevent race condition
+            // This ensures that when we navigate to the next page, the data is already there
+            // and we don't get redirected back because of missing startImageUrl
+            queryClient.setQueryData(
+                courseProgressKeys.progress(type, variables.groupId),
+                (oldData: any) => ({
+                    ...oldData,
+                    ...data,
+                    startImageUrl: variables.portraitUrl,
+                    courseName: variables.courseName,
+                    userFullname: variables.userFullname,
+                    userBirthDate: variables.userBirthDate,
+                    userCompanyName: variables.userCompanyName,
+                    userIdCard: variables.userIdCard,
+                    completedVideos: [],
+                    lastUpdatedAt: Date.now(),
+                })
+            );
+
+            // Invalidate progress query để fetch lại data mới (clean up eventual consistency)
             void queryClient.invalidateQueries({
                 queryKey: courseProgressKeys.progress(type, variables.groupId),
             });

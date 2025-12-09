@@ -36,6 +36,18 @@ const HocNgheLearnPage = () => {
 
     useEffect(() => {
         if (progressData) {
+            // Check if startImageUrl is missing (e.g., after retaking course)
+            // User must capture start image before learning
+            if (!progressData.startImageUrl) {
+                router.replace(
+                    `${navigationPaths.HOC_NGHE_VERIFY.replace(
+                        `[${HOC_NGHE_SLUG}]`,
+                        hocNgheId as string
+                    )}?name=${progressData?.courseName}`
+                );
+                return;
+            }
+
             if (progressData.isCompleted) {
                 router.replace(
                     `${navigationPaths.HOC_NGHE_LEARN.replace(`[${HOC_NGHE_SLUG}]`, hocNgheId as string)}`

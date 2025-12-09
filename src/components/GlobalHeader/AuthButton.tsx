@@ -138,7 +138,7 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
                 {t("dang_nhap")}
             </Button>
             <Button size="xs" onClick={handleSignUp} className={signUpButtonClassName}>
-                {t("dang_ky_1")}
+                {t("dang_ky")}
             </Button>
         </Group>
     );
