@@ -140,6 +140,18 @@ export interface RetakeCourseErrorEvent {
     };
 }
 
+export interface RetakeCourseSuccessEvent {
+    event: "retake_course_success";
+    properties: {
+        course_type: CourseType;
+        course_id: string;
+        courseName: string;
+        timestamp: number;
+        userId: string;
+        userName: string;
+    };
+}
+
 // ============================================================================
 // Union Type for All Events
 // ============================================================================
@@ -154,4 +166,5 @@ export type MixpanelEvent =
     | CourseStartFailedEvent
     | ExamSubmittedEvent
     | ApiErrorEvent
-    | RetakeCourseErrorEvent;
+    | RetakeCourseErrorEvent
+    | RetakeCourseSuccessEvent;

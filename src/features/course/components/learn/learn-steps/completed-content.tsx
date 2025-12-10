@@ -44,6 +44,9 @@ const CompletedContent = ({ completedTime }: CompletedContentProps) => {
             await retakeCourse({
                 userId: user.id,
                 groupId: learnDetail.id,
+                courseType: learnDetail.type,
+                courseName: learnDetail.title,
+                userName: userName as string,
             });
 
             // Invalidate progress query to refetch
