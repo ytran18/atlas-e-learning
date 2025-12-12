@@ -17,6 +17,7 @@ export async function createDocument(payload: DocumentPayload) {
         const lastDocumentSnapshot = await adminDb
             .collection(FIRESTORE_COLLECTIONS.DOCUMENTS)
             .where("type", "==", payload.type)
+            .where("category", "==", payload.category)
             .orderBy("sortNo", "desc")
             .limit(1)
             .get();

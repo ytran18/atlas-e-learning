@@ -10,6 +10,11 @@ export const docsTable = [
         visileInMobile: false,
     },
     {
+        label: "Loại tài liệu",
+        key: "document_type",
+        visileInMobile: true,
+    },
+    {
         label: "",
         key: "actions",
         visileInMobile: true,

@@ -16,9 +16,17 @@ export async function POST(request: NextRequest) {
 
         const body = await parseJsonBody<DocumentPayload & { id: string }>(request);
 
-        validateRequiredFields(body, ["id", "title", "description", "type", "url", "sortNo"]);
+        validateRequiredFields(body, [
+            "id",
+            "title",
+            "description",
+            "type",
+            "url",
+            "sortNo",
+            "category",
+        ]);
 
-        const { id, title, description, type, url, sortNo } = body;
+        const { id, title, description, type, url, sortNo, category } = body;
 
         await updateDocument(id, {
             title,
@@ -26,6 +34,7 @@ export async function POST(request: NextRequest) {
             type,
             url,
             sortNo,
+            category,
         });
 
         const response: CreateDocumentResponse = {

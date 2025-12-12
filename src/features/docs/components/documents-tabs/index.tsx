@@ -4,7 +4,6 @@ import { Tabs, ThemeIcon } from "@mantine/core";
 import { IconBrandYoutube, IconFileTypePdf, ReactNode } from "@tabler/icons-react";
 
 import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
-import { navigationPaths } from "@/utils/navigationPaths";
 
 type DocumentTabsSlot = {
     File: () => ReactNode;
@@ -40,7 +39,7 @@ const DocumentsTabs = ({ slots }: DocumentsTabsProps) => {
     ];
 
     const handleChangeTab = (tab: string) => {
-        router.push(`${navigationPaths.DOCUMENTS}?tab=${tab}`);
+        router.push(`${window.location.pathname}?tab=${tab}`);
     };
 
     return (

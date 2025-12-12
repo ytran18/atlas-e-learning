@@ -433,5 +433,12 @@
     "ban_co_chac_chan_muon_hoc_lai_khoa_hoc_nay": "Are you sure you want to retake this course?",
     "ket_qua_hoc_cu_cua_ban_se_duoc_luu_vao_lich_su": "Your old results will be saved to history and you will start learning from the beginning.",
     "ban_da_bat_dau_hoc_lai_khoa_hoc": "You have started retaking the course",
-    "khong_the_hoc_lai_khoa_hoc_vui_long_thu_lai": "Cannot retake course. Please try again."
+    "khong_the_hoc_lai_khoa_hoc_vui_long_thu_lai": "Cannot retake course. Please try again.",
+    "online_training_portal": "Online Training Portal",
+    "top_priority": "Top Priority",
+    "national_standard_training_system": "National standard training and document storage system. Equip with knowledge and skills to protect yourself and colleagues.",
+    "standard_training_program": "Standard Training Program",
+    "nationally_recognized": "Nationally Recognized",
+    "legislation": "Legislation / Law",
+    "latest_decree_update": "Latest Decree Update"
 }

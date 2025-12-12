@@ -4,7 +4,11 @@ const ADMIN_USER = "user";
 const ADMIN_DOCS = "docs";
 
 export const getCurrentAdminPathname = (pathname: string, isStaff?: boolean) => {
-    if (isStaff) return ADMIN_USER;
+    if (isStaff) {
+        if (pathname.includes(ADMIN_DOCS)) return ADMIN_DOCS;
+
+        return ADMIN_USER;
+    }
 
     if (pathname.includes(ADMIN_ATLD)) return ADMIN_ATLD;
 

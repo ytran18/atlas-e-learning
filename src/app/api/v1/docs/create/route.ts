@@ -16,15 +16,16 @@ export async function POST(request: NextRequest) {
 
         const body = await parseJsonBody<DocumentPayload>(request);
 
-        validateRequiredFields(body, ["title", "description", "type", "url"]);
+        validateRequiredFields(body, ["title", "description", "type", "url", "category"]);
 
-        const { title, description, type, url } = body;
+        const { title, description, type, url, category } = body;
 
         await createDocument({
             title,
             description,
             type,
             url,
+            category,
         });
 
         const response: CreateDocumentResponse = {

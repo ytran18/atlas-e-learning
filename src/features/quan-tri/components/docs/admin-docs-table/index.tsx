@@ -98,6 +98,10 @@ const AdminDocsTable = ({ docsLists, onEdit, type }: AdminDocsTableProps) => {
                                     {dayjs(Number(doc.createdAt)).format("DD-MM-YYYY HH:mm")}
                                 </Table.Td>
 
+                                <Table.Td>
+                                    {doc.category === "atld" ? "An Toàn Lao Động" : "Học Nghề"}
+                                </Table.Td>
+
                                 <Table.Td className="flex items-center justify-center gap-x-2">
                                     <Tooltip label={`Xóa ${typeName}`} withArrow>
                                         <Button
