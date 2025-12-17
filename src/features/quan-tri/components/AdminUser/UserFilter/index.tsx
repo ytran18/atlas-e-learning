@@ -37,6 +37,7 @@ const UserFilter: FunctionComponent = () => {
     const search = searchParams.get("search");
 
     const startDateParam = searchParams.get("startDate");
+
     const endDateParam = searchParams.get("endDate");
 
     const { courseList } = useAdminUserContext();
@@ -133,7 +134,7 @@ const UserFilter: FunctionComponent = () => {
         }
     };
 
-    // Tạo queryHook với debounce 300ms
+    // Tạo queryHook với debounce 800ms
     const queryHook = useMemo(() => {
         return (query: string, search: (value: string) => void) => {
             // Clear timeout cũ nếu có
@@ -147,12 +148,17 @@ const UserFilter: FunctionComponent = () => {
                 return;
             }
 
-            // Debounce search với 300ms
+            // Không search nếu < 2 ký tự
+            if (query.trim().length < 2) {
+                return;
+            }
+
+            // Debounce search với 800ms
             timeoutRef.current = setTimeout(() => {
                 // Tracking search event
                 trackStudentSearched({ query });
                 search(query);
-            }, 300);
+            }, 800);
         };
     }, []);
 
