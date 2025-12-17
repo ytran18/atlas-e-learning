@@ -62,7 +62,7 @@ export function generateMetadata({
     const fullDescription = description || baseSeoConfig.defaultDescription;
     const fullKeywords = keywords ? [...baseSeoConfig.defaultKeywords, ...keywords] : baseSeoConfig.defaultKeywords;
     const fullUrl = url ? `${baseSeoConfig.siteUrl}${url}` : baseSeoConfig.siteUrl;
-    const fullImage = image ? `${baseSeoConfig.siteUrl}${image}` : `${baseSeoConfig.siteUrl}/images/banner.jpg`;
+    const fullImage = image ? `${baseSeoConfig.siteUrl}${image}` : `${baseSeoConfig.siteUrl}/images/og-banner.png`;
 
     const metadata: Metadata = {
         title: fullTitle,
