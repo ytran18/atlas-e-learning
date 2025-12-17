@@ -6,6 +6,7 @@ import { SearchBox, useInstantSearch } from "react-instantsearch-hooks-web";
 import Loader from "@/components/Loader";
 import CustomPagination from "@/features/quan-tri/components/AdminUser/UserTable/CustomPagination";
 import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+import { trackDocumentSearched } from "@/libs/mixpanel/tracking";
 import { DocumentResponse } from "@/types/documents";
 
 import DocumentItem from "../document-item";
@@ -38,6 +39,7 @@ const DocumentsVideo = () => {
 
             // Debounce search với 300ms
             timeoutRef.current = setTimeout(() => {
+                trackDocumentSearched({ query, type: "video" });
                 search(query);
             }, 300);
         };

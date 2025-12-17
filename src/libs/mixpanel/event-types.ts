@@ -112,6 +112,25 @@ export interface ExamSubmittedEvent {
 }
 
 // ============================================================================
+// Search Events
+// ============================================================================
+
+export interface StudentSearchedEvent {
+    event: "student_searched";
+    properties: {
+        query: string;
+    };
+}
+
+export interface DocumentSearchedEvent {
+    event: "document_searched";
+    properties: {
+        query: string;
+        type: "file" | "video";
+    };
+}
+
+// ============================================================================
 // Error Events
 // ============================================================================
 
@@ -167,4 +186,6 @@ export type MixpanelEvent =
     | ExamSubmittedEvent
     | ApiErrorEvent
     | RetakeCourseErrorEvent
-    | RetakeCourseSuccessEvent;
+    | RetakeCourseSuccessEvent
+    | StudentSearchedEvent
+    | DocumentSearchedEvent;

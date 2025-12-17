@@ -13,10 +13,12 @@ import type {
     CoursePreviewStartClickedEvent,
     CourseStartFailedEvent,
     CourseStartedEvent,
+    DocumentSearchedEvent,
     ExamSubmittedEvent,
     MixpanelEvent,
     RetakeCourseErrorEvent,
     RetakeCourseSuccessEvent,
+    StudentSearchedEvent,
     UserSignedInEvent,
     UserSignedOutEvent,
     UserSignedUpEvent,
@@ -126,6 +128,24 @@ export const trackCourseStartFailed = (properties: CourseStartFailedEvent["prope
 export const trackExamSubmitted = (properties: ExamSubmittedEvent["properties"]) => {
     trackEvent<ExamSubmittedEvent>({
         event: "exam_submitted",
+        properties,
+    });
+};
+
+// ============================================================================
+// Search Events
+// ============================================================================
+
+export const trackStudentSearched = (properties: StudentSearchedEvent["properties"]) => {
+    trackEvent<StudentSearchedEvent>({
+        event: "student_searched",
+        properties,
+    });
+};
+
+export const trackDocumentSearched = (properties: DocumentSearchedEvent["properties"]) => {
+    trackEvent<DocumentSearchedEvent>({
+        event: "document_searched",
         properties,
     });
 };

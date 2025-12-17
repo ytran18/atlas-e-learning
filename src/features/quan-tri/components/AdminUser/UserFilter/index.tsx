@@ -16,6 +16,7 @@ import { SearchBox, useInstantSearch } from "react-instantsearch-hooks-web";
 import { useAdminUserContext } from "@/features/quan-tri/contexts/AdminUserContext";
 import { formatXLSXData } from "@/features/quan-tri/utils/format-xlsx-data";
 import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+import { trackStudentSearched } from "@/libs/mixpanel/tracking";
 import { exportToXLSX } from "@/libs/xlsx/export-to-xlsx";
 import { getStudentStatsByUserIds } from "@/services/api.client";
 import { CourseType } from "@/types/api";
@@ -148,6 +149,8 @@ const UserFilter: FunctionComponent = () => {
 
             // Debounce search với 300ms
             timeoutRef.current = setTimeout(() => {
+                // Tracking search event
+                trackStudentSearched({ query });
                 search(query);
             }, 300);
         };
