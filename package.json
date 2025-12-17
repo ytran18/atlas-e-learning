@@ -12,7 +12,8 @@
         "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
         "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
         "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then husky; fi",
-        "knip": "knip"
+        "knip": "knip",
+        "ship": "npm version patch && git push --follow-tags"
     },
     "dependencies": {
         "@ant-design/nextjs-registry": "^1.2.0",
