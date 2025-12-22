@@ -174,7 +174,9 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
 
     const buttonText = useMemo(() => {
         if (learnDetail.practice.videos.length > 0) return t("chuyen_sang_thuc_hanh");
+
         if (learnDetail.exam.questions.length > 0) return t("chuyen_sang_bai_kiem_tra");
+
         return t("hoan_thanh_khoa_hoc");
     }, [learnDetail.practice.videos.length, learnDetail.exam.questions.length, t]);
 

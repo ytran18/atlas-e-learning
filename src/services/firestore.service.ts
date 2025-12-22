@@ -797,7 +797,7 @@ export async function getUserCourseCompleted(userId: string): Promise<UserCourse
             finishImageUrl: data.finishImageUrl || "",
             groupId: data?.groupId ?? "",
             examResult: data.examResult,
-            isCompleted: data.isCompleted || true,
+            isCompleted: data?.isCompleted || false,
             currentSection: data.currentSection || "exam",
             courseName: data.courseName || "",
         } as UserCourseCompleted;
