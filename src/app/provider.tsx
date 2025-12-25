@@ -18,7 +18,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { CookiesProvider, useCookies } from "react-cookie";
 
 import { createQueryClient } from "@/configs/reactQuery.config";
-import { makeGrowthBook } from "@/libs/growthbook/make-growthbook";
+import { makeGrowthBook } from "@/libs/growthbook";
 import { I18nProvider } from "@/libs/i18n/provider";
 import { i18nCookieName } from "@/libs/i18n/settings";
 import { initMixpanel } from "@/libs/mixpanel/mixpanel-client";
@@ -34,31 +34,17 @@ const customViVN = {
 };
 
 // Inner component to use hooks (must be inside ClerkProvider)
-function ProviderContent({
-    children,
-    growthBookPayload,
-}: {
-    children: React.ReactNode;
-    growthBookPayload: GrowthBookPayload;
-}) {
+function ProviderContent({ children }: { children: React.ReactNode }) {
     // Tạo QueryClient instance, chỉ tạo 1 lần duy nhất
     const [queryClient] = useState(() => createQueryClient());
 
     const [cookies] = useCookies([i18nCookieName]);
-
-    const gb = useMemo(() => makeGrowthBook(growthBookPayload), [growthBookPayload]);
 
     // Identify user in Mixpanel when authenticated
     useMixpanelUserIdentification();
 
     useEffect(() => {
         initMixpanel();
-    }, []);
-
-    useEffect(() => {
-        // Load features from the GrowthBook API and initialize the SDK
-        gb.loadFeatures();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -98,9 +84,7 @@ export default function Provider({
                 signUpUrl="/sign-up"
             >
                 <CookiesProvider>
-                    <ProviderContent growthBookPayload={growthBookPayload}>
-                        {children}
-                    </ProviderContent>
+                    <ProviderContent>{children}</ProviderContent>
                 </CookiesProvider>
             </ClerkProvider>
         </GrowthBookProvider>

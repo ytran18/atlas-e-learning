@@ -1,11 +1,17 @@
 "use client";
 
+import { useFeatureFlag } from "@/libs/growthbook";
+
 import CTASection from "./components/CTASection";
 import FeaturesSection from "./components/FeaturesSection";
 import HeroSection from "./components/HeroSection";
 
 const LandingPage = () => {
     const version = process.env.NEXT_PUBLIC_APP_VERSION;
+
+    const { isReady, value: maintenanceMode } = useFeatureFlag("maintenance-mode");
+
+    console.log({ isReady, maintenanceMode });
 
     return (
         <div className="min-h-screen">

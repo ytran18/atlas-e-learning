@@ -1,14 +1,17 @@
+"use client";
+
 import { FeatureApiResponse } from "@growthbook/growthbook";
 import { GrowthBook } from "@growthbook/growthbook-react";
 
 export function makeGrowthBook(payload?: FeatureApiResponse): GrowthBook {
+    const isDev = process.env.NODE_ENV === "development";
+
     const gb = new GrowthBook({
         apiHost: "https://cdn.growthbook.io",
         clientKey: process.env.NEXT_PUBLIC_GROWTHBOOK_ID,
-        // Enable easier debugging during development
-        // Update the instance in realtime as features change in GrowthBook
-        subscribeToChanges: true,
-        enableDevMode: true,
+        // Only subscribe to changes in development
+        subscribeToChanges: isDev,
+        enableDevMode: isDev,
     });
 
     if (payload) {

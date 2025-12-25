@@ -14,7 +14,7 @@ import {
     generateMetadata,
     generateOrganizationStructuredData,
 } from "@/configs/seo.config";
-import { getGrowthBookPayload } from "@/libs/growthbook/get-growthbook-payload";
+import { getGrowthBookPayload } from "@/libs/growthbook";
 import { i18nCookieName } from "@/libs/i18n/settings";
 
 import "./globals.css";
