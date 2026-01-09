@@ -13,6 +13,7 @@ type ModalUserDetailProps = {
     user: StudentStats | null;
     courseDetail?: CourseDetail;
     onDeleteSuccess?: () => void;
+    currentCourseName: string;
 };
 
 export enum UserDetailTabs {
@@ -26,6 +27,7 @@ const ModalUserDetail: FunctionComponent<ModalUserDetailProps> = ({
     user,
     courseDetail,
     onDeleteSuccess,
+    currentCourseName,
 }) => {
     const [tab, setTab] = useState<UserDetailTabs>(UserDetailTabs.INFO);
 
@@ -73,6 +75,11 @@ const ModalUserDetail: FunctionComponent<ModalUserDetailProps> = ({
                     examQuestions={examQuesions}
                     userAnswers={userAnswers}
                     setTab={setTab}
+                    userFullname={user?.fullname ?? ""}
+                    userBirthDate={user?.birthDate ?? ""}
+                    userIdcard={user?.userIdCard ?? ""}
+                    userImage={user?.startImageUrl ?? ""}
+                    currentCourseName={currentCourseName}
                 />
             )}
         </Modal>

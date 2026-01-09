@@ -24,166 +24,170 @@ const CustomPagination = dynamic(() => import("./CustomPagination"), {
 
 type UserTableProps = {
     className?: string;
+    currentCourseName: string;
 };
 
-const UserTable = forwardRef<HTMLDivElement, UserTableProps>(({ className }, ref) => {
-    const { t } = useI18nTranslate();
+const UserTable = forwardRef<HTMLDivElement, UserTableProps>(
+    ({ className, currentCourseName }, ref) => {
+        const { t } = useI18nTranslate();
 
-    const searchParams = useSearchParams();
+        const searchParams = useSearchParams();
 
-    const type = searchParams.get("type");
+        const type = searchParams.get("type");
 
-    const courseId = searchParams.get("courseId");
+        const courseId = searchParams.get("courseId");
 
-    const { results, refresh } = useInstantSearch();
+        const { results, refresh } = useInstantSearch();
 
-    // Check if Algolia is still loading (results might be null initially)
-    const isLoading = !results;
+        // Check if Algolia is still loading (results might be null initially)
+        const isLoading = !results;
 
-    // get course detail
-    const { data: courseDetail } = useCourseDetail(type as CourseType, courseId as string);
+        // get course detail
+        const { data: courseDetail } = useCourseDetail(type as CourseType, courseId as string);
 
-    const [openedModalUserDetail, setOpenedModalUserDetail] = useState<boolean>(false);
+        const [openedModalUserDetail, setOpenedModalUserDetail] = useState<boolean>(false);
 
-    const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+        const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
-    // Fetch user detail when a row is clicked
-    const { data: userDetail, isLoading: isLoadingUserDetail } = useGetUserDetail(
-        type as CourseType,
-        courseId as string,
-        selectedUserId as string,
-        {
-            enabled: !!selectedUserId && !!courseId && !!type,
-        }
-    );
-
-    const handleDeleteSuccess = () => {
-        // Clear selected user to prevent showing deleted data
-        setSelectedUserId(null);
-        // Refresh Algolia results
-        refresh();
-    };
-
-    const isTableDataEmpty = results?.hits?.length === 0;
-
-    if (isTableDataEmpty) return <Empty description={t("khong_co_du_lieu")} />;
-
-    const rows = results?.hits?.map((element: any) => {
-        const isCompleted = Boolean(element.isCompleted);
-
-        const isTheoryCompleted = Boolean(
-            element.currentSection === "practice" ||
-                element.currentSection === "exam" ||
-                isCompleted
+        // Fetch user detail when a row is clicked
+        const { data: userDetail, isLoading: isLoadingUserDetail } = useGetUserDetail(
+            type as CourseType,
+            courseId as string,
+            selectedUserId as string,
+            {
+                enabled: !!selectedUserId && !!courseId && !!type,
+            }
         );
 
-        const isPracticeCompleted = Boolean(element.currentSection === "exam" || isCompleted);
-
-        const handleRowClick = () => {
-            // Get userId from objectID or element data
-            const userId = element?.objectID || element?.userId;
-            const groupId = element?.groupId || courseId;
-
-            if (userId && groupId) {
-                setSelectedUserId(userId);
-                setOpenedModalUserDetail(true);
-            }
+        const handleDeleteSuccess = () => {
+            // Clear selected user to prevent showing deleted data
+            setSelectedUserId(null);
+            // Refresh Algolia results
+            refresh();
         };
 
+        const isTableDataEmpty = results?.hits?.length === 0;
+
+        if (isTableDataEmpty) return <Empty description={t("khong_co_du_lieu")} />;
+
+        const rows = results?.hits?.map((element: any) => {
+            const isCompleted = Boolean(element.isCompleted);
+
+            const isTheoryCompleted = Boolean(
+                element.currentSection === "practice" ||
+                    element.currentSection === "exam" ||
+                    isCompleted
+            );
+
+            const isPracticeCompleted = Boolean(element.currentSection === "exam" || isCompleted);
+
+            const handleRowClick = () => {
+                // Get userId from objectID or element data
+                const userId = element?.objectID || element?.userId;
+                const groupId = element?.groupId || courseId;
+
+                if (userId && groupId) {
+                    setSelectedUserId(userId);
+                    setOpenedModalUserDetail(true);
+                }
+            };
+
+            return (
+                <Tooltip key={element?.objectID} label={t("nhan_vao_de_xem_chi_tiet")} withArrow>
+                    <Table.Tr onClick={handleRowClick}>
+                        <Table.Td>{element?.userFullname ?? ""}</Table.Td>
+
+                        <Table.Td>{element?.userIdCard ?? element?.cccd ?? ""}</Table.Td>
+
+                        <Table.Td>{element?.userBirthDate ?? ""}</Table.Td>
+
+                        <Table.Td>{element?.userCompanyName ?? ""}</Table.Td>
+
+                        <Table.Td>
+                            {element?.lastUpdatedAt
+                                ? dayjs(Number(element.lastUpdatedAt)).format("DD-MM-YYYY HH:mm")
+                                : ""}
+                        </Table.Td>
+
+                        <Table.Td>
+                            <Checkbox readOnly checked={isTheoryCompleted} />
+                        </Table.Td>
+
+                        <Table.Td>
+                            <Checkbox readOnly checked={isPracticeCompleted} />
+                        </Table.Td>
+
+                        <Table.Td>
+                            <Checkbox readOnly checked={isCompleted} />
+                        </Table.Td>
+
+                        <Table.Td>
+                            <Checkbox readOnly checked={isCompleted} />
+                        </Table.Td>
+                    </Table.Tr>
+                </Tooltip>
+            );
+        });
+
         return (
-            <Tooltip key={element?.objectID} label={t("nhan_vao_de_xem_chi_tiet")} withArrow>
-                <Table.Tr onClick={handleRowClick}>
-                    <Table.Td>{element?.userFullname ?? ""}</Table.Td>
+            <div className={`flex flex-col gap-y-2 flex-1 ${className}`} ref={ref}>
+                <div className="flex-1 max-h-[calc(100vh-268px)] md:max-h-[calc(100vh-306px)] lg:max-h-[calc(100vh-380px)] overflow-y-auto">
+                    <Table highlightOnHover withTableBorder withColumnBorders stickyHeader>
+                        <Table.Thead>
+                            <Table.Tr>
+                                {tableHeader.map((header) => (
+                                    <Table.Th key={header.key}>{t(header.label)}</Table.Th>
+                                ))}
+                            </Table.Tr>
+                        </Table.Thead>
 
-                    <Table.Td>{element?.userIdCard ?? element?.cccd ?? ""}</Table.Td>
+                        {isLoading ? (
+                            <div>
+                                <Loader />
+                            </div>
+                        ) : (
+                            <Table.Tbody>{rows}</Table.Tbody>
+                        )}
+                    </Table>
+                </div>
 
-                    <Table.Td>{element?.userBirthDate ?? ""}</Table.Td>
+                <div className="w-full">
+                    <CustomPagination />
+                </div>
 
-                    <Table.Td>{element?.userCompanyName ?? ""}</Table.Td>
-
-                    <Table.Td>
-                        {element?.lastUpdatedAt
-                            ? dayjs(Number(element.lastUpdatedAt)).format("DD-MM-YYYY HH:mm")
-                            : ""}
-                    </Table.Td>
-
-                    <Table.Td>
-                        <Checkbox readOnly checked={isTheoryCompleted} />
-                    </Table.Td>
-
-                    <Table.Td>
-                        <Checkbox readOnly checked={isPracticeCompleted} />
-                    </Table.Td>
-
-                    <Table.Td>
-                        <Checkbox readOnly checked={isCompleted} />
-                    </Table.Td>
-
-                    <Table.Td>
-                        <Checkbox readOnly checked={isCompleted} />
-                    </Table.Td>
-                </Table.Tr>
-            </Tooltip>
-        );
-    });
-
-    return (
-        <div className={`flex flex-col gap-y-2 flex-1 ${className}`} ref={ref}>
-            <div className="flex-1 max-h-[calc(100vh-268px)] md:max-h-[calc(100vh-306px)] lg:max-h-[calc(100vh-380px)] overflow-y-auto">
-                <Table highlightOnHover withTableBorder withColumnBorders stickyHeader>
-                    <Table.Thead>
-                        <Table.Tr>
-                            {tableHeader.map((header) => (
-                                <Table.Th key={header.key}>{t(header.label)}</Table.Th>
-                            ))}
-                        </Table.Tr>
-                    </Table.Thead>
-
-                    {isLoading ? (
-                        <div>
+                {isLoadingUserDetail ? (
+                    <Modal
+                        opened={openedModalUserDetail}
+                        onClose={() => {
+                            setOpenedModalUserDetail(false);
+                            setSelectedUserId(null);
+                        }}
+                        title={t("dang_tai")}
+                        closeOnEscape={false}
+                        centered
+                        size="lg"
+                    >
+                        <div className="flex items-center justify-center min-h-[200px]">
                             <Loader />
                         </div>
-                    ) : (
-                        <Table.Tbody>{rows}</Table.Tbody>
-                    )}
-                </Table>
+                    </Modal>
+                ) : (
+                    <ModalUserDetail
+                        opened={openedModalUserDetail}
+                        onClose={() => {
+                            setOpenedModalUserDetail(false);
+                            setSelectedUserId(null);
+                        }}
+                        user={userDetail || null}
+                        courseDetail={courseDetail}
+                        onDeleteSuccess={handleDeleteSuccess}
+                        currentCourseName={currentCourseName}
+                    />
+                )}
             </div>
-
-            <div className="w-full">
-                <CustomPagination />
-            </div>
-
-            {isLoadingUserDetail ? (
-                <Modal
-                    opened={openedModalUserDetail}
-                    onClose={() => {
-                        setOpenedModalUserDetail(false);
-                        setSelectedUserId(null);
-                    }}
-                    title={t("dang_tai")}
-                    closeOnEscape={false}
-                    centered
-                    size="lg"
-                >
-                    <div className="flex items-center justify-center min-h-[200px]">
-                        <Loader />
-                    </div>
-                </Modal>
-            ) : (
-                <ModalUserDetail
-                    opened={openedModalUserDetail}
-                    onClose={() => {
-                        setOpenedModalUserDetail(false);
-                        setSelectedUserId(null);
-                    }}
-                    user={userDetail || null}
-                    courseDetail={courseDetail}
-                    onDeleteSuccess={handleDeleteSuccess}
-                />
-            )}
-        </div>
-    );
-});
+        );
+    }
+);
 
 UserTable.displayName = "UserTable";
 

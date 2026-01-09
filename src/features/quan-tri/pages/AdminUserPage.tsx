@@ -61,6 +61,8 @@ const AdminUserPage = () => {
         return filters.length > 0 ? filters : undefined;
     }, [searchParams]);
 
+    const currentCourseName = courseList?.find((item) => item.id === courseId)?.title;
+
     if (!courseList) return null;
 
     if (!courseId) {
@@ -130,7 +132,7 @@ const AdminUserPage = () => {
                     <Card withBorder className="w-full h-full flex flex-col gap-y-4 flex-1">
                         <UserFilter />
 
-                        <UserTable ref={tableRef} />
+                        <UserTable ref={tableRef} currentCourseName={currentCourseName || ""} />
                     </Card>
                 </div>
             </AdminUserProvider>

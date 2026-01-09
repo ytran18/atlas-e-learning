@@ -33,6 +33,7 @@
         "@mantine/hooks": "8.3.3",
         "@mantine/modals": "8.3.3",
         "@mantine/notifications": "8.3.3",
+        "@react-pdf/renderer": "^4.3.2",
         "@sparticuz/chromium": "^141.0.0",
         "@tabler/icons-react": "^3.35.0",
         "@tailwindcss/postcss": "^4",
