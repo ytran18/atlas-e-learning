@@ -79,7 +79,43 @@ const HeroSection = () => {
 
                                     const isWebview = getIsWebView(getUA);
 
-                                    console.log({ isWebview });
+                                    if (isWebview) {
+                                        const iosDomain = getBaseUrl() || "";
+
+                                        const androidDomain =
+                                            getBaseUrl()?.replaceAll("https://", "") || "";
+
+                                        const baseUrl = {
+                                            android: androidDomain,
+                                            ios: `${iosDomain}/`,
+                                        };
+
+                                        const updatedSearchParams = new URLSearchParams(
+                                            searchParams.toString()
+                                        );
+
+                                        const href = getRedirectUrl(
+                                            baseUrl,
+                                            pathname || "",
+                                            `?${updatedSearchParams.toString()}`
+                                        );
+
+                                        window.location.href = href;
+                                    } else {
+                                        router.push(navigationPaths.ATLD);
+                                    }
+                                }}
+                            >
+                                <Button size="lg">{t("an_toan_lao_dong")}</Button>
+                            </Link>
+
+                            <Link
+                                href={navigationPaths.HOC_NGHE}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+
+                                    const isWebview = getIsWebView(getUA);
 
                                     if (isWebview) {
                                         const iosDomain = getBaseUrl() || "";
@@ -102,18 +138,12 @@ const HeroSection = () => {
                                             `?${updatedSearchParams.toString()}`
                                         );
 
-                                        console.log({ href });
-
                                         window.location.href = href;
                                     } else {
-                                        router.push(navigationPaths.ATLD);
+                                        router.push(navigationPaths.HOC_NGHE);
                                     }
                                 }}
                             >
-                                <Button size="lg">{t("an_toan_lao_dong")}</Button>
-                            </Link>
-
-                            <Link href={navigationPaths.HOC_NGHE}>
                                 <Button size="lg" variant="outline">
                                     {t("hoc_nghe")}
                                 </Button>
