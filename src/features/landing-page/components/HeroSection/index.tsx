@@ -3,11 +3,16 @@
 import { lazy } from "react";
 
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Badge, Button } from "@mantine/core";
+import { getUA } from "react-device-detect";
 
 import { fadeInUp, staggerContainer } from "@/animations/landing-page";
 import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+import { getBaseUrl } from "@/utils/get-base-url";
+import { getIsWebView } from "@/utils/get-is-webview";
+import { getRedirectUrl } from "@/utils/get-redirect-url";
 import { navigationPaths } from "@/utils/navigationPaths";
 
 const AnimatedDiv = lazy(() => import("../../animations/AnimatedDiv"));
@@ -18,6 +23,12 @@ const AnimatedParagraph = lazy(() => import("../../animations/AnimatedParagraph"
 
 const HeroSection = () => {
     const { t } = useI18nTranslate();
+
+    const router = useRouter();
+
+    const pathname = usePathname();
+
+    const searchParams = useSearchParams();
 
     return (
         <section className="relative py-20 md:py-32 overflow-hidden">
@@ -60,7 +71,45 @@ const HeroSection = () => {
 
                     <AnimatedDiv variants={fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link href={navigationPaths.ATLD}>
+                            <Link
+                                href={navigationPaths.ATLD}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+
+                                    const isWebview = getIsWebView(getUA);
+
+                                    console.log({ isWebview });
+
+                                    if (isWebview) {
+                                        const iosDomain = getBaseUrl() || "";
+
+                                        const androidDomain =
+                                            getBaseUrl()?.replaceAll("https://", "") || "";
+
+                                        const baseUrl = {
+                                            android: androidDomain,
+                                            ios: `${iosDomain}/`,
+                                        };
+
+                                        const updatedSearchParams = new URLSearchParams(
+                                            searchParams.toString()
+                                        );
+
+                                        const href = getRedirectUrl(
+                                            baseUrl,
+                                            pathname || "",
+                                            `?${updatedSearchParams.toString()}`
+                                        );
+
+                                        console.log({ href });
+
+                                        window.location.href = href;
+                                    } else {
+                                        router.push(navigationPaths.ATLD);
+                                    }
+                                }}
+                            >
                                 <Button size="lg">{t("an_toan_lao_dong")}</Button>
                             </Link>
 
