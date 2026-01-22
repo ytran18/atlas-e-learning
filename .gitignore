@@ -52,3 +52,5 @@ next-env.d.ts
 # bmad
 _bmad/
 _bmad-output
+# Sentry Config File
+.env.sentry-build-plugin
