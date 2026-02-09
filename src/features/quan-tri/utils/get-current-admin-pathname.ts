@@ -2,6 +2,7 @@ const ADMIN_ATLD = "atld";
 const ADMIN_HOC_NGHE = "hoc-nghe";
 const ADMIN_USER = "user";
 const ADMIN_DOCS = "docs";
+const ADMIN_CERT = "certificate";
 
 export const getCurrentAdminPathname = (pathname: string, isStaff?: boolean) => {
     if (isStaff) {
@@ -17,6 +18,8 @@ export const getCurrentAdminPathname = (pathname: string, isStaff?: boolean) => 
     if (pathname.includes(ADMIN_USER)) return ADMIN_USER;
 
     if (pathname.includes(ADMIN_DOCS)) return ADMIN_DOCS;
+
+    if (pathname.includes(ADMIN_CERT)) return ADMIN_CERT;
 
     return ADMIN_ATLD;
 };

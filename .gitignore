@@ -54,3 +54,6 @@ _bmad/
 _bmad-output
 # Sentry Config File
 .env.sentry-build-plugin
+
+.shared/script
+.shared/ui-ux-pro-max/scripts/
