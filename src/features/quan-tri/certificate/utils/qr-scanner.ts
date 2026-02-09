@@ -103,21 +103,21 @@ export const scanQRFromImage = async (file: File): Promise<string> => {
         // Preprocess image with multiple strategies
         const processedFiles = await preprocessImage(file);
 
+        // Create Html5Qrcode instance
+        html5QrCode = new Html5Qrcode("qr-reader");
+
         // Try scanning each preprocessed version
         for (let i = 0; i < processedFiles.length; i++) {
             try {
                 console.log(`Trying scan attempt ${i + 1}/${processedFiles.length}...`);
 
-                if (!html5QrCode) {
-                    html5QrCode = new Html5Qrcode("temp-qr-reader");
-                }
+                // Use scanFileV2 method on the instance
+                const result = await html5QrCode.scanFileV2(processedFiles[i], false);
 
-                const decodedText = await html5QrCode.scanFile(processedFiles[i], false);
-
-                if (decodedText && decodedText.trim()) {
+                if (result && result.decodedText && result.decodedText.trim()) {
                     console.log("QR code detected successfully!");
 
-                    return decodedText.trim();
+                    return result.decodedText.trim();
                 }
             } catch (scanError) {
                 console.warn(`Scan attempt ${i + 1} failed:`, scanError);

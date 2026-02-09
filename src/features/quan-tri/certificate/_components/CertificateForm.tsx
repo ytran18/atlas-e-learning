@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, TextInput } from "@mantine/core";
+import { IconCheck } from "@tabler/icons-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -19,10 +20,20 @@ const certificateFormSchema = z.object({
 interface CertificateFormProps {
     initialData?: Partial<CertificateFormData>;
     onSubmit: (data: CertificateFormData) => void;
+    onSuccess?: () => void;
     isLoading?: boolean;
 }
 
-const CertificateForm = ({ initialData, onSubmit, isLoading = false }: CertificateFormProps) => {
+const CertificateForm = ({
+    initialData,
+    onSubmit,
+    onSuccess,
+    isLoading = false,
+}: CertificateFormProps) => {
+    const hasInitialized = useRef(false);
+
+    const [showSuccess, setShowSuccess] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -38,20 +49,32 @@ const CertificateForm = ({ initialData, onSubmit, isLoading = false }: Certifica
         },
     });
 
-    // Update form when initial data changes
+    // Only reset form on initial mount, NOT on subsequent initialData changes
     useEffect(() => {
-        if (initialData) {
+        if (initialData && !hasInitialized.current) {
             reset({
                 studentName: initialData.studentName || "",
                 courseName: initialData.courseName || "",
                 birthYear: initialData.birthYear || "",
                 certificateId: initialData.certificateId || `CERT-${Date.now()}`,
             });
+            hasInitialized.current = true;
         }
     }, [initialData, reset]);
 
+    const handleFormSubmit = (data: CertificateFormData) => {
+        onSubmit(data);
+
+        // Show success feedback
+        setShowSuccess(true);
+
+        setTimeout(() => setShowSuccess(false), 2000);
+
+        onSuccess?.();
+    };
+
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
             <div className="space-y-4">
                 {/* Student Name */}
                 <TextInput
@@ -113,11 +136,18 @@ const CertificateForm = ({ initialData, onSubmit, isLoading = false }: Certifica
             {/* Submit Button */}
             <Button
                 type="submit"
-                className="w-full bg-sky-700 hover:bg-sky-800"
+                className={`w-full transition-all duration-300 ${
+                    showSuccess ? "bg-green-600 hover:bg-green-700" : "bg-sky-700 hover:bg-sky-800"
+                }`}
                 size="md"
                 loading={isLoading}
+                leftSection={
+                    showSuccess ? (
+                        <IconCheck className="w-5 h-5 animate-in zoom-in duration-300" />
+                    ) : null
+                }
             >
-                Tạo Chứng Chỉ
+                {showSuccess ? "Đã Cập Nhật!" : "Cập Nhật Thông Tin"}
             </Button>
         </form>
     );
