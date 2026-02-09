@@ -70,6 +70,9 @@ const IdCardUploader = ({ onQRScanned, onError }: IdCardUploaderProps) => {
 
     return (
         <div className="space-y-4">
+            {/* Hidden element required by Html5Qrcode library */}
+            <div id="qr-reader" className="hidden"></div>
+
             {!uploadedFile ? (
                 <Dropzone
                     onDrop={handleDrop}
