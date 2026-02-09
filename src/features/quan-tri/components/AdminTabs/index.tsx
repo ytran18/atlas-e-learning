@@ -98,7 +98,12 @@ const AdminTabs = () => {
 
                         const isNavigating = navigatingTab === item.value;
 
-                        if ((item.value === "atld" || item.value === "hoc-nghe") && !isAdmin) {
+                        if (
+                            (item.value === "atld" ||
+                                item.value === "hoc-nghe" ||
+                                item.value === "certificate") &&
+                            !isAdmin
+                        ) {
                             return null;
                         }
 

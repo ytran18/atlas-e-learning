@@ -8,6 +8,8 @@ export const getCurrentAdminPathname = (pathname: string, isStaff?: boolean) => 
     if (isStaff) {
         if (pathname.includes(ADMIN_DOCS)) return ADMIN_DOCS;
 
+        if (pathname.includes(ADMIN_CERT)) return ADMIN_USER;
+
         return ADMIN_USER;
     }
 
