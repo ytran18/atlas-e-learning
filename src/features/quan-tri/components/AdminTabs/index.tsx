@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { useClerk } from "@clerk/nextjs";
 import { Card, Loader, Tabs, ThemeIcon } from "@mantine/core";
-import { IconFile, IconHammer, IconShield, IconUsers } from "@tabler/icons-react";
+import { IconCertificate, IconFile, IconHammer, IconShield, IconUsers } from "@tabler/icons-react";
 
 import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
 import { navigationPaths } from "@/utils/navigationPaths";
@@ -57,6 +57,13 @@ const AdminTabs = () => {
             icon: IconUsers,
             color: "teal",
             href: navigationPaths.QUAN_TRI_USER,
+        },
+        {
+            value: "certificate",
+            label: "Chứng chỉ",
+            icon: IconCertificate,
+            color: "violet",
+            href: navigationPaths.QUAN_TRI_CERT,
         },
     ];
 

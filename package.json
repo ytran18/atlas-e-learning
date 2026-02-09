@@ -49,6 +49,7 @@
         "firebase-admin": "^13.5.0",
         "framer-motion": "^12.23.22",
         "hls.js": "^1.6.13",
+        "html5-qrcode": "^2.3.8",
         "i18next": "^25.6.3",
         "i18next-resources-to-backend": "^1.2.1",
         "media-chrome": "^4.14.0",

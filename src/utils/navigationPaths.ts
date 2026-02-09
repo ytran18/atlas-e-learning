@@ -20,6 +20,7 @@ export const navigationPaths = {
     QUAN_TRI_USER: `/quan-tri/user`,
     USER_DETAIL: `/user/[${USER_SLUG}]`,
     QUAN_TRI_DOCS: `/quan-tri/docs`,
+    QUAN_TRI_CERT: `/quan-tri/certificate`,
 };
 
 export const publicPaths = [
