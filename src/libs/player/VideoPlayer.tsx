@@ -26,6 +26,8 @@ interface VideoPlayerProps {
     isUsingLink?: boolean; // whether the video source is using link
     // optional external ref to the underlying HTMLVideoElement
     videoRef?: RefObject<HTMLVideoElement | null>;
+    // called when a fatal (unrecoverable) video error occurs
+    onError?: (errorType: string, message: string) => void;
 }
 
 const LOADING_DEBOUNCE_TIME = 200;
@@ -41,6 +43,7 @@ const VideoPlayer = ({
     isHls = true,
     isUsingLink = false,
     videoRef,
+    onError,
 }: VideoPlayerProps) => {
     const hlsRef = useRef<Hls | null>(null);
 
@@ -115,14 +118,17 @@ const VideoPlayer = ({
                         case Hls.ErrorTypes.NETWORK_ERROR:
                             console.log("Fatal network error encountered, try to recover");
                             hls.startLoad();
+                            onError?.("hls_network", data.error?.message ?? "HLS network error");
                             break;
                         case Hls.ErrorTypes.MEDIA_ERROR:
                             console.log("Fatal media error encountered, try to recover");
                             hls.recoverMediaError();
+                            onError?.("hls_media", data.error?.message ?? "HLS media error");
                             break;
                         default:
                             console.log("Fatal error, cannot recover");
                             hls.destroy();
+                            onError?.("hls_fatal", data.error?.message ?? "HLS fatal error");
                             break;
                     }
                 }
@@ -138,7 +144,7 @@ const VideoPlayer = ({
                 hlsRef.current = null;
             }
         };
-    }, [src, isHls, isUsingLink, videoRef]);
+    }, [src, isHls, isUsingLink, videoRef, onError]);
 
     // Cleanup timeout on unmount
     useEffect(() => {
@@ -175,6 +181,12 @@ const VideoPlayer = ({
                         setIsLoadingVideo(false);
                     }}
                     onProgress={handleProgress}
+                    onError={(event: React.SyntheticEvent<HTMLVideoElement>) => {
+                        const mediaError = (event.currentTarget as HTMLVideoElement).error;
+                        const message = mediaError?.message ?? "Unknown native video error";
+                        console.error("Native video error:", mediaError);
+                        onError?.("native", message);
+                    }}
                     style={{
                         width: "100%",
                         height: "100%",

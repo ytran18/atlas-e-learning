@@ -22,6 +22,8 @@ import type {
     UserSignedInEvent,
     UserSignedOutEvent,
     UserSignedUpEvent,
+    VideoLoadErrorEvent,
+    VideoPlaybackErrorEvent,
 } from "./event-types";
 import { dispatchTrackingEvent, identifyMixpanel } from "./mixpanel-client";
 
@@ -146,6 +148,24 @@ export const trackStudentSearched = (properties: StudentSearchedEvent["propertie
 export const trackDocumentSearched = (properties: DocumentSearchedEvent["properties"]) => {
     trackEvent<DocumentSearchedEvent>({
         event: "document_searched",
+        properties,
+    });
+};
+
+// ============================================================================
+// Video Error Events
+// ============================================================================
+
+export const trackVideoLoadError = (properties: VideoLoadErrorEvent["properties"]) => {
+    trackEvent<VideoLoadErrorEvent>({
+        event: "video_load_error",
+        properties,
+    });
+};
+
+export const trackVideoPlaybackError = (properties: VideoPlaybackErrorEvent["properties"]) => {
+    trackEvent<VideoPlaybackErrorEvent>({
+        event: "video_playback_error",
         properties,
     });
 };

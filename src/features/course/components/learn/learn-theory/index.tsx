@@ -9,6 +9,7 @@ import { useLearnContext } from "@/contexts/LearnContext";
 import { useAutoCapture } from "@/features/course/hooks/useAutoCapture";
 import { COURSE_THEMES } from "@/features/course/types";
 import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+import { trackVideoLoadError } from "@/libs/mixpanel/tracking";
 import VideoPlayer from "@/libs/player/VideoPlayer";
 import { CourseType } from "@/types/api";
 
@@ -172,6 +173,19 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
         totalVideos,
     });
 
+    const handleVideoError = (errorType: string, message: string) => {
+        trackVideoLoadError({
+            course_type: courseType,
+            course_id: learnDetail.id,
+            video_url: currentVideo?.url ?? "",
+            section: "theory",
+            video_index: videoIndex,
+            error_type: errorType as "hls_network" | "hls_media" | "hls_fatal" | "native",
+            error_message: message,
+            timestamp: Date.now(),
+        });
+    };
+
     const buttonText = useMemo(() => {
         if (learnDetail.practice.videos.length > 0) return t("chuyen_sang_thuc_hanh");
 
@@ -199,6 +213,7 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                         }
                         onEnded={handleVideoEnded}
                         onProgress={onPlayerProgress}
+                        onError={handleVideoError}
                         videoRef={videoRef}
                     />
                 </div>

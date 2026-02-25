@@ -54,3 +54,5 @@ _bmad/
 _bmad-output
 # Sentry Config File
 .env.sentry-build-plugin
+
+.shared/
