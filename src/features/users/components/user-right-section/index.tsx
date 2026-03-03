@@ -50,6 +50,7 @@ const UserRightSection = ({ user }: UserRightSectionProps) => {
                 icon={<IconEPassport className="size-5" />}
                 type={EditInfoType.CCCD}
                 onEdit={() => handleOpenModalEditInfo(EditInfoType.CCCD)}
+                isEditable={false}
             />
 
             <InfoCard
@@ -58,6 +59,7 @@ const UserRightSection = ({ user }: UserRightSectionProps) => {
                 type={EditInfoType.FULL_NAME}
                 value={user?.fullName}
                 onEdit={() => handleOpenModalEditInfo(EditInfoType.FULL_NAME)}
+                isEditable={false}
             />
 
             <InfoCard

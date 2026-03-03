@@ -9,9 +9,10 @@ type InfoCardProps = {
     value: string;
     onEdit: (type: EditInfoType) => void;
     type: EditInfoType;
+    isEditable?: boolean;
 };
 
-const InfoCard = ({ title, icon, value, onEdit, type }: InfoCardProps) => {
+const InfoCard = ({ title, icon, value, onEdit, type, isEditable = true }: InfoCardProps) => {
     return (
         <Card withBorder radius="md" shadow="sm" className="w-full relative">
             <div className="flex flex-col gap-y-2">
@@ -26,11 +27,16 @@ const InfoCard = ({ title, icon, value, onEdit, type }: InfoCardProps) => {
                 </div>
             </div>
 
-            <div className="absolute top-2 right-3">
-                <Tooltip label="Chỉnh sửa" withArrow>
-                    <IconPencil className="size-4 cursor-pointer" onClick={() => onEdit(type)} />
-                </Tooltip>
-            </div>
+            {isEditable && (
+                <div className="absolute top-2 right-3">
+                    <Tooltip label="Chỉnh sửa" withArrow>
+                        <IconPencil
+                            className="size-4 cursor-pointer"
+                            onClick={() => onEdit(type)}
+                        />
+                    </Tooltip>
+                </div>
+            )}
         </Card>
     );
 };
