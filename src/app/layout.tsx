@@ -75,6 +75,9 @@ export default async function RootLayout({
                     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8929342474531813"
                     crossOrigin="anonymous"
                     strategy="afterInteractive"
+                    onError={(e) => {
+                        console.error("AdSense failed to load", e);
+                    }}
                 />
             </head>
             <body
