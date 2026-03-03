@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Geist, Geist_Mono, Noto_Sans_KR } from "next/font/google";
 import { cookies } from "next/headers";
-import Script from "next/script";
 
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -70,15 +69,6 @@ export default async function RootLayout({
         <html lang={locale} className={isKr ? notoSansKr.variable : beVietnamPro.variable}>
             <head>
                 <StructuredData data={generateOrganizationStructuredData()} />
-                <Script
-                    async
-                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8929342474531813"
-                    crossOrigin="anonymous"
-                    strategy="afterInteractive"
-                    onError={(e) => {
-                        console.error("AdSense failed to load", e);
-                    }}
-                />
             </head>
             <body
                 className={`${isKr ? notoSansKr.className : beVietnamPro.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
