@@ -2,6 +2,7 @@
 
 import { FunctionComponent } from "react";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { useClerk, useUser } from "@clerk/nextjs";
@@ -129,17 +130,38 @@ const AuthButton: FunctionComponent<AuthButtonProps> = ({
 
     return (
         <Group gap="xs" className={`${className} justify-end!`}>
-            <Button
-                variant="default"
-                size="xs"
-                onClick={handleLogin}
-                className={signInButtonClassName}
+            <div
+                onMouseEnter={() => {
+                    router.prefetch(navigationPaths.SIGN_IN);
+                }}
             >
-                {t("dang_nhap")}
-            </Button>
-            <Button size="xs" onClick={handleSignUp} className={signUpButtonClassName}>
-                {t("dang_ky")}
-            </Button>
+                <Button
+                    component={Link}
+                    href={navigationPaths.SIGN_IN}
+                    variant="default"
+                    size="xs"
+                    onClick={handleLogin}
+                    className={signInButtonClassName}
+                >
+                    {t("dang_nhap")}
+                </Button>
+            </div>
+
+            <div
+                onMouseEnter={() => {
+                    router.prefetch(navigationPaths.SIGN_UP);
+                }}
+            >
+                <Button
+                    size="xs"
+                    component={Link}
+                    onClick={handleSignUp}
+                    href={navigationPaths.SIGN_UP}
+                    className={signUpButtonClassName}
+                >
+                    {t("dang_ky")}
+                </Button>
+            </div>
         </Group>
     );
 };

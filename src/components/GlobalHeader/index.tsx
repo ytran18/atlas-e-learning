@@ -232,6 +232,7 @@ const GlobalHeader = () => {
                         <Button color="red" size="sm" onClick={handleLogout}>
                             <div className="flex items-center gap-x-2">
                                 <IconLogout className="text-white" size={16} />
+
                                 <Text>{t("dang_xuat")}</Text>
                             </div>
                         </Button>
