@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro, Geist, Geist_Mono, Noto_Sans_KR } from "next/font/google";
+import {
+    Be_Vietnam_Pro,
+    Geist,
+    Geist_Mono,
+    Noto_Sans_KR,
+    Outfit,
+    Work_Sans,
+} from "next/font/google";
 import { cookies } from "next/headers";
 
 import { Analytics } from "@vercel/analytics/next";
@@ -48,6 +55,18 @@ const geistMono = Geist_Mono({
     preload: false,
 });
 
+const outfit = Outfit({
+    variable: "--font-outfit",
+    subsets: ["latin"],
+    display: "swap",
+});
+
+const workSans = Work_Sans({
+    variable: "--font-work-sans",
+    subsets: ["latin", "vietnamese"],
+    display: "swap",
+});
+
 export const metadata: Metadata = generateMetadata({
     title: baseSeoConfig.defaultTitle,
     description: baseSeoConfig.defaultDescription,
@@ -71,7 +90,7 @@ export default async function RootLayout({
                 <StructuredData data={generateOrganizationStructuredData()} />
             </head>
             <body
-                className={`${isKr ? notoSansKr.className : beVietnamPro.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
+                className={`${isKr ? notoSansKr.className : beVietnamPro.className} ${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${workSans.variable} antialiased`}
             >
                 <SpeedInsights />
 

@@ -43,6 +43,8 @@
     --color-foreground: var(--foreground);
     --font-sans: var(--font-be-vietnam-pro);
     --font-mono: var(--font-geist-mono);
+    --font-heading: var(--font-outfit);
+    --font-body: var(--font-work-sans);
 }
 
 @media (prefers-color-scheme: dark) {

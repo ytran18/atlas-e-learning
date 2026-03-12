@@ -5,6 +5,7 @@ import { useFeatureFlag } from "@/libs/growthbook";
 import CTASection from "./components/CTASection";
 import FeaturesSection from "./components/FeaturesSection";
 import HeroSection from "./components/HeroSection";
+import StatsSection from "./components/StatsSection";
 
 const LandingPage = () => {
     const version = process.env.NEXT_PUBLIC_APP_VERSION;
@@ -16,6 +17,8 @@ const LandingPage = () => {
     return (
         <div className="min-h-screen">
             <HeroSection />
+
+            <StatsSection />
 
             <FeaturesSection />
 
