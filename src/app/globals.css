@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "@vidstack/react/player/styles/default/theme.css";
+@import "@vidstack/react/player/styles/default/layouts/audio.css";
+@import "@vidstack/react/player/styles/default/layouts/video.css";
 
 :root {
     --primary: oklch(0.62 0.15 240);

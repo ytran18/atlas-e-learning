@@ -1,18 +1,23 @@
 "use client";
 
-import { ReactEventHandler, RefObject, useEffect, useRef, useState } from "react";
+import { ReactEventHandler, RefObject, useRef } from "react";
 
-import Hls from "hls.js";
 import {
-    MediaControlBar,
-    MediaController,
-    // MediaFullscreenButton,
-    MediaPlayButton,
-    MediaTimeDisplay,
-    MediaTimeRange,
-    MediaVolumeRange,
-} from "media-chrome/react";
-import Player from "react-player";
+    MediaPlayer,
+    type MediaPlayerInstance,
+    MediaProvider,
+    type MediaProviderAdapter,
+    type MediaSeekRequestEvent,
+    type MediaSeekingRequestEvent,
+    TimeSlider,
+    isHLSProvider,
+} from "@vidstack/react";
+import {
+    DefaultAudioLayout,
+    DefaultVideoLayout,
+    defaultLayoutIcons,
+} from "@vidstack/react/player/layouts/default";
+import "@vidstack/react/player/styles/base.css";
 
 interface VideoPlayerProps {
     src: string;
@@ -30,193 +35,120 @@ interface VideoPlayerProps {
     onError?: (errorType: string, message: string) => void;
 }
 
-const LOADING_DEBOUNCE_TIME = 200;
-
 const VideoPlayer = ({
     src,
     canSeek = true,
-    isPreview = false,
+    // isPreview = false,
     onEnded,
     onPause,
     onPlay,
     onProgress,
-    isHls = true,
-    isUsingLink = false,
-    videoRef,
     onError,
+    // isHls = true,
+    // isUsingLink = false,
+    videoRef,
 }: VideoPlayerProps) => {
-    const hlsRef = useRef<Hls | null>(null);
+    const player = useRef<MediaPlayerInstance>(null);
+    const maxWatchedTime = useRef(0);
 
-    const isLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    // useEffect(() => {
+    //     // Subscribe to state updates.
+    //     return player.current?.subscribe(() => {
+    //         // console.log('is paused?', '->', paused);
+    //         // console.log('is audio view?', '->', viewType === 'audio');
+    //     });
+    // }, []);
 
-    const [, setIsLoadingVideo] = useState<boolean>(false);
-
-    const handleReady = () => {
-        clearTimeout(isLoadingTimeoutRef.current as NodeJS.Timeout);
-
-        isLoadingTimeoutRef.current = setTimeout(() => {
-            setIsLoadingVideo(false);
-        }, LOADING_DEBOUNCE_TIME);
-    };
-
-    const handleLoadStart = () => {
-        setIsLoadingVideo(true);
-    };
-
-    // Handle progress for HTML5 video
-    const handleProgress = (event: React.SyntheticEvent<HTMLVideoElement>) => {
-        // If onProgress callback is provided, call it
-        if (onProgress) {
-            onProgress(event);
-        }
-    };
-
-    // Initialize HLS if needed
-    useEffect(() => {
-        const videoElement = videoRef?.current;
-
-        if (!videoElement || !isHls || isUsingLink) return;
-
-        // Convert R2 URL to proxy URL for same-origin requests
-        const proxySrc = src;
-
-        // Prevent crash if `canPlayType` is not a function
-        const canNativePlayHls =
-            typeof videoElement.canPlayType === "function" &&
-            videoElement.canPlayType("application/vnd.apple.mpegurl");
-
-        if (canNativePlayHls) {
-            // Native HLS support (Safari) - use proxy URL
-            videoElement.src = proxySrc;
-        } else if (Hls.isSupported()) {
-            // Use hls.js for other browsers - also use proxy URL for consistency
-            if (hlsRef.current) {
-                hlsRef.current.destroy();
-            }
-
-            const hls = new Hls({
+    function onProviderChange(provider: MediaProviderAdapter | null) {
+        // We can configure provider's here.
+        if (isHLSProvider(provider)) {
+            provider.config = {
                 enableWorker: true,
                 lowLatencyMode: true,
                 backBufferLength: 90,
-            });
-
-            console.log("proxySrc", proxySrc);
-
-            hlsRef.current = hls;
-            hls.loadSource(proxySrc); // Use proxy URL
-            hls.attachMedia(videoElement);
-
-            // Handle HLS events
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                console.log("HLS manifest parsed");
-            });
-
-            hls.on(Hls.Events.ERROR, (event, data) => {
-                console.error("HLS error:", data);
-                if (data.fatal) {
-                    switch (data.type) {
-                        case Hls.ErrorTypes.NETWORK_ERROR:
-                            console.log("Fatal network error encountered, try to recover");
-                            hls.startLoad();
-                            onError?.("hls_network", data.error?.message ?? "HLS network error");
-                            break;
-                        case Hls.ErrorTypes.MEDIA_ERROR:
-                            console.log("Fatal media error encountered, try to recover");
-                            hls.recoverMediaError();
-                            onError?.("hls_media", data.error?.message ?? "HLS media error");
-                            break;
-                        default:
-                            console.log("Fatal error, cannot recover");
-                            hls.destroy();
-                            onError?.("hls_fatal", data.error?.message ?? "HLS fatal error");
-                            break;
-                    }
-                }
-            });
-        } else {
-            console.error("HLS is not supported in this browser");
+            };
         }
 
-        // Cleanup function
-        return () => {
-            if (hlsRef.current) {
-                hlsRef.current.destroy();
-                hlsRef.current = null;
-            }
-        };
-    }, [src, isHls, isUsingLink, videoRef, onError]);
+        if (videoRef && provider && "video" in provider) {
+            // Expose Native HTMLVideoElement so auto-capture and other logic can drawImage
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            videoRef.current = provider.video;
+        }
+    }
 
-    // Cleanup timeout on unmount
-    useEffect(() => {
-        return () => {
-            clearTimeout(isLoadingTimeoutRef.current as NodeJS.Timeout);
-        };
-    }, []);
+    const handleSeekRequest = (
+        time: number,
+        event: MediaSeekRequestEvent | MediaSeekingRequestEvent
+    ) => {
+        if (!canSeek) {
+            // Chỉ chặn nếu vị trí muốn tua lớn hơn vị trí xa nhất đã xem
+            if (time > maxWatchedTime.current) {
+                event.preventDefault();
+            }
+        }
+    };
 
     return (
-        <>
-            <MediaController
-                id="media-controller-atld"
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    aspectRatio: "16/9",
+        <MediaPlayer
+            id="media-controller-atld"
+            title="Bài học"
+            className="absolute inset-0 w-full h-full bg-slate-900 text-white font-sans overflow-hidden rounded-md ring-media-focus data-focus:ring-4"
+            style={{
+                maxHeight: "100%",
+            }}
+            src={src}
+            crossOrigin
+            playsInline
+            onProviderChange={onProviderChange}
+            onMediaSeekRequest={handleSeekRequest}
+            onMediaSeekingRequest={handleSeekRequest}
+            onEnded={onEnded}
+            onPause={onPause}
+            onPlay={onPlay}
+            onError={(detail) => {
+                if (onError) {
+                    onError(
+                        detail.code === 1
+                            ? "hls_network"
+                            : detail.code === 2
+                              ? "hls_media"
+                              : "native",
+                        detail.message
+                    );
+                }
+            }}
+            onTimeUpdate={(detail, nativeEvent) => {
+                if (!canSeek && detail.currentTime > maxWatchedTime.current) {
+                    // Update the furthest watched time
+                    maxWatchedTime.current = detail.currentTime;
+                }
+
+                if (onProgress) {
+                    onProgress(nativeEvent as any);
+                }
+            }}
+            ref={player}
+        >
+            <MediaProvider />
+
+            <DefaultAudioLayout icons={defaultLayoutIcons} />
+
+            <DefaultVideoLayout
+                icons={defaultLayoutIcons}
+                slots={{
+                    fullscreenButton: <></>,
                 }}
-            >
-                <Player
-                    ref={videoRef}
-                    slot="media"
-                    src={isUsingLink || !isHls ? src : undefined}
-                    crossOrigin="anonymous"
-                    playsInline
-                    onEnded={onEnded}
-                    onPause={onPause}
-                    onPlay={onPlay}
-                    onLoadStart={handleLoadStart}
-                    onCanPlay={handleReady}
-                    onWaiting={() => {
-                        setIsLoadingVideo(true);
-                    }}
-                    onPlaying={() => {
-                        setIsLoadingVideo(false);
-                    }}
-                    onProgress={handleProgress}
-                    onError={(event: React.SyntheticEvent<HTMLVideoElement>) => {
-                        const mediaError = (event.currentTarget as HTMLVideoElement).error;
-                        const message = mediaError?.message ?? "Unknown native video error";
-                        console.error("Native video error:", mediaError);
-                        onError?.("native", message);
-                    }}
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                    }}
-                />
-                {!isPreview && (
-                    <MediaControlBar className="w-full bg-[rgba(20,20,30,0.5)] px-2">
-                        <div className="w-full flex flex-col">
-                            <div className="w-full flex items-center justify-between gap-x-2">
-                                <div className="flex items-center gap-x-4">
-                                    <MediaPlayButton className="size-5 bg-transparent" />
+            />
 
-                                    <MediaTimeDisplay showDuration className="bg-transparent" />
-                                </div>
+            <TimeSlider.Root>
+                <TimeSlider.Track>
+                    <TimeSlider.Progress />
+                </TimeSlider.Track>
 
-                                <div className="flex items-center gap-x-4">
-                                    <MediaVolumeRange className="bg-transparent" />
-
-                                    {/* <MediaFullscreenButton className="bg-transparent" /> */}
-                                </div>
-                            </div>
-
-                            <MediaTimeRange
-                                className={`w-full bg-transparent ${!canSeek ? "pointer-events-none" : ""}`}
-                            />
-                        </div>
-                    </MediaControlBar>
-                )}
-            </MediaController>
-        </>
+                <TimeSlider.Thumb />
+            </TimeSlider.Root>
+        </MediaPlayer>
     );
 };
 

@@ -198,25 +198,22 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
         <LearnView
             gradientClass={theme.gradient}
             videoSlot={
-                <div className="min-h-0">
-                    <VideoPlayer
-                        src={currentVideo?.url || learnDetail?.theory?.videos?.[0]?.url}
-                        canSeek={
-                            currentVideo?.canSeek ||
-                            learnDetail?.theory?.videos?.[0]?.canSeek ||
-                            Boolean(progress?.isCompleted) ||
-                            isCompletedThisVideo
-                        }
-                        isUsingLink={
-                            currentVideo?.isUsingLink ||
-                            learnDetail?.theory?.videos?.[0]?.isUsingLink
-                        }
-                        onEnded={handleVideoEnded}
-                        onProgress={onPlayerProgress}
-                        onError={handleVideoError}
-                        videoRef={videoRef}
-                    />
-                </div>
+                <VideoPlayer
+                    src={currentVideo?.url || learnDetail?.theory?.videos?.[0]?.url}
+                    canSeek={
+                        currentVideo?.canSeek ||
+                        learnDetail?.theory?.videos?.[0]?.canSeek ||
+                        Boolean(progress?.isCompleted) ||
+                        isCompletedThisVideo
+                    }
+                    isUsingLink={
+                        currentVideo?.isUsingLink || learnDetail?.theory?.videos?.[0]?.isUsingLink
+                    }
+                    onEnded={handleVideoEnded}
+                    onProgress={onPlayerProgress}
+                    onError={handleVideoError}
+                    videoRef={videoRef}
+                />
             }
             infoSlot={
                 <LearnInfo
