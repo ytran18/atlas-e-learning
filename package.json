@@ -1,6 +1,6 @@
 {
     "name": "atld-e-learning",
-    "version": "0.1.8",
+    "version": "0.1.13",
     "private": true,
     "scripts": {
         "dev": "next dev --turbopack",
@@ -33,6 +33,7 @@
         "@mantine/hooks": "8.3.3",
         "@mantine/modals": "8.3.3",
         "@mantine/notifications": "8.3.3",
+        "@next/third-parties": "^16.1.6",
         "@react-pdf/renderer": "^4.3.2",
         "@sentry/nextjs": "^10.36.0",
         "@sparticuz/chromium": "^141.0.0",
@@ -42,6 +43,7 @@
         "@tanstack/react-query-devtools": "^5.90.2",
         "@vercel/analytics": "^1.5.0",
         "@vercel/speed-insights": "^1.2.0",
+        "@vidstack/react": "^1.12.13",
         "algoliasearch": "^4.25.3",
         "antd": "^5.28.0",
         "axios": "^1.12.2",
