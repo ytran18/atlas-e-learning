@@ -9,6 +9,7 @@ import { useLearnContext } from "@/contexts/LearnContext";
 import { useAutoCapture } from "@/features/course/hooks/useAutoCapture";
 import { COURSE_THEMES } from "@/features/course/types";
 import { useI18nTranslate } from "@/libs/i18n/useI18nTranslate";
+import { trackVideoLoadError } from "@/libs/mixpanel/tracking";
 import VideoPlayer from "@/libs/player/VideoPlayer";
 import { CourseType } from "@/types/api";
 
@@ -154,6 +155,19 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
         totalVideos,
     });
 
+    const handleVideoError = (errorType: string, message: string) => {
+        trackVideoLoadError({
+            course_type: courseType,
+            course_id: learnDetail.id,
+            video_url: currentVideo?.url ?? "",
+            section: "practice",
+            video_index: videoIndex,
+            error_type: errorType as "hls_network" | "hls_media" | "hls_fatal" | "native",
+            error_message: message,
+            timestamp: Date.now(),
+        });
+    };
+
     const buttonText = useMemo(() => {
         if (learnDetail.practice.videos.length > 0) return t("tiep_theo");
         if (learnDetail.exam.questions.length > 0) return t("chuyen_sang_bai_kiem_tra");
@@ -164,24 +178,22 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
         <LearnView
             gradientClass={theme.gradient}
             videoSlot={
-                <div className="min-h-0">
-                    <VideoPlayer
-                        src={currentVideo?.url || learnDetail.practice.videos?.[0]?.url}
-                        canSeek={
-                            currentVideo?.canSeek ||
-                            learnDetail.practice.videos?.[0]?.canSeek ||
-                            Boolean(progress?.isCompleted) ||
-                            isCompletedThisVideo
-                        }
-                        isUsingLink={
-                            currentVideo?.isUsingLink ||
-                            learnDetail.practice.videos?.[0]?.isUsingLink
-                        }
-                        onEnded={handleVideoEnded}
-                        onProgress={onPlayerProgress}
-                        videoRef={videoRef}
-                    />
-                </div>
+                <VideoPlayer
+                    src={currentVideo?.url || learnDetail.practice.videos?.[0]?.url}
+                    canSeek={
+                        currentVideo?.canSeek ||
+                        learnDetail.practice.videos?.[0]?.canSeek ||
+                        Boolean(progress?.isCompleted) ||
+                        isCompletedThisVideo
+                    }
+                    isUsingLink={
+                        currentVideo?.isUsingLink || learnDetail.practice.videos?.[0]?.isUsingLink
+                    }
+                    onEnded={handleVideoEnded}
+                    onProgress={onPlayerProgress}
+                    onError={handleVideoError}
+                    videoRef={videoRef}
+                />
             }
             infoSlot={
                 <LearnInfo

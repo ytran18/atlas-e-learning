@@ -113,6 +113,7 @@ const GlobalHeader = () => {
                                 <Link
                                     key={item.href}
                                     href={item.href}
+                                    prefetch
                                     className="flex items-center h-[42px] sm:h-full w-full sm:w-auto pl-(--mantine-spacing-md) pr-(--mantine-spacing-md) no-underline text-(--mantine-color-black) font-medium hover:bg-(--mantine-color-gray-0)"
                                     style={{
                                         fontSize: "var(--mantine-font-size-sm)",
@@ -126,7 +127,7 @@ const GlobalHeader = () => {
                     </Group>
 
                     {/* Desktop Auth Button */}
-                    <Box visibleFrom="md" className="col-span-4 place-items-end">
+                    <Box visibleFrom="md" className="col-span-4 place-items-end flex justify-end">
                         <AuthButton />
                     </Box>
 

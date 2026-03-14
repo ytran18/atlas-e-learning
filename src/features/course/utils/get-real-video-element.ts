@@ -1,6 +1,11 @@
 export const getRealVideoEl = (videoRef: React.RefObject<unknown>): HTMLVideoElement | null => {
-    // ReactPlayer ref
-    const container = videoRef.current as unknown as HTMLElement | null;
+    // Nếu videoRef.current đã là thẻ video do Vidstack hay Player truyền chuẩn:
+    if (videoRef.current instanceof HTMLVideoElement) {
+        return videoRef.current;
+    }
+
+    // ReactPlayer fallback
+    const container = videoRef.current as HTMLElement | null;
     if (!container) return null;
 
     // 1️⃣ Thử tìm video trực tiếp (ReactPlayer fallback)

@@ -145,6 +145,34 @@ interface ApiErrorEvent {
     };
 }
 
+export interface VideoLoadErrorEvent {
+    event: "video_load_error";
+    properties: {
+        course_type: CourseType;
+        course_id: string;
+        video_url: string;
+        section: "theory" | "practice";
+        video_index: number;
+        error_type: "hls_network" | "hls_media" | "hls_fatal" | "native";
+        error_message: string;
+        timestamp: number;
+    };
+}
+
+export interface VideoPlaybackErrorEvent {
+    event: "video_playback_error";
+    properties: {
+        course_type: CourseType;
+        course_id: string;
+        video_url: string;
+        section: "theory" | "practice";
+        video_index: number;
+        error_code?: number;
+        error_message: string;
+        timestamp: number;
+    };
+}
+
 // track retake course error
 export interface RetakeCourseErrorEvent {
     event: "retake_course_error";
@@ -188,4 +216,6 @@ export type MixpanelEvent =
     | RetakeCourseErrorEvent
     | RetakeCourseSuccessEvent
     | StudentSearchedEvent
-    | DocumentSearchedEvent;
+    | DocumentSearchedEvent
+    | VideoLoadErrorEvent
+    | VideoPlaybackErrorEvent;

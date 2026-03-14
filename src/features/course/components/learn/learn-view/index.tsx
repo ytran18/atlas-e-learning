@@ -22,12 +22,17 @@ const LearnView = React.memo(function LearnView({
             radius="md"
             padding="lg"
             h="100%"
-            className={`bg-linear-to-br ${gradientClass} p-0! sm:p-4!`}
+            className={`bg-linear-to-br ${gradientClass} p-0! sm:p-4! w-full min-w-0 flex flex-col overflow-hidden`}
         >
-            <div className="flex flex-col gap-4 lg:gap-6 h-full">
-                {videoSlot}
-                {infoSlot}
-                {nextButtonSlot}
+            <div className="flex flex-col gap-4 lg:gap-6 h-full w-full min-w-0 overflow-hidden">
+                <div className="flex-1 min-h-0 min-w-0 w-full rounded-md relative bg-black overflow-hidden flex items-center justify-center">
+                    <div className="w-full h-full max-h-full max-w-full relative">{videoSlot}</div>
+                </div>
+
+                <div className="shrink-0">
+                    {infoSlot}
+                    {nextButtonSlot}
+                </div>
             </div>
         </Card>
     );
