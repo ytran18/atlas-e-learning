@@ -16,7 +16,12 @@ const DesktopLearnLayout = ({ courseType }: DesktopLearnLayoutProps) => {
                 <LearnSidebar courseType={courseType} />
             </div>
 
-            <div className="flex-1 h-full">
+            <div
+                className="min-w-0 h-full"
+                style={{
+                    width: "calc(100vw - 320px)",
+                }}
+            >
                 <LearnSteps
                     slots={{
                         Theory: () => <LearnTheory courseType={courseType} />,
