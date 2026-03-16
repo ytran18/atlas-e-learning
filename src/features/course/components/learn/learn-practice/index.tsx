@@ -186,9 +186,6 @@ const LearnPractice = ({ courseType }: LearnPracticeProps) => {
                         Boolean(progress?.isCompleted) ||
                         isCompletedThisVideo
                     }
-                    isUsingLink={
-                        currentVideo?.isUsingLink || learnDetail.practice.videos?.[0]?.isUsingLink
-                    }
                     onEnded={handleVideoEnded}
                     onProgress={onPlayerProgress}
                     onError={handleVideoError}

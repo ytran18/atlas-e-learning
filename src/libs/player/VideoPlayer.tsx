@@ -9,7 +9,6 @@ import {
     type MediaProviderAdapter,
     type MediaSeekRequestEvent,
     type MediaSeekingRequestEvent,
-    TimeSlider,
     isHLSProvider,
 } from "@vidstack/react";
 import {
@@ -22,13 +21,10 @@ import "@vidstack/react/player/styles/base.css";
 interface VideoPlayerProps {
     src: string;
     canSeek?: boolean;
-    isPreview?: boolean;
     onEnded?: () => void; // when video ended
     onPause?: () => void; // when video paused
     onPlay?: () => void; // when video played
     onProgress?: ReactEventHandler<HTMLVideoElement> | undefined; // when video progress
-    isHls?: boolean; // whether the video source is HLS stream
-    isUsingLink?: boolean; // whether the video source is using link
     // optional external ref to the underlying HTMLVideoElement
     videoRef?: RefObject<HTMLVideoElement | null>;
     // called when a fatal (unrecoverable) video error occurs
@@ -38,14 +34,11 @@ interface VideoPlayerProps {
 const VideoPlayer = ({
     src,
     canSeek = true,
-    // isPreview = false,
     onEnded,
     onPause,
     onPlay,
     onProgress,
     onError,
-    // isHls = true,
-    // isUsingLink = false,
     videoRef,
 }: VideoPlayerProps) => {
     const player = useRef<MediaPlayerInstance>(null);
@@ -148,14 +141,6 @@ const VideoPlayer = ({
                     fullscreenButton: <></>,
                 }}
             />
-
-            <TimeSlider.Root>
-                <TimeSlider.Track>
-                    <TimeSlider.Progress />
-                </TimeSlider.Track>
-
-                <TimeSlider.Thumb />
-            </TimeSlider.Root>
         </MediaPlayer>
     );
 };

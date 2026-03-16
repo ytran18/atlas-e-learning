@@ -206,9 +206,6 @@ const LearnTheory = ({ courseType }: LearnTheoryProps) => {
                         Boolean(progress?.isCompleted) ||
                         isCompletedThisVideo
                     }
-                    isUsingLink={
-                        currentVideo?.isUsingLink || learnDetail?.theory?.videos?.[0]?.isUsingLink
-                    }
                     onEnded={handleVideoEnded}
                     onProgress={onPlayerProgress}
                     onError={handleVideoError}
