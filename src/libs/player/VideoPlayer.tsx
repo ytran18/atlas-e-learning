@@ -119,9 +119,17 @@ const VideoPlayer = ({
                 }
             }}
             onTimeUpdate={(detail, nativeEvent) => {
-                if (!canSeek && detail.currentTime > maxWatchedTime.current) {
-                    // Update the furthest watched time
-                    maxWatchedTime.current = detail.currentTime;
+                if (!canSeek) {
+                    // Cho phép sai số 1 giây để tránh giật video khi buffering
+                    if (detail.currentTime > maxWatchedTime.current + 1) {
+                        if (player.current) {
+                            // Ép thời gian lùi lại mốc lớn nhất hợp lệ
+                            player.current.currentTime = maxWatchedTime.current;
+                        }
+                    } else if (detail.currentTime > maxWatchedTime.current) {
+                        // Cập nhật mốc thời gian lớn nhất
+                        maxWatchedTime.current = detail.currentTime;
+                    }
                 }
 
                 if (onProgress) {
